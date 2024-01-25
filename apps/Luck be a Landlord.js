@@ -1,0 +1,445 @@
+import { getOrSetEvent, getChoiceSymbols, getNextRentPaidInfo, addSymbolToAllSymbols, randomSlotMachinePosition, toRenderSymbol, handle, Symbols } from '../models/index.js'
+import puppeteer from "../../../lib/puppeteer/puppeteer.js";
+import { join } from 'node:path'
+import { pluginName, pluginPath } from '../components/index.js';
+
+const pluResPath = join(pluginPath, 'resources')
+
+const self_id = '3889000138'
+
+export class game extends plugin {
+    constructor() {
+        super({
+            name: '[幸运房东] 开始游戏',
+            dsc: '[幸运房东] 开始游戏',
+            event: 'message',
+            priority: 1,
+            rule: [
+                {
+                    reg: '^#?幸运房东$',
+                    fnc: 'help'
+                },
+                {
+                    reg: '^#?开始游戏$',
+                    fnc: 'startGame'
+                },
+                {
+                    reg: '^#?(选择|跳过)',
+                    fnc: 'choice'
+                },
+                {
+                    reg: '^#?旋转$',
+                    fnc: 'start'
+                },
+                {
+                    reg: '#?符号图鉴',
+                    fnc: 'SymbolHelp'
+                }
+            ]
+        })
+
+    }
+    async help(e) {
+        if (e.self_id != self_id) {
+            return true
+        }
+        const content = [
+            '灵感来源: Stram上的游戏: 幸运房东(Luck Be A Landlord)',
+            '一款 Rogue-like 游戏'
+        ]
+        const md = await toMd(content.join('\r'), [
+            [
+                { label: '开始游戏', data: '/开始游戏', enter: true }
+            ]
+        ])
+        console.log(md);
+        return await e.reply(md)
+    }
+
+    async startGame(e) {
+        if (e.self_id != self_id) {
+            return true
+        }
+        getOrSetEvent(e.user_id, 1, 'del')
+        await e.reply(segment.image('https://gchat.qpic.cn/gchatpic_new/0/0-0-691D725B4BE4F051C546BE7AE3C48026/0'))
+        await e.reply(segment.image('https://gchat.qpic.cn/gchatpic_new/0/0-0-CA46D002C56431A2716C21AD36E391DA/0'))
+        await e.reply(await toMd('选择你的操作', [
+            [
+                { label: '旋转', data: '/旋转', enter: true }
+            ]
+        ]))
+        return true
+    }
+
+    async start(e) {
+        if (e.self_id != self_id) {
+            return true
+        }
+        const event = getOrSetEvent(e.user_id, null, 'set')
+        if (event.choiceSymbols.length == 3) {
+            // 需要先选择符号
+            const choiceSymbolsDesc = []
+            for (const i of event.choiceSymbols) {
+                const [rarity, id] = i.split('/')
+                const Symbol = toRenderSymbol(Symbols[rarity][id])
+                choiceSymbolsDesc.push(Symbol)
+            }
+            // 选择
+            const data = {
+                tplFile: `./plugins/${pluginName}/resources/html/choice.html`,
+                pluResPath,
+                ...event,
+                choiceSymbols: choiceSymbolsDesc
+
+            }
+            const img = await puppeteer.screenshot(pluginName, data);
+            await e.reply(img)
+            // await e.reply('需要先选择符号哦')
+            await e.reply(await toMd('需要先选择符号哦', [
+                [
+                    { label: '跳过', data: '/跳过', enter: true }
+                ],
+                [
+                    { label: '选1', data: '/选择1', enter: true },
+                    { label: '选2', data: '/选择2', enter: true },
+                    { label: '选3', data: '/选择3', enter: true },
+                ],
+                [
+                    { label: '查看图鉴', data: '/符号图鉴' }
+                ]
+            ]))
+            return
+        } else if (event.choiceSymbols.length == 5) {
+            // 初始化
+            addSymbolToAllSymbols(event.choiceSymbols, event.allSymbols)
+        }
+        // 消耗1硬币旋转
+        event.coins--
+        const SlotMachine = randomSlotMachinePosition(event.allSymbols)
+
+        // 然后循环处理事件
+        for (const i in SlotMachine) {
+            const self = SlotMachine[i]
+            self.position = i
+            const id = SlotMachine[i].id
+            handle.Symbols[id](SlotMachine, event, self)
+        }
+
+        // 处理回调
+        while (true) {
+            const callback = event.callback.shift()
+            if (!callback) {
+                break
+            }
+            callback(SlotMachine, event)
+        }
+
+        // 循环处理硬币
+        let earnedCoin = 0
+        for (const i in SlotMachine) {
+            let coin = SlotMachine[i].payout
+            coin += SlotMachine[i].coin
+            if (SlotMachine[i].times) {
+                coin *= SlotMachine[i].times
+            }
+            earnedCoin += coin
+            SlotMachine[i].getCoin = coin
+        }
+
+        // 循环处理移除的符号 应该也有一个方法
+        while (true) {
+            const remove = event.removeSymbols.shift()
+            if (!remove) {
+                break
+            }
+            const i = event.allSymbols.findIndex(Symbol => Symbol.rand === remove.rand);
+            if (i !== -1) {
+                event.allSymbols.splice(i, 1);
+            }
+        }
+
+        // 处理添加的符号
+        if (event.addSymbols.length) {
+            addSymbolToAllSymbols(event.addSymbols, event.allSymbols)
+        }
+
+        // 将硬币加到event上
+        event.coins += earnedCoin
+
+        // 处理旋转完成之后的时间,旋转次数+1,剩余交房租-1
+        event.spins++
+        event.nextRentPaid--
+
+        let data = {
+            tplFile: `./plugins/${pluginName}/resources/html/index.html`,
+            pluResPath,
+            SlotMachine,
+            log: event.log,
+            allCoins: event.coins,
+            earnedCoin
+        }
+        let img = await puppeteer.screenshot(pluginName, data);
+        event.log.length = 0
+        await e.reply(img)
+
+        // 判断旋转次数是否应该要交房租
+        if (event.nextRentPaid == 0) {
+            if (event.coins >= event.rentPaidCoin) {
+                event.coins -= event.rentPaidCoin
+                await e.reply(`花费${event.rentPaidCoin}硬币交房租`)
+            } else {
+                // 如果不够的话有物品能够再转一次或者取硬币
+                // 游戏结束
+                // return "1"
+                // await e.reply(`当前硬币:${event.coins},不够房租${event.rentPaidCoin},游戏结束`)
+                await e.reply(await toMd(`当前硬币:${event.coins},不够房租${event.rentPaidCoin},游戏结束`, [
+                    [
+                        { label: '再玩一局', data: '/开始游戏', enter: true }
+                    ]
+                ]))
+                getOrSetEvent(e.user_id, event, 'del')
+                return true
+            }
+            event.timesRentPaid++
+            const rent = getNextRentPaidInfo(event.timesRentPaid)
+            event.nextRentPaid = rent.nextRentPaid
+            event.rentPaidCoin = rent.rentPaidCoin
+        }
+
+        if (event.timesRentPaid == 12) {
+            await e.reply(await toMd(`游戏胜利!! ps: 内测版,事件不多`, [
+                [
+                    { label: '再玩一局', data: '/开始游戏', enter: true }
+                ]
+            ]))
+            getOrSetEvent(e.user_id, event, 'del')
+            return
+        }
+
+
+        // 够硬币之后根据旋转次数随机三个符号,添加到event
+        const choiceSymbols = getChoiceSymbols(event.timesRentPaid)
+        event.choiceSymbols.push(...choiceSymbols)
+        // 再保存到文件
+        getOrSetEvent(e.user_id, event)
+
+        const choiceSymbolsDesc = []
+        for (const i of choiceSymbols) {
+            const [rarity, id] = i.split('/')
+            const Symbol = toRenderSymbol(Symbols[rarity][id])
+            choiceSymbolsDesc.push(Symbol)
+        }
+        // 选择
+        data = {
+            tplFile: `./plugins/${pluginName}/resources/html/choice.html`,
+            pluResPath,
+            ...event,
+            choiceSymbols: choiceSymbolsDesc
+
+        }
+        img = await puppeteer.screenshot(pluginName, data);
+        await e.reply(img)
+        await e.reply(await toMd('选择你的操作', [
+            [
+                { label: '跳过', data: '/跳过', enter: true }
+            ],
+            [
+                { label: '选1', data: '/选择1', enter: true },
+                { label: '选2', data: '/选择2', enter: true },
+                { label: '选3', data: '/选择3', enter: true },
+            ],
+            [
+                { label: '查看图鉴', data: '/符号图鉴' }
+            ]
+        ]))
+        return true
+    }
+
+    async choice(e) {
+        if (e.self_id != self_id) {
+            return true
+        }
+        const event = getOrSetEvent(e.user_id)
+        if (!event) {
+            // await e.reply('还没有存档哦,先输入/开始游戏 吧')
+            await e.reply(await toMd('还没有存档哦,先输入/开始游戏 吧', [
+                [
+                    { label: '开始游戏', data: '/开始游戏', enter: true }
+                ]
+            ]))
+            return
+        } else if (event.choiceSymbols.length == 0) {
+            // await e.reply('不需要选择哦,输入#旋转 继续游戏吧')
+            await e.reply(await toMd('不需要选择哦,输入/旋转 继续游戏吧', [
+                [
+                    { label: '旋转', data: '/旋转', enter: true }
+                ]
+            ]))
+            return
+        }
+        if (e.msg.includes('跳过')) {
+        } else {
+            const choiceSymbols = event.choiceSymbols
+            let target = e.msg.replace(/#?选择\s*/, '')
+            target = Number(target) || String(target)
+            if (typeof target === 'number') {
+                target = Math.floor(target)
+                if (target > 3 || target < 1) {
+                    // await e.reply('没有这个选项: ' + target)
+                    await e.reply(await toMd('没有这个选项' + target, [
+                        [
+                            { label: '跳过', data: '/跳过', enter: true }
+                        ],
+                        [
+                            { label: '选1', data: '/选择1', enter: true },
+                            { label: '选2', data: '/选择2', enter: true },
+                            { label: '选3', data: '/选择3', enter: true },
+                        ],
+                        [
+                            { label: '查看图鉴', data: '/符号图鉴' }
+                        ]
+                    ]))
+                    return
+                }
+                target--
+                target = choiceSymbols[target]
+            } else {
+                target = Symbols.nameToSymbol[target]
+                if (target) {
+                    target = target.rarity + '/' + target.id
+                } else {
+                    // return await e.reply('没有这个选项: ' + target)
+                    await e.reply(await toMd('没有这个选项' + target, [
+                        [
+                            { label: '跳过', data: '/跳过', enter: true }
+                        ],
+                        [
+                            { label: '选1', data: '/选择1', enter: true },
+                            { label: '选2', data: '/选择2', enter: true },
+                            { label: '选3', data: '/选择3', enter: true },
+                        ],
+                        [
+                            { label: '查看图鉴', data: '/符号图鉴' }
+                        ]
+                    ]))
+                    return
+                }
+            }
+            addSymbolToAllSymbols([target], event.allSymbols)
+        }
+        event.choiceSymbols.length = 0
+        getOrSetEvent(e.user_id, event, 'set')
+        e.msg = '旋转'
+        return false
+    }
+
+    async SymbolHelp(e) {
+        if (e.self_id != self_id) {
+            return true
+        }
+        let target = e.msg.replace(/#?符号图鉴\s*/, '')
+        if (!target) {
+            // return await e.reply('请在指令后带上需要查看的符号哦')
+            await e.reply(await toMd('请在指令后带上需要查看的符号名字哦', [
+                [
+                    { label: '查看图鉴', data: '/符号图鉴' }
+                ]
+            ]))
+            return
+        }
+        target = Symbols.nameToSymbol[target]
+        if (!target) {
+            // return await e.reply('没有找到此符号: ' + target)
+            await e.reply(await toMd('没有找到此符号: ' + target, [
+                [
+                    { label: '查看图鉴', data: '/符号图鉴' }
+                ]
+            ]))
+            return
+        }
+        const Symbol = toRenderSymbol(target)
+        let data = {
+            tplFile: `./plugins/${pluginName}/resources/html/handbook.html`,
+            pluResPath,
+            ...Symbol
+        }
+        let img = await puppeteer.screenshot(pluginName, data);
+        await e.reply(img)
+        return
+    }
+
+}
+const toMd = async (content, buttons) => {
+    const result = []
+    // 这一段是处理图片 如果不需要处理可以注释 把 /* 和 */删
+
+    // let buffer = await Bot.Buffer(file)
+    // let imgSize = sizeOf(buffer)
+    // let imgUrl = await Bot.fileToUrl(file)
+    // if (imgSize.width > 720) {
+    //     let ratio = imgSize.height / imgSize.width;
+    //     imgSize.width = 720;
+    //     imgSize.height = Math.round(imgSize.width * ratio)
+    // }
+
+
+    // 这一段是模版 改这里
+    result.push(segment.raw({
+        type: 'markdown',
+        custom_template_id: '102072007_1702987215',
+        params: [
+            {
+                key: 'content0',
+                values: [content]
+            }
+        ]
+    }))
+
+    // 这一段是按钮
+    if (buttons) {
+        result.push(...toButton(buttons))
+    }
+
+    return result
+}
+
+/**
+ * 转换成button,发送时需要...toButton
+ * @returns [{type:buttom},{type:buttom}]
+ */
+function toButton(buttons) {
+    const button = []
+    for (const btn of buttons) {
+        const arr = []
+        for (const i of btn) {
+            arr.push({
+                "id": String(Date.now()),
+                "render_data": {
+                    "label": i.label,
+                    "visited_label": i.label,
+                    "style": 1
+                },
+                "action": {
+                    "type": 2,
+                    "permission":
+                        i.specify_user_ids ?
+                            {
+                                "type": 0,
+                                "specify_user_ids": i.specify_user_ids
+                            } :
+                            {
+                                "type": 2,
+                            },
+                    "data": i.data,
+                    "enter": i.enter ? true : false,
+                    "unsupport_tips": "code: 45",
+                }
+            })
+        }
+        button.push(segment.raw({
+            type: 'button',
+            buttons: arr
+        }))
+    }
+    return button
+}

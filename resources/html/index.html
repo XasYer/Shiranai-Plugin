@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                -2px 0 0 #000,
+                2px 0 0 #000,
+                0 -2px 0 #000,
+                0 2px 0 #000;
+        }
+
+
+        body {
+            width: 1024px;
+            /* height: 576px; */
+            background-color: #797449;
+        }
+
+        .SlotMachine {
+            width: 610px;
+            height: 460px;
+            border: 10px black solid;
+            position: absolute;
+            left: 207px;
+            background-color: #FFFFFF;
+        }
+
+        .SlotMachine .img {
+            position: absolute;
+            top: 12px;
+            left: 10px;
+            width: 90px;
+            height: 90px;
+            z-index: 0;
+        }
+
+        .start {
+            width: 185px;
+            height: 110px;
+            background-color: #06799F;
+            position: absolute;
+            top: 466px;
+            left: 420px;
+            border: 10px black solid;
+            font-size: 65px;
+            text-align: center;
+            color: #FFFFFF;
+            z-index: 1;
+        }
+
+        .start span {
+            position: relative;
+        }
+
+        .start span::after {
+            -webkit-text-stroke: 10px #000;
+            width: 150px;
+            content: "旋转";
+            font-size: 70px;
+            color: #000;
+            font-weight: bold;
+            position: absolute;
+            z-index: -1;
+            top: -3px;
+            left: -9px;
+        }
+
+        .coin {
+            position: absolute;
+            top: 520px;
+            left: 10px;
+            height: 60px;
+        }
+
+        .coin img {
+            position: relative;
+            top: 10px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .coin .all {
+            color: #F8F87B;
+            font-size: 40px;
+            height: 60px;
+            line-height: 60px;
+            position: relative;
+            bottom: 10px;
+        }
+
+        .coin .get {
+            position: absolute;
+            color: #F8F87B;
+            font-size: 40px;
+            height: 60px;
+            line-height: 60px;
+            bottom: 70px;
+        }
+
+        .col {
+            width: 110px;
+            height: 110px;
+            border-right: 10px black solid;
+            box-sizing: content-box;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .y-1 {
+            left: 0px;
+        }
+
+        .y-2 {
+            left: 120px;
+        }
+
+        .y-3 {
+            left: 240px;
+        }
+
+        .y-4 {
+            left: 360px;
+        }
+
+        .y-5 {
+            left: 480px;
+        }
+
+        .x-1 {
+            top: 0px;
+        }
+
+        .x-2 {
+            top: 110px;
+        }
+
+        .x-3 {
+            top: 220px;
+        }
+
+        .x-4 {
+            top: 330px;
+        }
+
+        .payout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 50px;
+
+        }
+
+        .payout img {
+            width: 40px;
+            height: 40px;
+            z-index: 0;
+        }
+
+        .payout div {
+            font-size: 40px;
+            color: #F8F87B;
+            z-index: 3;
+            text-align: center;
+
+        }
+
+        .shadow {
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                -2px 0 0 #000,
+                2px 0 0 #000,
+                0 -2px 0 #000,
+                0 2px 0 #000;
+        }
+
+        .count {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 24px;
+            color: #E14A68;
+        }
+
+        .log {
+            /* height: 776px; */
+            padding-top: 576px;
+            padding-left: 10px;
+        }
+
+        .log p {
+            color: #F28050;
+            font-size: 40px;
+            padding-bottom: 10px;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="body">
+        <div class="Item_left">
+
+        </div>
+        <div class="Item_right">
+
+        </div>
+        <div class="SlotMachine">
+            {{each SlotMachine}}
+            <div class="x-{{$value.x}} y-{{$value.y}} col">
+                <div>
+                    {{if $value.image}}
+                    <img src="{{pluResPath}}/{{$value.image}}.webp" class="img">
+                    {{else}}
+                    <img src="{{pluResPath}}/{{$value.type + '/' + $value.rarity + '/' + $value.id}}.webp" class="img">
+                    {{/if}}
+                </div>
+                {{if $value.count > 0}}
+                <div class="count shadow">
+                    {{$value.count}}
+                </div>
+                {{/if}}
+                {{if $value.getCoin}}
+                <div class="payout">
+                    <img src="{{pluResPath}}/Symbols/Common/Coin.webp">
+                    <div class="shadow">
+                        {{$value.getCoin}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+        <div class="coin">
+            <div class="all">
+                <img src="{{pluResPath}}/Symbols/Common/Coin.webp" alt="">
+                <span>
+                    {{allCoins}}
+                </span>
+            </div>
+            <div class="get">
+                <img src="{{pluResPath}}/Symbols/Common/Coin.webp" alt="">
+                <span>
+                    {{earnedCoin}}
+                </span>
+            </div>
+        </div>
+        <div class="start">
+            <span>
+                旋转
+            </span>
+        </div>
+
+        <div class="log">
+            {{each log}}
+            <p>{{$value}}</p>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+</html>

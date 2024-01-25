@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                -2px 0 0 #000,
+                2px 0 0 #000,
+                0 -2px 0 #000,
+                0 2px 0 #000;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 978px;
+            background-color: rgb(18, 41, 80);
+            border: 10px solid black;
+        }
+
+        .header {
+            height: 50px;
+            background-color: rgb(36, 36, 36);
+            border-bottom: 10px black solid;
+            display: flex;
+            font-size: 35px;
+            /* justify-content: space-between; */
+        }
+
+        .coin {
+            color: #F8F87B;
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            position: absolute;
+            top: 7px;
+            left: 10px;
+        }
+
+        .spins {
+            color: white;
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .floor {
+            color: #046BF9;
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .tip {
+            height: 50px;
+            background-color: rgb(36, 36, 36);
+            border-bottom: 10px black solid;
+            font-size: 35px;
+            display: flex;
+        }
+
+        .add {
+            color: white;
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .other {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 35px;
+            /* justify-content: center; */
+            justify-content: space-between;
+        }
+
+        .timesRentPaid {
+            color: white;
+            position: absolute;
+            left: 10px;
+        }
+
+        .skip {
+            width: 95px;
+            height: 45px;
+            background-color: #F28050;
+            color: white;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            margin: 5px auto;
+            border: 5px solid black;
+            box-sizing: content-box;
+        }
+
+        .choice {
+            display: flex;
+            font-size: 25px;
+            width: 100%;
+            justify-content: space-around;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .choice>div {
+            background-color: #E14A68;
+            border: 5px solid black;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            margin: 2px auto;
+            /* justify-content: center; */
+            align-items: center;
+            height: 100%;
+        }
+
+        .choice>div>div {
+            margin-bottom: 5px;
+        }
+
+        .desc {
+            letter-spacing: 1px;
+            width: 280px;
+            word-wrap: break-word;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .border {
+            height: 2px;
+            border: 2px solid black;
+            width: 260px;
+            box-sizing: border-box;
+        }
+
+        .Common {
+            color: #C4C4C4;
+        }
+
+        .Uncommon {
+            color: #61D3E3;
+        }
+
+        .Rare {
+            color: #FBF236
+        }
+
+        .VeryRare {
+            color: #7234BF
+        }
+
+        .thumb {
+            width: 33px;
+            height: 33px;
+            line-height: 37px;
+            position: relative;
+            top: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="body">
+        <div class="header">
+            <div class="coin">
+                <img src="{{pluResPath}}/Symbols/Common/Coin.webp">
+                {{coins}}
+            </div>
+            <div class="spins">
+                需在<span style="color: #E14A68;">{{nextRentPaid}}</span>次旋转之后支付<span
+                    style="color:#F8F87B;">{{rentPaidCoin}}</span>枚
+                <img src="{{pluResPath}}/Symbols/Common/Coin.webp">
+            </div>
+            <div class="floor">
+                {{floor}}
+            </div>
+        </div>
+        <div class="tip">
+            <div class="options">
+
+            </div>
+            <div class="add">
+                添加符号！
+            </div>
+            <div class="item">
+
+            </div>
+        </div>
+        <div class="other">
+            <div class="timesRentPaid">
+                支付次数：<span style="color: #E14A68;">{{timesRentPaid}}</span>/<span style="color: #E14A68;">12</span>
+            </div>
+            <div class="skip">
+                跳过
+            </div>
+        </div>
+        <div class="choice">
+            {{each choiceSymbols i}}
+            <div>
+                <div>{{i.name}}</div>
+                <div>
+                    <img src="{{pluResPath}}/Symbols/{{i.rarity}}/{{i.id}}.webp" class="img">
+                </div>
+                <div class="{{i.rarity}}">
+                    {{i.rarityName}}
+                </div>
+                <div class="payout">
+                    给予<span style="color:#F8F87B;">{{i.payout}}</span>枚<img src="{{pluResPath}}/Symbols/Common/Coin.webp"
+                        class="thumb">
+                </div>
+                <div class="border">
+                </div>
+                <div class="desc">
+                    {{@i.description}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+</html>
