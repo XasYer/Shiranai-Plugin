@@ -12,8 +12,8 @@ let cd = null
 export class game extends plugin {
     constructor() {
         super({
-            name: '游戏签到',
-            dsc: '游戏签到',
+            name: '游戏金币签到',
+            dsc: '游戏金币签到',
             event: 'message',
             priority: 1,
             rule: [
@@ -26,9 +26,6 @@ export class game extends plugin {
     }
 
     async sign(e) {
-        if (e.self_id != 3889000138) {
-            return true
-        }
         const user_id = e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
         if (cd) {
             return reply(e, `<@${user_id}>\r不可以这么快哦`)
