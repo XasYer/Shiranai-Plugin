@@ -1,0 +1,6 @@
+node_modules/
+data/
+config/config/*
+model/db/data.db
+**/test.js
+!.gitignore

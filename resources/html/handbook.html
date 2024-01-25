@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-shadow:
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                2px 2px 0 #000,
+                -2px 0 0 #000,
+                2px 0 0 #000,
+                0 -2px 0 #000,
+                0 2px 0 #000;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 300px;
+        }
+
+        .choice {
+            display: flex;
+            font-size: 25px;
+            width: 100%;
+            justify-content: space-around;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .choice>div {
+            background-color: #E14A68;
+            border: 5px solid black;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            margin: 2px auto;
+            /* justify-content: center; */
+            align-items: center;
+            height: 100%;
+        }
+
+        .choice>div>div {
+            margin-bottom: 5px;
+        }
+
+        .desc {
+            letter-spacing: 1px;
+            width: 280px;
+            word-wrap: break-word;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .border {
+            height: 2px;
+            border: 2px solid black;
+            width: 260px;
+            box-sizing: border-box;
+        }
+
+        .Common {
+            color: #C4C4C4;
+        }
+
+        .Uncommon {
+            color: #61D3E3;
+        }
+
+        .Rare {
+            color: #FBF236
+        }
+
+        .VeryRare {
+            color: #7234BF
+        }
+
+        .thumb {
+            width: 33px;
+            height: 33px;
+            line-height: 37px;
+            position: relative;
+            top: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="body">
+        <div class="choice">
+            <div>
+                <div>{{name}}</div>
+                <div>
+                    <img src="{{pluResPath}}/Symbols/{{rarity}}/{{id}}.webp" class="img">
+                </div>
+                <div class="{{rarity}}">
+                    {{rarityName}}
+                </div>
+                <div class="payout">
+                    给予<span style="color:#F8F87B;">{{payout}}</span>枚<img
+                        src="{{pluResPath}}/Symbols/Common/Coin.webp" class="thumb">
+                </div>
+                <div class="border">
+                </div>
+                <div class="desc">
+                    {{@description}}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
