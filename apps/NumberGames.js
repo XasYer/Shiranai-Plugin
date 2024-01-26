@@ -1,11 +1,14 @@
+import {
+  findUser,
+  createUser,
+  updateUser,
+  reply
+} from '../models/index.js'
 
 const gameCache = {
   '24': {},
   'arithmetic': {}
 }
-
-const custom_template_id = '102072007_1702987215'
-const key = Array.from({ length: 10 }, (v, i) => `content${i}`)
 
 export class game extends plugin {
   constructor() {
@@ -92,8 +95,12 @@ export class game extends plugin {
     if (!nowGame) return await reply(e, [`现在没有开局哦,请输入/24点来开始游戏!`], buttons)
     let msg = e.msg.replace(/#?解答\s*/, '')
     if (check_result(msg, nowGame.question, nowGame.game)) {
+      const user_id = getUserId(e)
       delete GameName[e.group_id]
-      return await reply(e, ['恭喜你回答正确!'], buttons)
+      const user_info = await getUserInfo(e)
+      user_info.currency += 5
+      await updateUser(user_info.user_id, user_info)
+      return await reply(e, [`<@${user_id}>\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`], buttons)
     }
     buttons = [
       [
@@ -278,10 +285,16 @@ export class game extends plugin {
         const num1 = Number(nowGame.user[0].sum)
         const num2 = Number(nowGame.user[1].sum)
         if (num1 > num2) {
-          return await reply(e, `恭喜你赢了菜菜!`, buttons)
+          const user_info1 = await getUserInfo({ user_id: nowGame.user[0].id })
+          user_info1.currency += 5
+          await updateUser(user_info1.user_id, user_info1)
+          return await reply(e, `<@${user_info1.user_id}>\r恭喜你赢了菜菜!\r\r>获得5金币\rID: ${user_info1.id}\t\t昵称: ${user_info1.name}\r>剩余金币: ${user_info1.currency}`, buttons)
         } else if (num1 == num2) {
           return await reply(e, `是平局!`, buttons)
         }
+        const user_info2 = await getUserInfo({ user_id: nowGame.user[1].id })
+        user_info2.currency += 5
+        await updateUser(user_info2.user_id, user_info2)
         return await reply(e, `是菜菜赢了哦!`, buttons)
       }
       await reply(e, `你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到<@${nowUser.id}>了`)
@@ -291,52 +304,6 @@ export class game extends plugin {
     return await reply(e, `请<@${nowUser.id}>开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, buttons)
   }
 
-}
-
-function reply(e, msg, buttons = []) {
-  if (e.bot.adapter.id != 'QQBot') {
-    let regex = /(<@.*?>)/;
-    let result;
-
-    if (regex.test(msg)) {
-      result = msg.split(regex).filter(Boolean);
-      result = result.map(item => {
-        if (/<@.*?>/.test(item)) {
-          let qq = item.match(/<@(.*?)>/)[1];
-          return segment.at(qq)
-        } else {
-          return item;
-        }
-      });
-    } else {
-      result = msg;
-    }
-    return e.reply(result)
-  }
-  if (!Array.isArray(msg)) {
-    msg = [msg]
-  }
-  const user_id = e.raw.sender?.user_id || e.raw.operator_id
-  let index = 1, params = [{
-    key: key[0],
-    values: [`<@${user_id}>\r`]
-  }]
-  for (let i of msg) {
-    params.push({
-      key: key[index],
-      values: [i]
-    })
-    index++
-  }
-  const md = segment.markdown({
-    custom_template_id,
-    params
-  })
-  const msgs = [md]
-  if (buttons.length) {
-    msgs.push(segment.button(...buttons))
-  }
-  return e.reply(msgs)
 }
 
 function sixty(cards, sum) {
@@ -453,8 +420,14 @@ function sleep(ms) {
 }
 
 function getUserId(e) {
-  if (e.bot.adapter.id != 'QQBot') {
-    return e.user_id
+  return e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
+}
+
+async function getUserInfo(e) {
+  const user_id = getUserId(e)
+  let user_info = await findUser(user_id)
+  if (!user_info) {
+    user_info = await createUser(user_id)
   }
-  return e.raw.sender?.user_id || e.raw.operator_id
+  return user_info
 }

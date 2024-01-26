@@ -247,6 +247,9 @@ export class game extends plugin {
         if (prize < 0) {
             prize = Math.abs(prize)
             msg = `抽奖总是伴随着风险，这次你亲身体会到了这一点。虽然心中抱着赢得大奖的希望，但结果却是减少了${prize}金币。这让你更加明白，在游戏中每个决定都需要慎重。`
+            if (prize > user_info.currency) {
+                prize = user_info.currency
+            }
             user_info.currency -= prize
         } else if (prize > 0) {
             msg = `在这个游戏的抽奖中，风险与回报总是并存的。你小心翼翼地参与了抽奖，希望能能赢得丰厚的奖励。幸运女神微笑了，它停在了一个令人满意的位置上，获得了${prize}金币的奖励！但也有可能下次就不那么幸运了。`
