@@ -18,6 +18,10 @@ export class game extends plugin {
             priority: 1,
             rule: [
                 {
+                    reg: /^#?金币大作战$/,
+                    fnc: 'help'
+                },
+                {
                     reg: /^#?金币签到$/,
                     fnc: 'sign'
                 },
@@ -43,6 +47,22 @@ export class game extends plugin {
                 }
             ]
         })
+    }
+
+    async help(e) {
+        return await reply(e, [`金币小游戏,所有指令均有一分钟cd,更多小游戏正在开发中...敬请期待`], [
+            [
+                { text: '金币签到', callback: '/金币签到' },
+            ],
+            [
+                { text: '抢金币', input: '/抢金币' },
+                { text: '抽金币', callback: '/金币抽奖' },
+                { text: '金币排行', callback: '/金币排行' },
+            ],
+            [
+                { text: '赚金币', callback: '/数字游戏' }
+            ]
+        ])
     }
 
     async sign(e) {
