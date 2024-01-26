@@ -29,10 +29,10 @@ export class game extends plugin {
                     reg: /^#?抢金币\s*\d*$/,
                     fnc: 'rob'
                 },
-                // {
-                //     reg: /^#?送金币\s*\d+/,
-                //     fnc: 'give'
-                // },
+                {
+                    reg: /^#?送金币\s*(\d+|\d+[\s\*]+\d+)$/,
+                    fnc: 'give'
+                },
                 {
                     reg: /^#?金币抽奖$/,
                     fnc: 'draw'
@@ -81,7 +81,7 @@ export class game extends plugin {
         }
         msg += `\r已签到${user_info.sign_count}天\r现在有${user_info.currency}个金币`
         await updateUser(user_id, user_info)
-        return await reply(e, `<@${user_id}>\rid: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`, [
+        return await reply(e, `<@${user_id}>\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`, [
             [
                 { text: '我也要签到', callback: '/金币签到' },
             ],
@@ -190,7 +190,7 @@ export class game extends plugin {
             }
         }
         await updateUser(user_info.user_id, user_info)
-        return reply(e, [`<@${user_id}>\r`,msg, `\r\r>剩余金币: ${user_info.currency}\r>带上id为指定抢,不带为随机抢\r>每60秒只能抢一次哦`], [
+        return reply(e, [`<@${user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r>带上id为指定抢,不带为随机抢\r>每60秒只能抢一次哦`], [
             [
                 { text: '我也要抢金币', input: '/抢金币' }
             ],
@@ -207,13 +207,30 @@ export class game extends plugin {
         if (getCD(e, 'give', 60 * 60)) {
             return reply(e, `<@${user_id}>\r不可以这么快哦`)
         }
-        const id = e.msg.replace(/^#?送金币\s*/, '')
-        const target = await findUser(id, 'id')
-        let msg
-        if (!target) {
-            msg = `你带着慷慨的心准备给${target}送上${1}金币，但当你尝试进行转账时，却发现他们似乎并不存在于这个游戏中。这份未送出的礼物，成了你心中的一丝遗憾。`
+        const reg = /^#?送金币\s*(\d+\s*|((\d+)[\s\*]+(\d+)))$/
+        const i = reg.exec(e.msg)
+        let id, currency = 5
+        if (i[4]) {
+            id = i[3].trim()
+            currency = Number(i[4])
+        } else {
+            id = i[1]
         }
+        let msg
         const user_info = await getUserInfo(e)
+        const target = await findUser(id, 'id')
+        if (user_info.currency < currency) {
+            msg = `你想要向${id}赠送${currency}个金币，表达你的友好与慷慨，但当你查看自己的金币时，却发现自己的金库并不允许这样的大方。这个小小的难题让你有些尴尬，但你的好意已经表达。`
+        } else if (!target) {
+            msg = `你带着慷慨的心准备给${target}送上${currency}金币，但当你尝试进行转账时，却发现他们似乎并不存在于这个游戏中。这份未送出的礼物，成了你心中的一丝遗憾。`
+        } else {
+            msg = `在这个游戏的世界里，你选择了成为一个慷慨的玩家。你向${target.name || target.id}送去了${currency}个金币，这不仅是一份礼物，也是友谊的象征。`
+            user_info.currency -= currency
+            target.currency += currency
+            await updateUser(user_info.user_id, user_info)
+            await updateUser(target.user_id, target)
+        }
+        return await reply(e, [`<@${user_info.user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`])
     }
 
     async draw(e) {
@@ -238,7 +255,7 @@ export class game extends plugin {
             msg = '你参与了抽奖，期待着一些令人兴奋的变化。然而，转盘停止时，你的金币数并没有任何变化。这个结果虽然平淡，但也让你避免了潜在的损失。'
         }
         await updateUser(user_info.user_id, user_info)
-        return await reply(e, [`<@${user_id}>\r`, msg, `\r\r>剩余金币: ${user_info.currency}\r>奖池:-20金币到20金币\r>每60秒只能抽一次哦`], [
+        return await reply(e, [`<@${user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r>奖池:-20金币到20金币\r>每60秒只能抽一次哦`], [
             [
                 { text: '我也要抽奖', callback: '/金币抽奖' }
             ],
@@ -252,8 +269,8 @@ export class game extends plugin {
 
     async rename(e) {
         const name = e.msg.replace(/^#?修?改(名字?|昵称)\s*/, '')
-        const warn = ['你妈', '操你', 'cnm', 'rnm', '爸爸', '爷爷', '草你', '妈逼', '傻逼', 'http', 'com', 'cn', 'top', '日你']
-        if (warn.includes(name)) {
+        const warn = ['妈', '操', 'nm', 'nm', '爸', '爷', '草你', '日你', '.', 'everyone', '逼', '胸', '穴', '死', '插', '鸡', 'b', 'B', '淫', '杀', '你', '我', '性', '交', '加', '微信', 'wx', '屌', '狗', '尸', '乳', '生殖器', '阴道', '婊']
+        if (warn.some(i => name.includes(i))) {
             return await reply(e, [`<@${user_info.user_id}>\r修改失败\r包含违规词`])
         }
         const user_info = await getUserInfo(e)
