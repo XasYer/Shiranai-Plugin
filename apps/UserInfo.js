@@ -7,7 +7,7 @@ import {
     reply
 } from '../models/index.js'
 
-let cd = null
+const cd = {}
 
 export class game extends plugin {
     constructor() {
@@ -27,11 +27,11 @@ export class game extends plugin {
 
     async sign(e) {
         const user_id = e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
-        if (cd) {
+        if (cd[user_id]) {
             return reply(e, `<@${user_id}>\r不可以这么快哦`)
         } else {
-            cd = setTimeout(() => {
-                cd = false
+            cd[user_id] = setTimeout(() => {
+                cd[user_id] = false
             }, 60 * 1000)
         }
         let user_info = await findUser(user_id)
