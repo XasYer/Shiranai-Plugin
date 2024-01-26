@@ -75,16 +75,23 @@ async function createUser(user_id) {
  * 更新一个现有用户的信息
  * @param {string} user_id - 要更新的用户的唯一标识符。
  * @param {{name:string?,currency:number?,sign_count:number?,game_count:number?,win_count:number}} updateValues - 一个包含要更新字段的对象。
+ * @param {'id'|'user_id'} type - 根据id还是user_id查询,默认user_id 
+ * 
  * 例如，要更新 name 和 currency，传入 { name: '新名字', currency: 100 }。
  * 可以包含任何 user_info 表中的字段。
  */
-async function updateUser(user_id, updateValues) {
-    user_id = String(user_id)
+async function updateUser(user_id, updateValues, type = 'user_id') {
+    const where = {}
+    if (type == 'id') {
+        where.id = Number(user_id)
+    } else {
+        where.user_id = String(user_id)
+    }
     return executeSync(async () => {
         if (updateValues.hasOwnProperty('game_count') && updateValues.hasOwnProperty('win_count')) {
             updateValues.winning = updateValues.game_count > 0 ? Math.floor((updateValues.win_count / updateValues.game_count) * 100) : 0;
         } else if (updateValues.hasOwnProperty('game_count') || updateValues.hasOwnProperty('win_count')) {
-            const user = await user_info_table.findOne({ where: { user_id } });
+            const user = await user_info_table.findOne({ where });
             const gameCount = updateValues.game_count != null ? updateValues.game_count : user.game_count;
             const winCount = updateValues.win_count != null ? updateValues.win_count : user.win_count;
             updateValues.winning = gameCount > 0 ? Math.floor((winCount / gameCount) * 100) : 0;
@@ -95,22 +102,26 @@ async function updateUser(user_id, updateValues) {
             updateValues.last_sign = now.toISOString().split('T').shift();
         }
         return await user_info_table.update(updateValues, {
-            where: { user_id }
+            where
         });
     });
 }
 
 /**
  * 查询一个特定用户的信息
- * @param {string} user_id - 要查询的用户的唯一标识符。
- * 该函数返回与给定 user_id 匹配的用户信息。
+ * @param {number|string} user_id - 要查询的用户的唯一标识符。
+ * @param {'id'|'user_id'} type - 根据id还是user_id查询,默认user_id 
  */
-async function findUser(user_id) {
-    user_id = String(user_id)
+async function findUser(user_id, type = 'user_id') {
+    const where = {}
+    if (type == 'id') {
+        where.id = Number(user_id)
+    } else {
+        where.user_id = String(user_id)
+    }
     return executeSync(async () => {
         return await user_info_table.findOne({
-            where: { user_id: String(user_id) },
-            attributes: { include: ['winning'] },
+            where,
             raw: true
         });
     });
@@ -121,14 +132,13 @@ async function findUser(user_id) {
  * @param {'currency'|'sign_count'|'game_count'|'win_count'|'winning'} field - 要排序的字段
  * @param {'ASC'|'DESC'} order - 排序方式，'ASC' 为升序，'DESC' 为降序。
  * @param {number} limit - 查询结果的数量限制。
- * 该函数返回根据指定字段排序的用户列表。
  */
 async function findUsersSortedBy(field, order = 'DESC', limit = 10) {
     return executeSync(async () => {
         return await user_info_table.findAll({
             order: [
                 [field, order],
-                ['updatedAt', 'DESC']
+                ['updatedAt', 'ASC']
             ],
             limit,
             raw: true

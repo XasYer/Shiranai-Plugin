@@ -1,6 +1,6 @@
 node_modules/
 data/
 config/config/*
-model/db/data.db
+models/db/data.db
 **/test.js
 !.gitignore
