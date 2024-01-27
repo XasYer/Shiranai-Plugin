@@ -40,53 +40,8 @@ function generateRandomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const custom_template_id = '102072007_1702987215'
-const key = Array.from({ length: 10 }, (v, i) => `content${i}`)
-function reply(e, msg, buttons = []) {
-    if (e.bot.adapter.id != 'QQBot') {
-      let regex = /(<@.*?>)/;
-      let result;
-  
-      if (regex.test(msg)) {
-        result = msg.split(regex).filter(Boolean);
-        result = result.map(item => {
-          if (/<@.*?>/.test(item)) {
-            let qq = item.match(/<@(.*?)>/)[1];
-            return segment.at(qq)
-          } else {
-            return item;
-          }
-        });
-      } else {
-        result = msg;
-      }
-      return e.reply(result)
-    }
-    if (!Array.isArray(msg)) {
-      msg = [msg]
-    }
-    let index = 0, params = []
-    for (let i of msg) {
-      params.push({
-        key: key[index],
-        values: [i]
-      })
-      index++
-    }
-    const md = segment.markdown({
-      custom_template_id,
-      params
-    })
-    const msgs = [md]
-    if (buttons.length) {
-      msgs.push(segment.button(...buttons))
-    }
-    return e.reply(msgs)
-  }
-
 export {
     getDaysBetweenDates,
     getNowDate,
     generateRandomInteger,
-    reply
 }

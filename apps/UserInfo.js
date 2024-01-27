@@ -5,8 +5,8 @@ import {
     findUsersSortedBy,
     countUsers,
     getDaysBetweenDates,
+    getNowDate,
     generateRandomInteger,
-    reply
 } from '../models/index.js'
 
 export class game extends plugin {
@@ -50,7 +50,8 @@ export class game extends plugin {
     }
 
     async help(e) {
-        return await reply(e, [`金币小游戏,所有指令均有一分钟cd,更多小游戏正在开发中...敬请期待`], [
+        e.toQQBotMD = true
+        return await e.reply([`金币小游戏,所有指令均有一分钟cd,更多小游戏正在开发中...敬请期待`, segment.button(
             [
                 { text: '金币签到', callback: '/金币签到' },
             ],
@@ -62,13 +63,13 @@ export class game extends plugin {
             [
                 { text: '赚金币', callback: '/数字游戏' }
             ]
-        ])
+        )])
     }
 
     async sign(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'sign')) {
-            return reply(e, `<@${user_id}>\r不可以这么快哦`)
+            return e.reply(`不可以这么快哦`)
         }
         const user_info = await getUserInfo(e)
         const last_sign = getDaysBetweenDates(user_info.last_sign)
@@ -98,10 +99,12 @@ export class game extends plugin {
             msg = `签到成功~获得${i}个金币`
             user_info.currency += i
             user_info.sign_count++
+            user_info.last_sign = getNowDate()
         }
         msg += `\r已签到${user_info.sign_count}天\r现在有${user_info.currency}个金币`
         await updateUser(user_id, user_info)
-        return await reply(e, `<@${user_id}>\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`, [
+        e.toQQBotMD = true
+        const buttons = [
             [
                 { text: '我也要签到', callback: '/金币签到' },
             ],
@@ -110,35 +113,49 @@ export class game extends plugin {
                 { text: '抽金币', callback: '/金币抽奖' },
                 { text: '金币排行', callback: '/金币排行' },
             ]
+        ]
+        return await e.reply([
+            segment.at(user_id),
+            `\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`,
+            segment.button(...buttons)
         ])
     }
 
     async rank(e) {
         const rankList = await findUsersSortedBy('currency', 'DESC', 10)
         if (!rankList || rankList.length == 0) {
-            return await reply(e, ['还没有排名哦'])
+            return await e.reply(['还没有排名哦'])
         }
-        const msg = []
+        let msg = '\r#金币排行榜\r\r>'
         let index = 1
         for (const i of rankList) {
-            let str = `\r>#No.${index}\r>ID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}`
-            if (index == 1) {
-                str = '\r#金币排行榜\r' + str
+            if (index != 1) {
+                msg += '\r'
             }
-            msg.push(str)
+            msg += `#No.${index}\rID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}`
             index++
         }
-        return await reply(e, msg, [[{ text: '改名字', input: '/改名' }]])
+        const buttons = [
+            [
+                { text: '改名字', input: '/改名' }
+            ]
+        ]
+        e.toQQBotMD = true
+        return await e.reply([msg, segment.button(...buttons)])
     }
 
     async rob(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'rob', 60)) {
-            return reply(e, `<@${user_id}>\r不可以这么快哦`)
+            return e.reply(`不可以这么快哦`)
         }
+        e.toQQBotMD = true
         const user_info = await getUserInfo(e)
         if (user_info.currency < 10) {
-            return reply(e, `<@${user_id}>\r金币太少了哦,大于10个金币再来吧`)
+            return await e.reply([
+                segment.at(user_id),
+                `金币太少了哦,大于10个金币再来吧\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`
+            ])
         }
         const type = generateRandomInteger(1, 100) < 40 ? '增加' : '减少'
         let i
@@ -210,7 +227,7 @@ export class game extends plugin {
             }
         }
         await updateUser(user_info.user_id, user_info)
-        return reply(e, [`<@${user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r>带上id为指定抢,不带为随机抢\r>每60秒只能抢一次哦`], [
+        const buttons = [
             [
                 { text: '我也要抢金币', input: '/抢金币' }
             ],
@@ -219,14 +236,20 @@ export class game extends plugin {
                 { text: '金币排行', callback: '/金币排行' },
                 { text: '签到', callback: '/金币签到' },
             ]
+        ]
+        return e.reply([
+            segment.at(user_id), `\r`, msg,
+            `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r带上id为指定抢,不带为随机抢\r每60秒只能抢一次哦`,
+            segment.button(...buttons)
         ])
     }
 
     async give(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'give', 60 * 60)) {
-            return reply(e, `<@${user_id}>\r不可以这么快哦`)
+            return e.reply(`不可以这么快哦`)
         }
+        e.toQQBotMD = true
         const reg = /^#?送金币\s*(\d+\s*|((\d+)[\s\*]+(\d+)))$/
         const i = reg.exec(e.msg)
         let id, currency = 5
@@ -250,17 +273,24 @@ export class game extends plugin {
             await updateUser(user_info.user_id, user_info)
             await updateUser(target.user_id, target)
         }
-        return await reply(e, [`<@${user_info.user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`])
+        return await e.reply([
+            segment.at(user_id), `\r`, msg,
+            `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`
+        ])
     }
 
     async draw(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'draw', 60)) {
-            return reply(e, `<@${user_id}>\r不可以这么快哦`)
+            return await e.reply(`不可以这么快哦`)
         }
+        e.toQQBotMD = true
         const user_info = await getUserInfo(e)
         if (user_info.currency < 5) {
-            return reply(e, `<@${user_id}>\r金币太少了哦,大于5个金币再来抽奖吧`)
+            return await e.reply([
+                segment.at(user_id),
+                `金币太少了哦,大于10个金币再来吧\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`
+            ])
         }
         let prize = generateRandomInteger(-20, 20)
         let msg
@@ -278,7 +308,7 @@ export class game extends plugin {
             msg = '你参与了抽奖，期待着一些令人兴奋的变化。然而，转盘停止时，你的金币数并没有任何变化。这个结果虽然平淡，但也让你避免了潜在的损失。'
         }
         await updateUser(user_info.user_id, user_info)
-        return await reply(e, [`<@${user_id}>\r`, msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r>奖池:-20金币到20金币\r>每60秒只能抽一次哦`], [
+        const buttons = [
             [
                 { text: '我也要抽奖', callback: '/金币抽奖' }
             ],
@@ -287,19 +317,20 @@ export class game extends plugin {
                 { text: '签到', callback: '/金币签到' },
                 { text: '金币排行', callback: '/金币排行' },
             ]
-        ])
+        ]
+        return await e.reply([segment.at(user_id), '\r', msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}\r奖池:-20金币到20金币\r每60秒只能抽一次哦`, segment.button(...buttons)])
     }
 
     async rename(e) {
         const name = e.msg.replace(/^#?修?改(名字?|昵称)\s*/, '')
         const warn = ['妈', '操', 'nm', 'nm', '爸', '爷', '草你', '日你', '.', 'everyone', '逼', '胸', '穴', '死', '插', '鸡', 'b', 'B', '淫', '杀', '你', '我', '性', '交', '加', '微信', 'wx', '屌', '狗', '尸', '乳', '生殖器', '阴道', '婊']
         if (warn.some(i => name.includes(i))) {
-            return await reply(e, [`<@${user_info.user_id}>\r修改失败\r包含违规词`])
+            return await e.reply(`修改失败\r包含违规词`)
         }
         const user_info = await getUserInfo(e)
         user_info.name = name
         await updateUser(user_info.user_id, user_info)
-        return await reply(e, [`<@${user_info.user_id}>\r修改成功~\r以后你的昵称就是: ${name}`])
+        return await e.reply(`修改成功~\r以后你的昵称就是: ${name}`)
     }
 }
 

@@ -96,11 +96,6 @@ async function updateUser(user_id, updateValues, type = 'user_id') {
             const winCount = updateValues.win_count != null ? updateValues.win_count : user.win_count;
             updateValues.winning = gameCount > 0 ? Math.floor((winCount / gameCount) * 100) : 0;
         }
-        if (updateValues.hasOwnProperty('sign_count')) {
-            const now = new Date();
-            now.setHours(now.getHours() + 8);
-            updateValues.last_sign = now.toISOString().split('T').shift();
-        }
         return await user_info_table.update(updateValues, {
             where
         });

@@ -2,7 +2,6 @@ import {
   findUser,
   createUser,
   updateUser,
-  reply
 } from '../models/index.js'
 
 const gameCache = {
@@ -57,29 +56,29 @@ export class game extends plugin {
       ]
     ]
     const msg = [
-      '#',
-      '24点\r>随机给予4个数字通过+-*/计算出24\r\r#',
-      '60点,72点\r>同24点,有5个数字\r\r#',
-      '算术对战\r>(1 + ? - ?) x ? ÷ ?\r>依次给予4个1-9的数字,每次可选择填入其中某个?\r>最后计算谁的数字大谁就赢'
+      '\r#24点\r>随机给予4个数字通过+-*/计算出24\r',
+      '\r#60点,72点\r>同24点,有5个数字\r',
+      '\r#算术对战\r>(1 + ? - ?) x ? ÷ ?\r依次给予4个1-9的数字,每次可选择填入其中某个?\r最后计算谁的数字大谁就赢'
     ]
-    return await reply(e, msg, buttons)
+    e.toQQBotMD = true
+    return await e.reply([msg.join(''), segment.button(...buttons)])
   }
 
   async start24(e) {
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
     const game = /^#?(24|60|72)点$/.exec(e.msg)[1]
+    e.toQQBotMD = true
     const buttons = [
       [
         { text: '解答', input: '/解答' },
         { text: '结束', callback: `/结束${game}点` }
       ]
     ]
-    if (nowGame) return await reply(e, [`上一局游戏还未结束\r使用+-*/算出${nowGame.game}:\r${nowGame.question.join('  ')}`], buttons)
+    if (nowGame) return await e.reply([`上一局游戏还未结束\r使用+-*/算出${nowGame.game}:\r${nowGame.question.join('  ')}`, segment.button(...buttons)])
     const [question, answer] = random_question(game)
     GameName[e.group_id] = { question, answer, game }
-    console.log(question, answer);
-    return await reply(e, [`请使用以下数字通过+-*/算出${game}(可使用括号)\r发送'/解答'+答案:\r${question.join('  ')}`], buttons)
+    return await e.reply([`请使用以下数字通过+-*/算出${game}(可使用括号)\r发送'/解答'+答案:\r${question.join('  ')}`, segment.button(...buttons)])
   }
 
   async answer24(e) {
@@ -92,15 +91,16 @@ export class game extends plugin {
         { text: '72点', callback: '/72点' },
       ]
     ]
-    if (!nowGame) return await reply(e, [`现在没有开局哦,请输入/24点来开始游戏!`], buttons)
+    e.toQQBotMD = true
+    if (!nowGame) return await e.reply([`现在没有开局哦,请输入/24点来开始游戏!`, segment.button(...buttons)])
     let msg = e.msg.replace(/#?解答\s*/, '')
+    const user_id = getUserId(e)
     if (check_result(msg, nowGame.question, nowGame.game)) {
-      const user_id = getUserId(e)
       delete GameName[e.group_id]
       const user_info = await getUserInfo(e)
       user_info.currency += 5
       await updateUser(user_info.user_id, user_info)
-      return await reply(e, [`<@${user_id}>\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`], buttons)
+      return await e.reply([segment.at(user_id), `\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`, , segment.button(...buttons)])
     }
     buttons = [
       [
@@ -108,10 +108,11 @@ export class game extends plugin {
         { text: '结束', callback: `/结束${nowGame.game}点` }
       ]
     ]
-    return await reply(e, '答案不对或输入格式有误!(仅可使用+-*/和括号)', buttons)
+    return await e.reply([segment.at(user_id), '答案不对或输入格式有误!(仅可使用+-*/和括号)', segment.button(...buttons)])
   }
 
   async stop24(e) {
+    e.toQQBotMD = true
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
     let buttons = [
@@ -121,17 +122,18 @@ export class game extends plugin {
         { text: '72点', callback: '/72点' },
       ]
     ]
-    if (!nowGame) return await reply(e, `现在没有开局哦,请输入/24点来开始游戏!`, buttons)
+    if (!nowGame) return await e.reply([`现在没有开局哦,请输入/24点来开始游戏!`, segment.button(...buttons)])
     delete GameName[e.group_id]
-    return await reply(e, `游戏已结束,参考答案: ${nowGame.answer.replace(/\*/g, 'x').replace(/\//g, '÷')}`, buttons)
+    return await e.reply([`游戏已结束,参考答案: ${nowGame.answer.replace(/\*/g, 'x').replace(/\//g, '÷')}`, segment.button(...buttons)])
   }
 
   async arithmeticPK(e) {
+    e.toQQBotMD = true
     const GameName = gameCache['arithmetic']
     const nowGame = GameName[e.group_id]
     if (nowGame) {
       if (nowGame.start) {
-        return await reply(e, `算术对战已经开始了哦,请等待结束吧`, buttons)
+        return await e.reply([`算术对战已经开始了哦,请等待结束吧`, segment.button(...buttons)])
       }
       const user_id = getUserId(e)
       nowGame.user.push({
@@ -159,7 +161,7 @@ export class game extends plugin {
         e.reply('算术对战已超时自动结束游戏')
         delete GameName[e.group_id]
       }, 1000 * 60 * 3)
-      return await reply(e, `请<@${nowGame.user[0].id}>开始选择,本次数字:\r${rand}`, buttons)
+      return await e.reply(['请', segment.at(nowGame.user[0].id), `开始选择,本次数字:\r${rand}`, segment.button(...buttons)])
     }
     GameName[e.group_id] = {
       start: false,
@@ -179,18 +181,19 @@ export class game extends plugin {
         { text: '接受挑战', callback: '/算术对战' }
       ]
     ]
-    return await reply(e, `游戏规则:\r(1 + ? - ?) x ? ÷ ?\r依次给予4个1-9的数字,每次可选择填入其中某个?\r最后计算谁的数字大谁就赢\r想要对战的玩家发送/算术对战 即可加入游戏\r再次发送/算术对战 就是和菜菜挑战哦`, buttons)
+    return await e.reply([`游戏规则:\r(1 + ? - ?) x ? ÷ ?\r依次给予4个1-9的数字,每次可选择填入其中某个?\r最后计算谁的数字大谁就赢\r想要对战的玩家发送/算术对战 即可加入游戏\r再次发送/算术对战 就是和菜菜挑战哦`, segment.button(...buttons)])
   }
 
   async arithmetic(e) {
+    e.toQQBotMD = true
     const GameName = gameCache['arithmetic']
     const nowGame = GameName[e.group_id]
     if (!nowGame) {
-      return await reply(e, '还没有开始游戏哦', [[{ text: '开始游戏', input: '/算术对战', send: true }]])
+      return await e.reply(['还没有开始游戏哦', segment.button([{ text: '开始游戏', input: '/算术对战', send: true }])])
     }
     let nowUser = nowGame.user[nowGame.nowUser]
     if (nowUser.id != getUserId(e)) {
-      return await reply(e, '现在不是你的回合哦')
+      return await e.reply([segment.at(e.user_id), '现在不是你的回合哦'])
     }
     const buttons = [
       [
@@ -214,7 +217,7 @@ export class game extends plugin {
       '\\': '÷'
     }[target]
     if (!nowUser.ops[target]) {
-      return await reply(e, `${target}已经被填入了,现在的表达式:\r${nowUser.str}`, buttons)
+      return await e.reply([`${target}已经被填入了,现在的表达式:\r${nowUser.str}`, segment.button(...buttons)])
     }
     clearTimeout(nowGame.time)
     nowGame.count++
@@ -241,20 +244,20 @@ export class game extends plugin {
         ]
         clearTimeout(nowGame.time)
         delete GameName[e.group_id]
-        await reply(e, `你的结果为${nowUser.str} = ${nowUser.sum}`)
+        await e.reply(`你的结果为${nowUser.str} = ${nowUser.sum}`)
         const num1 = Number(nowGame.user[0].sum)
         const num2 = Number(nowGame.user[1].sum)
         if (num1 > num2) {
-          return await reply(e, `恭喜<@${nowGame.user[0].id}>获得胜利!`, buttons)
+          return await e.reply([`恭喜`, segment.at(nowGame.user[0].id), '获得胜利!', segment.button(...buttons)])
         } else if (num1 == num2) {
-          return await reply(e, `是平局!`)
+          return await e.reply([`是平局!`, segment.button(...buttons)])
         }
-        return await reply(e, `恭喜<@${nowGame.user[1].id}>获得胜利!`, buttons)
+        return await e.reply(['恭喜', segment.at(nowGame.user[1].id), '获得胜利!', segment.button(...buttons)])
       }
       let oldUser = nowUser
       nowUser = nowGame.user[1]
       if (nowUser.id == '菜菜') {
-        await reply(e, `你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到菜菜了哦`)
+        await e.reply(`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到菜菜了哦`)
         clearTimeout(nowGame.time)
         for (let i = 0; i < 4; i++) {
           const rand = Math.floor(Math.random() * 9) + 1;
@@ -275,7 +278,7 @@ export class game extends plugin {
         ret = eval(str)
         nowUser.sum = ret % 1 == 0 ? ret : ret.toFixed(2)
         await sleep(3000)
-        await reply(e, `菜菜的结果为${nowUser.str} = ${nowUser.sum}`)
+        await e.reply(`菜菜的结果为${nowUser.str} = ${nowUser.sum}`)
         const buttons = [
           [
             { text: '再来一局', input: '/算术对战', send: true }
@@ -288,20 +291,20 @@ export class game extends plugin {
           const user_info1 = await getUserInfo({ user_id: nowGame.user[0].id })
           user_info1.currency += 5
           await updateUser(user_info1.user_id, user_info1)
-          return await reply(e, `<@${user_info1.user_id}>\r恭喜你赢了菜菜!\r\r>获得5金币\rID: ${user_info1.id}\t\t昵称: ${user_info1.name}\r>剩余金币: ${user_info1.currency}`, buttons)
+          return await e.reply([segment.at(user_info1.user_id), `\r恭喜你赢了菜菜!\r\r>获得5金币\rID: ${user_info1.id}\t\t昵称: ${user_info1.name}\r剩余金币: ${user_info1.currency}`, segment.button(...buttons)])
         } else if (num1 == num2) {
-          return await reply(e, `是平局!`, buttons)
+          return await e.reply([`是平局!`, segment.button(...buttons)])
         }
         const user_info2 = await getUserInfo({ user_id: nowGame.user[1].id })
         user_info2.currency += 5
         await updateUser(user_info2.user_id, user_info2)
-        return await reply(e, `是菜菜赢了哦!`, buttons)
+        return await e.reply([`是菜菜赢了哦!`, segment.button(...buttons)])
       }
-      await reply(e, `你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到<@${nowUser.id}>了`)
+      await e.reply([`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到`, segment.at(nowUser.id), '了'])
       nowGame.count = 0
-      return await reply(e, `请<@${nowUser.id}>开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, buttons)
+      return await e.reply(['请', segment.at(nowUser.id), `开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, segment.button(...buttons)])
     }
-    return await reply(e, `请<@${nowUser.id}>开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, buttons)
+    return await e.reply(['请', segment.at(nowUser.id), `开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, segment.button(...buttons)])
   }
 
 }

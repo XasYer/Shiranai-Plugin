@@ -17,7 +17,6 @@ import {
     getDaysBetweenDates,
     getNowDate,
     generateRandomInteger,
-    reply
 } from './common.js'
 
 export {
@@ -36,7 +35,6 @@ export {
     getDaysBetweenDates,
     getNowDate,
     generateRandomInteger,
-    reply,
     findUser,
     findUsersSortedBy,
     createUser,
