@@ -370,7 +370,7 @@ export class game extends plugin {
         e.toQQBotMD = true
         return await e.reply([
             segment.at(user_info.user_id),
-            `\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}`,
+            `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}`,
             `\r金币: ${user_info.currency}`,
             `\r签到次数: ${user_info.sign_count}\t\t签到获得的金币: ${user_info.sign_get}`,
             `\r送金币次数: ${user_info.give_count}\t\t送出的金币: ${user_info.give_send}`,
