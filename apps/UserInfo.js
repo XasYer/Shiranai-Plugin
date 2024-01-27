@@ -231,7 +231,7 @@ export class game extends plugin {
                     } else {
                         if (type === '增加') {
                             if (target.currency < i) {
-                                i = currency
+                                i = target.currency
                             }
                             msg = `你目标明确，锁定了你的目标——${target.name || target.id}。经过周密的计划，你成功地潜入了他的领地，从中拿走了了${i}个金币。`
                             user_info.currency += i
@@ -382,7 +382,7 @@ export class game extends plugin {
                 { text: '我的信息', callback: '/我的信息' },
                 { text: '金币签到', callback: '/金币签到' },
                 { text: '改名', input: '/改名' },
-            ],[
+            ], [
                 { text: '抢金币', input: '/抢金币' },
                 { text: '抽金币', callback: '/金币抽奖' },
                 { text: '送金币', input: '/送金币' },
