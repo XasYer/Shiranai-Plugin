@@ -102,8 +102,7 @@ let user_info_table = sequelize.define('user_info', {
 /*
 */
 // 同步数据库模型
-// await sequelize.sync({ alter: alter['user_info'] })
-await sequelize.sync({ alter: true })
+await sequelize.sync({ alter: alter['user_info'] })
 
 /**
  * 创建一个新用户
@@ -140,11 +139,6 @@ async function updateUser(user_id, updateValues, type = 'user_id') {
     return executeSync(async () => {
         if (updateValues.hasOwnProperty('game_count') && updateValues.hasOwnProperty('win_count')) {
             updateValues.winning = updateValues.game_count > 0 ? Math.floor((updateValues.win_count / updateValues.game_count) * 100) : 0;
-        } else if (updateValues.hasOwnProperty('game_count') || updateValues.hasOwnProperty('win_count')) {
-            const user = await user_info_table.findOne({ where });
-            const gameCount = updateValues.game_count != null ? updateValues.game_count : user.game_count;
-            const winCount = updateValues.win_count != null ? updateValues.win_count : user.win_count;
-            updateValues.winning = gameCount > 0 ? Math.floor((winCount / gameCount) * 100) : 0;
         }
         return await user_info_table.update(updateValues, {
             where
