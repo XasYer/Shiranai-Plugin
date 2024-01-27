@@ -166,7 +166,7 @@ export class game extends plugin {
         if (user_info.currency < 10) {
             return await e.reply([
                 segment.at(user_id),
-                `金币太少了哦,大于10个金币再来吧\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`
+                `金币太少了哦,大于10个金币再来吧\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`
             ])
         }
         const type = generateRandomInteger(1, 100) < 40 ? '增加' : '减少'
@@ -318,7 +318,7 @@ export class game extends plugin {
         if (user_info.currency < 5) {
             return await e.reply([
                 segment.at(user_id),
-                `金币太少了哦,大于10个金币再来吧\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}`
+                `金币太少了哦,大于10个金币再来吧\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`
             ])
         }
         let prize = generateRandomInteger(-20, 20)
