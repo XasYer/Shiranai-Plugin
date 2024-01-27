@@ -44,6 +44,14 @@ export class game extends plugin {
                 {
                     reg: /^#?修?改(名字?|昵称)\s*.+$/,
                     fnc: 'rename'
+                },
+                // {
+                //     reg: /^#?乞讨$/,
+                //     fnc: 'beg'
+                // }
+                {
+                    reg: /^#?我的信息$/,
+                    fnc: 'info'
                 }
             ]
         })
@@ -81,9 +89,11 @@ export class game extends plugin {
                     if (user_info.currency > 0) {
                         msg = `今天已经签到过了,作为惩罚,菜菜拿走了你的1个金币`
                         user_info.currency--
+                        user_info.sign_get--
                     } else {
                         msg = `菜菜看你连1个金币也没有,所以菜菜给了你1个金币`
                         user_info.currency++
+                        user_info.sign_get++
                     }
                     break;
                 case 1:
@@ -92,6 +102,7 @@ export class game extends plugin {
                 case 2:
                     msg = `今天已经签到过了,但是菜菜还是给了你1个金币`
                     user_info.currency++
+                    user_info.sign_get++
                     break;
             }
         } else {
@@ -99,6 +110,7 @@ export class game extends plugin {
             msg = `签到成功~获得${i}个金币`
             user_info.currency += i
             user_info.sign_count++
+            user_info.sign_get += i
             user_info.last_sign = getNowDate()
         }
         msg += `\r已签到${user_info.sign_count}天\r现在有${user_info.currency}个金币`
@@ -172,60 +184,75 @@ export class game extends plugin {
         }
         let id = e.msg.replace(/^#?抢金币\s*/, '')
         let msg
-        if (!id) {
-            id = generateRandomInteger(1, await countUsers())
-        } else if (id == user_info.id) {
+        if (id == user_info.id) {
+            user_info.rob_count++
             // 指定抢自己
             if (type === '增加') {
                 msg = `一时兴起，你决定尝试一个疯狂的想法：抢自己的金币。你仔细检查了自己的所有隐秘角落，结果找到了${i}个金币。`
                 user_info.currency += i
+                user_info.rob_get += i
+                user_info.rob_win_count++
             } else {
                 if (user_info.currency < i) {
                     i = user_info.currency
                 }
                 user_info.currency -= i
+                user_info.rob_send += i
                 msg = `一时兴起，你决定尝试一个疯狂的想法：抢自己的金币。你仔细检查了自己的所有隐秘角落，什么也没找到，摸了摸口袋，发现丢了${i}个金币。`
             }
-        }
-        // 随机到自己
-        if (id == user_info.id) {
-            msg = `在这个风雨交加的夜晚，你准备抢一个陌生人的金币。但在视线模糊中，你误闯进了自己的家。你在沙发垫下意外地找到了${i}个金币。`
-            user_info.currency += i
-            i = i * 2
-            if (type === '减少') {
-                if (user_info.currency < i) {
-                    i = user_info.currency
-                }
-                user_info.currency -= i
-                msg = `你原本计划完美，但事与愿违。在逃离现场时，你的口袋破了一个洞，${i}个金币不翼而飞。`
-            }
         } else {
-            const target = await findUser(id, 'id')
-            if (!target) {
-                msg = `你花费了大量时间寻找${id}，但无论你怎么努力，都似乎抓不到任何关于他的线索。这种情况让你怀疑，他们是否真的存在于这个游戏之中。`
-            } else {
-                if (target.currency <= 0) {
-                    msg = `你小心翼翼地接近了${target.name || target.id}，准备发起突袭。但当你打开他们的金币储藏时，你震惊地发现里面空无一物。这个发现让你不禁感慨，有时候，目标并非总是如我们所愿。`
-                } else {
-                    if (type === '增加') {
-                        if (target.currency < i) {
-                            i = currency
-                        }
-                        msg = `你目标明确，锁定了你的目标——${target.name || target.id}。经过周密的计划，你成功地潜入了他的领地，从中拿走了了${i}个金币。`
-                        user_info.currency += i
-                        target.currency -= i
-                    } else {
-                        if (user_info.currency < i) {
-                            i = currency
-                        }
-                        msg = `你鼓起勇气，决定对${target.name || target.id}发起挑战。但事情并不顺利，你不仅没能得手，反而损失了${i}个金币。`
-                        user_info.currency -= i
-                        target.currency += i
+            if (!id) {
+                id = generateRandomInteger(1, await countUsers())
+            }
+            user_info.rob_count++
+            if (id == user_info.id) {
+                if (type === '增加') {
+                    msg = `在这个风雨交加的夜晚，你准备抢一个陌生人的金币。但在视线模糊中，你误闯进了自己的家。你在沙发垫下意外地找到了${i}个金币。`
+                    user_info.currency += i
+                    user_info.rob_get += i
+                    user_info.rob_win_count++
+                } else if (type === '减少') {
+                    if (user_info.currency < i) {
+                        i = user_info.currency
                     }
+                    user_info.currency -= i
+                    user_info.rob_send += i
+                    msg = `在这个风雨交加的夜晚，你准备抢一个陌生人的金币。但在视线模糊中，你误闯进了自己的家。你原本计划完美，但事与愿违。在离开现场时，你的口袋破了一个洞，${i}个金币不翼而飞。`
                 }
-                await updateUser(target.user_id, target)
+            } else {
+                const target = await findUser(id, 'id')
+                if (!target) {
+                    user_info.rob_count--
+                    msg = `你花费了大量时间寻找${id}，但无论你怎么努力，都似乎抓不到任何关于他的线索。这种情况让你怀疑，他们是否真的存在于这个游戏之中。`
+                } else {
+                    if (target.currency <= 0) {
+                        user_info.rob_count--
+                        msg = `你小心翼翼地接近了${target.name || target.id}，准备发起突袭。但当你打开他们的金币储藏时，你震惊地发现里面空无一物。这个发现让你不禁感慨，有时候，目标并非总是如我们所愿。`
+                    } else {
+                        if (type === '增加') {
+                            if (target.currency < i) {
+                                i = currency
+                            }
+                            msg = `你目标明确，锁定了你的目标——${target.name || target.id}。经过周密的计划，你成功地潜入了他的领地，从中拿走了了${i}个金币。`
+                            user_info.currency += i
+                            user_info.rob_win_count++
+                            user_info.rob_get += i
+                            target.currency -= i
+                        } else {
+                            if (user_info.currency < i) {
+                                i = currency
+                            }
+                            msg = `你鼓起勇气，决定对${target.name || target.id}发起挑战。但事情并不顺利，你不仅没能得手，反而损失了${i}个金币。`
+                            user_info.currency -= i
+                            user_info.rob_send += i
+                            target.currency += i
+                        }
+                    }
+                    await updateUser(target.user_id, target)
+                }
             }
         }
+
         await updateUser(user_info.user_id, user_info)
         const buttons = [
             [
@@ -255,7 +282,7 @@ export class game extends plugin {
         let id, currency = 5
         if (i[4]) {
             id = i[3].trim()
-            currency = Number(i[4])
+            currency = Number(i[4]) || 5
         } else {
             id = i[1]
         }
@@ -269,6 +296,8 @@ export class game extends plugin {
         } else {
             msg = `在这个游戏的世界里，你选择了成为一个慷慨的玩家。你向${target.name || target.id}送去了${currency}个金币，这不仅是一份礼物，也是友谊的象征。`
             user_info.currency -= currency
+            user_info.give_count++
+            user_info.give_send += currency
             target.currency += currency
             await updateUser(user_info.user_id, user_info)
             await updateUser(target.user_id, target)
@@ -293,6 +322,7 @@ export class game extends plugin {
             ])
         }
         let prize = generateRandomInteger(-20, 20)
+        user_info.draw_count++
         let msg
         if (prize < 0) {
             prize = Math.abs(prize)
@@ -301,9 +331,11 @@ export class game extends plugin {
                 prize = user_info.currency
             }
             user_info.currency -= prize
+            user_info.draw_send += prize
         } else if (prize > 0) {
             msg = `在这个游戏的抽奖中，风险与回报总是并存的。你小心翼翼地参与了抽奖，希望能能赢得丰厚的奖励。幸运女神微笑了，它停在了一个令人满意的位置上，获得了${prize}金币的奖励！但也有可能下次就不那么幸运了。`
             user_info.currency += prize
+            user_info.draw_get += prize
         } else {
             msg = '你参与了抽奖，期待着一些令人兴奋的变化。然而，转盘停止时，你的金币数并没有任何变化。这个结果虽然平淡，但也让你避免了潜在的损失。'
         }
@@ -331,6 +363,31 @@ export class game extends plugin {
         user_info.name = name
         await updateUser(user_info.user_id, user_info)
         return await e.reply(`修改成功~\r以后你的昵称就是: ${name}`)
+    }
+
+    async info(e) {
+        const user_info = await getUserInfo(e)
+        e.toQQBotMD = true
+        return await e.reply([
+            segment.at(user_info.user_id),
+            `\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}`,
+            `\r金币: ${user_info.currency}`,
+            `\r签到次数: ${user_info.sign_count}\t\t签到获得的金币: ${user_info.sign_get}`,
+            `\r送金币次数: ${user_info.give_count}\t\t送出的金币: ${user_info.give_send}`,
+            `\r抢金币次数: ${user_info.rob_count}\t\t抢金币成功率: ${user_info.rob_winning}%`,
+            `\r抢金币获得的金币: ${user_info.rob_get}\t\t抢金币送出的金币: ${user_info.rob_send}`,
+            `\r抽金币次数: ${user_info.draw_count}\t\t抽金币成功率: ${user_info.draw_winning}%`,
+            `\r抽金币获得的金币: ${user_info.draw_get}\t\t抽金币送出的金币: ${user_info.draw_send}`,
+            segment.button([
+                { text: '我的信息', callback: '/我的信息' },
+                { text: '金币签到', callback: '/金币签到' },
+                { text: '改名', input: '/改名' },
+            ],[
+                { text: '抢金币', input: '/抢金币' },
+                { text: '抽金币', callback: '/金币抽奖' },
+                { text: '送金币', input: '/送金币' },
+            ])
+        ])
     }
 }
 
