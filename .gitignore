@@ -2,5 +2,6 @@ node_modules/
 data/
 config/config/*
 models/db/data.db
+models/db/alter_proc.json
 **/test.js
 !.gitignore

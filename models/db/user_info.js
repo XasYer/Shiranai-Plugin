@@ -1,4 +1,4 @@
-import { sequelize, DataTypes, executeSync, Op } from './base.js'
+import { sequelize, DataTypes, executeSync, Op, alter } from './base.js'
 
 let user_info_table = sequelize.define('user_info', {
     id: {
@@ -36,24 +36,74 @@ let user_info_table = sequelize.define('user_info', {
         defaultValue: 0,
         comment: '游戏场数'
     },
-    win_count: {
+    game_win_count: {
         type: DataTypes.BIGINT,
         defaultValue: 0,
-        comment: '胜的场数'
+        comment: '游戏胜的场数'
     },
-    winning: {
+    game_winning: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
-        comment: '胜率'
-    }
+        comment: '游戏胜率'
+    },
+    rob_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '抢金币次数'
+    },
+    rob_win_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '抢金币胜的场数'
+    },
+    rob_winning: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '抢金币胜率'
+    },
+    give_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '送金币次数'
+    },
+    draw_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '抽金币次数'
+    },
+    draw_win_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '抽金币拿到金币的次数'
+    },
+    draw_winning: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '抽金币胜率'
+    },
+    beg_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '乞讨次数'
+    },
+    beg_win_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        comment: '乞讨成功的次数'
+    },
+    beg_winning: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: '乞讨成功率'
+    },
 }, {
     timestamps: true
 });
 /*
-
 */
 // 同步数据库模型
-await sequelize.sync()
+// await sequelize.sync({ alter: alter['user_info'] })
+await sequelize.sync({ alter: true })
 
 /**
  * 创建一个新用户

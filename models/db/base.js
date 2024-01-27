@@ -1,7 +1,8 @@
-import { dirname, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url'
 import TaskQueue from './TaskQueue.js';
 import { Sequelize, DataTypes, Op } from 'sequelize'
+import fs from 'node:fs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,16 +33,35 @@ if (taskQueueConfig > 0) {
     }
 }
 
+const alter = (() => {
+    const alter_path = join(__dirname, 'alter.json')
+    const proc_path = join(__dirname, 'alter_proc.json')
+    const alter_data = JSON.parse(fs.readFileSync(alter_path, 'utf-8'))
+    const keys = Object.keys(alter_data)
+    if (!fs.existsSync(proc_path)) {
+        fs.copyFileSync(alter_path, proc_path)
+        return keys.reduce((acc, i) => {
+            acc[i] = false
+            return acc
+        }, {})
+    }
+    const proc_data = JSON.parse(fs.readFileSync(proc_path, 'utf-8'))
+    fs.copyFileSync(alter_path, proc_path)
+    return keys.reduce((acc, i) => {
+        if (!proc_data[i] || (alter_data[i] > proc_data[i])) {
+            acc[i] = true
+        } else {
+            acc[i] = false
+        }
+        return acc
+    }, {})
+})()
 
-
-function resetLock() {
-    shouldCancel = true;
-    lock = Promise.resolve();
-}
 
 export {
     sequelize,
     DataTypes,
     Op,
     executeSync,
+    alter
 }
