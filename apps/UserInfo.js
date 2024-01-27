@@ -336,6 +336,7 @@ export class game extends plugin {
             msg = `在这个游戏的抽奖中，风险与回报总是并存的。你小心翼翼地参与了抽奖，希望能能赢得丰厚的奖励。幸运女神微笑了，它停在了一个令人满意的位置上，获得了${prize}金币的奖励！但也有可能下次就不那么幸运了。`
             user_info.currency += prize
             user_info.draw_get += prize
+            user_info.draw_win_count++
         } else {
             msg = '你参与了抽奖，期待着一些令人兴奋的变化。然而，转盘停止时，你的金币数并没有任何变化。这个结果虽然平淡，但也让你避免了潜在的损失。'
         }
