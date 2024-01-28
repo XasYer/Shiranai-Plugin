@@ -26,7 +26,7 @@ export class game extends plugin {
                     fnc: 'sign'
                 },
                 {
-                    reg: /^#?金币排行榜?$/,
+                    reg: /^#?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/,
                     fnc: 'rank'
                 },
                 {
@@ -77,7 +77,7 @@ export class game extends plugin {
     async sign(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'sign')) {
-            return e.reply(`不可以这么快哦`)
+            return e.reply(`不可以这么快哦,一分钟之后再来吧`)
         }
         const user_info = await getUserInfo(e)
         const last_sign = getDaysBetweenDates(user_info.last_sign)
@@ -119,6 +119,7 @@ export class game extends plugin {
         const buttons = [
             [
                 { text: '我也要签到', callback: '/金币签到' },
+                { text: '我的信息', callback: '/我的信息' },
             ],
             [
                 { text: '抢金币', input: '/抢金币' },
@@ -134,23 +135,75 @@ export class game extends plugin {
     }
 
     async rank(e) {
-        const rankList = await findUsersSortedBy('currency', 'DESC', 10)
+        const reg = /^#?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/
+        const regRet = reg.exec(e.msg)
+        let field = 'currency'
+        let getMsg = (i) => `ID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}`
+        if (regRet[1]) {
+            let i
+            switch (regRet[1]) {
+                case '抢':
+                    i = 'rob'
+                    getMsg = (i) => `ID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}\r抢金币次数: ${i.rob_count}\t\t抢金币成功率: ${i.rob_winning}%\r抢金币获得的金币: ${i.rob_get}\t\t抢金币送出的金币: ${i.rob_send}`
+                    break;
+                case '抽':
+                    i = 'draw'
+                    getMsg = (i) => `ID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}\r抽金币次数: ${i.draw_count}\t\t抽金币成功率: ${i.draw_winning}%\r抽金币获得的金币: ${i.draw_get}\t\t抽金币送出的金币: ${i.draw_send}`
+                    break
+                default:
+                    break;
+            }
+            switch (regRet[2]) {
+                case '次数':
+                    field = `${i}_count`
+                    break;
+                case '胜率':
+                    field = `${i}_winning`
+                    break;
+                case '获得':
+                case '获取':
+                    field = `${i}_get`
+                    break;
+                case '送出':
+                case '赔':
+                    field = `${i}_send`
+                    break;
+                default:
+                    field = `${i}_count`
+                    break;
+            }
+        }
+        const rankList = await findUsersSortedBy(field, 'DESC', 10)
         if (!rankList || rankList.length == 0) {
             return await e.reply(['还没有排名哦'])
         }
-        let msg = '\r#金币排行榜\r\r>'
+        let msg = `\r#${e.msg.replace('#', '')}\r\r>`
         let index = 1
         for (const i of rankList) {
             if (index != 1) {
                 msg += '\r'
             }
-            msg += `#No.${index}\rID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}`
+            msg += `#No.${index}\r` + getMsg(i)
             index++
         }
         const buttons = [
             [
-                { text: '改名字', input: '/改名' }
-            ]
+                { text: '金币排行', callback: '/金币排行' },
+                { text: '改名字', input: '/改名' },
+                { text: '我的信息', callback: '/我的信息' },
+            ],
+            [
+                { text: '抢排行', callback: '/抢金币次数排行' },
+                { text: '抢胜率', callback: '/抢金币胜率排行' },
+                { text: '抢获得', callback: '/抢金币获取排行' },
+                { text: '抢送出', callback: '/抢金币送出排行' },
+            ],
+            [
+                { text: '抽排行', callback: '/抽金币次数排行' },
+                { text: '抽胜率', callback: '/抽金币胜率排行' },
+                { text: '抽获得', callback: '/抽金币获取排行' },
+                { text: '抽送出', callback: '/抽金币送出排行' },
+            ],
         ]
         e.toQQBotMD = true
         return await e.reply([msg, segment.button(...buttons)])
@@ -159,7 +212,7 @@ export class game extends plugin {
     async rob(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'rob', 60)) {
-            return e.reply(`不可以这么快哦`)
+            return e.reply(`不可以这么快哦,一分钟之后再来吧`)
         }
         e.toQQBotMD = true
         const user_info = await getUserInfo(e)
@@ -256,7 +309,8 @@ export class game extends plugin {
         await updateUser(user_info.user_id, user_info)
         const buttons = [
             [
-                { text: '我也要抢金币', input: '/抢金币' }
+                { text: '我也要抢金币', input: '/抢金币' },
+                { text: '我的信息', callback: '/我的信息' },
             ],
             [
                 { text: '抽金币', callback: '/金币抽奖' },
@@ -274,7 +328,7 @@ export class game extends plugin {
     async give(e) {
         const user_id = getUserId(e)
         if (getCD(e, 'give', 60 * 60)) {
-            return e.reply(`不可以这么快哦`)
+            return e.reply(`不可以这么快哦,一分钟之后再来吧`)
         }
         e.toQQBotMD = true
         const reg = /^#?送金币\s*(\d+\s*|((\d+)[\s\*]+(\d+)))$/
@@ -310,12 +364,12 @@ export class game extends plugin {
 
     async draw(e) {
         const user_id = getUserId(e)
-        if (getCD(e, 'draw', 60)) {
-            return await e.reply(`不可以这么快哦`)
-        }
+        // if (getCD(e, 'draw', 60)) {
+        //     return await e.reply(`不可以这么快哦,一分钟之后再来吧`)
+        // }
         e.toQQBotMD = true
         const user_info = await getUserInfo(e)
-        if (user_info.currency < 5) {
+        if (user_info.currency < 10) {
             return await e.reply([
                 segment.at(user_id),
                 `金币太少了哦,大于10个金币再来吧\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`
@@ -343,7 +397,8 @@ export class game extends plugin {
         await updateUser(user_info.user_id, user_info)
         const buttons = [
             [
-                { text: '我也要抽奖', callback: '/金币抽奖' }
+                { text: '我也要抽奖', callback: '/金币抽奖' },
+                { text: '我的信息', callback: '/我的信息' },
             ],
             [
                 { text: '抢金币', input: '/抢金币' },
@@ -356,7 +411,10 @@ export class game extends plugin {
 
     async rename(e) {
         const name = e.msg.replace(/^#?修?改(名字?|昵称)\s*/, '')
-        const warn = ['妈', '操', 'nm', 'nm', '爸', '爷', '草你', '日你', '.', 'everyone', '逼', '胸', '穴', '死', '插', '鸡', 'b', 'B', '淫', '杀', '你', '我', '性', '交', '加', '微信', 'wx', '屌', '狗', '尸', '乳', '生殖器', '阴道', '婊','*',"#","~","@","_"]
+        if (getLength(name) > 6) {
+            return await e.reply(`长度不能超过6哦`)
+        }
+        const warn = ['妈', '操', 'nm', 'nm', '爸', '爷', '草你', '日你', '.', 'everyone', '逼', '胸', '穴', '死', '插', '鸡', 'b', 'B', '淫', '杀', '你', '性', '交', '加', '微信', 'wx', '屌', '狗', '尸', '乳', '生殖', '阴道', '婊', '*', "#", "~", "@", "_", '傻', '支付宝', '+', 'zfb', 'q', 'Q']
         if (warn.some(i => name.includes(i))) {
             return await e.reply(`修改失败\r包含违规词`)
         }
@@ -418,4 +476,16 @@ function getCD(e, type = 'default', time = 60) {
         i[user_id] = false
     }, time * 1000)
     return false
+}
+
+function getLength(str) {
+    let length = 0
+    for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) >= 0x4E00 && str.charCodeAt(i) <= 0x9FA5) {
+            length += 1
+        } else {
+            length += 0.5
+        }
+    }
+    return length
 }
