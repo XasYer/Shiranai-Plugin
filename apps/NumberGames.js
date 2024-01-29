@@ -100,7 +100,7 @@ export class game extends plugin {
       const user_info = await getUserInfo(e)
       user_info.currency += 5
       await updateUser(user_info.user_id, user_info)
-      return await e.reply([segment.at(user_id), `\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`, , segment.button(...buttons)])
+      return await e.reply([segment.at(user_id), `\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`, segment.button(...buttons)])
     }
     buttons = [
       [
