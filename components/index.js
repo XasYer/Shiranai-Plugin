@@ -3,7 +3,7 @@ import YamlReader from './YamlReader.js'
 import Render from './Render.js'
 import { join } from 'path'
 const pluginName = 'Shiranai-Plugin'
-const pluginPath = join(process.cwd(), 'plugin', pluginName)
+const pluginPath = join(process.cwd(), 'plugins', pluginName)
 export {
     Version,
     pluginName,

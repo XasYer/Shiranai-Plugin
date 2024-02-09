@@ -32,7 +32,7 @@ import { sequelize, DataTypes, executeSync, Op, alter } from './base.js'
  * @property {number} beg_win_count 乞讨成功的次数
  * @property {number} beg_winning 乞讨成功率
  */
-let user_info_table = sequelize.define('user_info', {
+const user_info_table = sequelize.define('user_info', {
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
@@ -294,6 +294,7 @@ async function countUsers() {
 }
 
 export {
+    user_info_table,
     createUser,
     updateUser,
     findUser,

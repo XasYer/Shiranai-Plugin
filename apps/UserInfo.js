@@ -134,6 +134,7 @@ export class game extends plugin {
         ])
     }
 
+    // TODO 达到次数才上榜
     async rank(e) {
         const reg = /^#?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/
         const regRet = reg.exec(e.msg)
