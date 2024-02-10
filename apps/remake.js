@@ -63,7 +63,8 @@ export class remake extends plugin {
         const user_id = getUserId(e)
         if (cache[user_id]) {
             delete cache[user_id]
-            return await e.reply('人生重开已取消')
+            return await e.reply([segment.at(e.user_id),
+                '\n人生重开已取消'])
         }
         const data = await getUserInfo({ user_id })
         data.times++
@@ -83,6 +84,8 @@ export class remake extends plugin {
         }
         e.toQQBotMD = true
         return await e.reply([
+            segment.at(e.user_id),
+            '\n',
             [
                 `请发送编号选择3个天赋,如"0 1 2",用空格分割,或发送"随机"随机选择\n`,
                 randTLT.map((val, i) => val = `${i}.【${val.name}】: ${val.description}`).join('\n')
@@ -115,18 +118,27 @@ export class remake extends plugin {
                     i = Number(i)
                     if (i < 0 || i > 9) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply(['请发送正确的编号', segment.button(...talentButton)])
+                        return await e.reply([
+                            segment.at(e.user_id),
+                            '\n请发送正确的编号',
+                            segment.button(...talentButton)])
                     }
                     const talent = randTLT[i]
                     if (selectTLTRet.some(s => s.id == talent.id)) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply(['不能选择相同的天赋,请重新选择', segment.button(...talentButton)])
+                        return await e.reply([
+                            segment.at(e.user_id),
+                            '\n不能选择相同的天赋,请重新选择',
+                            segment.button(...talentButton)])
                     }
                     selectTLTRet.push(talent)
                 }
             } else {
                 delete cache[user_id]
-                return await e.reply('人生重开已取消')
+                return await e.reply([
+                    segment.at(e.user_id),
+                    '\n人生重开已取消'
+                ])
             }
             const core = cache[user_id].core
             core.remake(selectTLTRet.map(({ id }) => id));
@@ -141,6 +153,8 @@ export class remake extends plugin {
             }
             const limit = core.propertyAllocateLimit;
             return await e.reply([
+                segment.at(e.user_id),
+                '\n',
                 [
                     `请发送4个数字分配"颜值、智力、体质、家境"4个属性，如"5 5 5 5"，或发送"随机"随机选择；\n`,
                     `可用属性点为${pts}，每个属性不能超过${limit[1]}`
@@ -177,14 +191,22 @@ export class remake extends plugin {
                     i = Number(i)
                     if (i < limit[0] || i > limit[1]) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply([`每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`, segment.button(...pointButton)])
+                        return await e.reply([
+                            segment.at(e.user_id),
+                            `\n每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`,
+                            segment.button(...pointButton)
+                        ])
                     }
                     sum += i
                     arr.push(i)
                 }
                 if (sum != pts) {
                     cache[user_id].timer = setTimer(e, 120)
-                    return await e.reply([`属性之和需为${pts}，请重新发送`, segment.button(...pointButton)])
+                    return await e.reply([
+                        segment.at(e.user_id),
+                        `\n属性之和需为${pts}，请重新发送`,
+                        segment.button(...pointButton)
+                    ])
                 }
                 selectStatsRet = {
                     CHR: arr[0],                     // 颜值 charm CHR
@@ -194,10 +216,18 @@ export class remake extends plugin {
                 }
             } else {
                 delete cache[user_id]
-                return await e.reply('人生重开已取消')
+                return await e.reply([
+                    segment.at(e.user_id),
+                    '\n人生重开已取消'
+                ])
             }
-            await e.reply(['你的人生正在重开...请稍后', segment.button([{ text: '我也要玩', callback: '/remake' }])])
+            await e.reply([
+                segment.at(e.user_id),
+                '\n你的人生正在重开...请稍后',
+                segment.button([{ text: '我也要玩', callback: '/remake' }])
+            ])
             const selectTLTRet = cache[user_id].selectTLTRet
+            delete cache[user_id]
             core.start(selectStatsRet);
             let trajectory;
             const event = []
@@ -209,7 +239,6 @@ export class remake extends plugin {
                     throw e;
                 }
                 const { age, content, achievements } = trajectory;
-                const stats = core.propertys
                 let str = content.map(
                     ({ type, description, rate, name, postEvent }) => {
                         switch (type) {
@@ -238,10 +267,9 @@ export class remake extends plugin {
                 event,
                 summary
             }
-            await e.runtime.render(pluginName, 'remake/html/index', data)
-            // await e.reply(await common.makeForwardMsg(e, event))
+            const img = await e.runtime.render(pluginName, 'remake/html/index', data, { retType: 'base64' })
+            await e.reply([segment.at(e.user_id),'\n', img])
             await saveItem(user_id)
-            delete cache[user_id]
             return true
         }
         return false
@@ -266,6 +294,9 @@ function setTimer(e, time = 120) {
     const user_id = getUserId(e)
     return setTimeout(() => {
         delete cache[user_id]
-        return e.reply('人生重开已取消')
+        return e.reply([
+            segment.at(e.user_id),
+            '人生重开已取消'
+        ])
     }, time * 1000)
 }
