@@ -152,6 +152,9 @@ export class remake extends plugin {
                     STR: arr[2],                     // 体质 strength STR
                     MNY: arr[3],                     // 家境 money MNY
                 }
+            } else {
+                delete cache[user_id]
+                return await e.reply('人生重开已取消')
             }
             await e.reply('你的人生正在重开...请稍后')
             const selectTLTRet = cache[user_id].selectTLTRet
