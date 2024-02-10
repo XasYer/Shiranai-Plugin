@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="{{pluResPath}}remake/html/fonts/方正像素12.ttf" as="font">
+    <link rel="stylesheet" href="{{pluResPath}}remake/html/index.css">
+    <title>人生重开模拟器</title>
+</head>
+
+<body>
+    <div id="container">
+        <div>
+            <div class="title">
+                <img src="{{pluResPath}}remake/html/imgs/title_left.png">
+                    已选天赋
+                <img src="{{pluResPath}}remake/html/imgs/title_right.png">
+            </div>
+            <div id="talent">
+                {{each selectTLTRet i}}
+                <div>
+                    <div class="talent_name">
+                        {{i.name}}
+                    </div>
+                    <div class="talent_desc">
+                        {{i.description}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div>
+            <div class="title">
+                <img src="{{pluResPath}}remake/html/imgs/title_left.png">
+                    初始属性
+                <img src="{{pluResPath}}remake/html/imgs/title_right.png">
+            </div>
+            <div id="point">
+                <div>
+                    <img src="{{pluResPath}}remake/html/imgs/icon_chr.png">
+                    颜值 {{selectStatsRet.CHR}}
+                </div>
+                <div>
+                    <img src="{{pluResPath}}remake/html/imgs/icon_int.png" alt="">
+                    智力 {{selectStatsRet.INT}}
+                </div>
+                <div>
+                    <img src="{{pluResPath}}remake/html/imgs/icon_str.png" alt="">
+                    体质 {{selectStatsRet.STR}}
+                </div>
+                <div>
+                    <img src="{{pluResPath}}remake/html/imgs//icon_mny.png" alt="">
+                    家境 {{selectStatsRet.MNY}}
+                </div>
+                <div>
+                    <img src="{{pluResPath}}remake/html/imgs/icon_spr.png" alt="">
+                    快乐 5
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="title">
+                <img src="{{pluResPath}}remake/html/imgs/title_left.png">
+                    人生经历
+                <img src="{{pluResPath}}remake/html/imgs/title_right.png">
+            </div>
+            <div id="event">
+                {{each event i}}
+                <div>
+                    <div class="point_now">
+                        <div>
+                            <img src="{{pluResPath}}remake/html/imgs/icon_chr.png">
+                            {{i.CHR}}
+                        </div>
+                        <div>
+                            <img src="{{pluResPath}}remake/html/imgs/icon_int.png" alt="">
+                            {{i.INT}}
+                        </div>
+                        <div>
+                            <img src="{{pluResPath}}remake/html/imgs/icon_str.png" alt="">
+                            {{i.STR}}
+                        </div>
+                        <div>
+                            <img src="{{pluResPath}}remake/html/imgs//icon_mny.png" alt="">
+                            {{i.MNY}}
+                        </div>
+                        <div>
+                            <img src="{{pluResPath}}remake/html/imgs/icon_spr.png" alt="">
+                            {{i.SPR}}
+                        </div>
+                    </div>
+                    <div class="event_now">
+                        <div class="age">
+                            {{i.age}}岁：
+                        </div>
+                        <div class="text">
+                            {{@ i.content}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div>
+            <div class="title">
+                <img src="{{pluResPath}}remake/html/imgs/title_left.png">
+                    人生总结
+                <img src="{{pluResPath}}remake/html/imgs/title_right.png">
+            </div>
+            <div id="summary">
+                <div class="HAGE">
+                    <div>
+                        享年：&nbsp;&nbsp; {{summary.HAGE.value}}
+                    </div>
+                    <div>
+                        {{summary.HAGE.judge}}
+                    </div>
+                </div>
+                <div class="SUM">
+                    <div>
+                        总评：&nbsp;&nbsp; {{summary.SUM.value}}
+                    </div>
+                    <div>
+                        {{summary.SUM.judge}}
+                    </div>
+                </div>
+                <div class="HCHR">
+                    <div>
+                        <img src="{{pluResPath}}remake/html/imgs/icon_chr.png">
+                        颜值：{{summary.HCHR.value}}
+                    </div>
+                    <div>
+                        {{summary.HCHR.judge}}
+                    </div>
+                </div>
+                <div class="HINT">
+                    <div>
+                        <img src="{{pluResPath}}remake/html/imgs/icon_int.png">
+                        智力：{{summary.HINT.value}}
+                    </div>
+                    <div>
+                        {{summary.HINT.judge}}
+                    </div>
+                </div>
+                <div class="HSTR">
+                    <div>
+                        <img src="{{pluResPath}}remake/html/imgs/icon_str.png">
+                        体质：{{summary.HSTR.value}}
+                    </div>
+                    <div>
+                        {{summary.HSTR.judge}}
+                    </div>
+                </div>
+                <div class="HMNY">
+                    <div>
+                        <img src="{{pluResPath}}remake/html/imgs/icon_mny.png">
+                        家境：{{summary.HMNY.value}}
+                    </div>
+                    <div>
+                        {{summary.HMNY.judge}}
+                    </div>
+                </div>
+                <div class="HSPR">
+                    <div>
+                        <img src="{{pluResPath}}remake/html/imgs/icon_spr.png">
+                        快乐：{{summary.HSPR.value}}
+                    </div>
+                    <div>
+                        {{summary.HSPR.judge}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

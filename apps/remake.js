@@ -2,9 +2,35 @@ import Life from '../models/remake/life.js'
 import config from '../models/remake/config.js'
 import { findUser, createUser } from '../models/db/remake.js'
 import { setItem, saveItem } from '../models/remake/save.js';
-import common from '../../../lib/common/common.js'
+import { pluginName } from '../components/index.js'
 
 const cache = {}
+
+const talentButton = [[
+    { text: '0', input: '0' },
+    { text: '1', input: '1' },
+    { text: '2', input: '2' },
+    { text: '3', input: '3' },
+], [
+    { text: '4', input: '4' },
+    { text: '5', input: '5' },
+    { text: '6', input: '6' },
+    { text: '7', input: '7' },
+], [
+    { text: '8', input: '8' },
+    { text: '9', input: '9' },
+    { text: '随机', callback: '随机' },
+]]
+
+const pointButton = [
+    [
+        { text: '点击输入', input: '/' },
+        { text: '随机', callback: '随机' }
+    ],
+    [
+        { text: '我也要玩', callback: '/remake' }
+    ]
+]
 
 export class remake extends plugin {
     constructor() {
@@ -49,18 +75,23 @@ export class remake extends plugin {
             type: 'TLT',
             timer: setTimer(e, 120)
         }
+        e.toQQBotMD = true
         return await e.reply([
-            `请发送编号选择3个天赋,如"0 1 2",用空格分割,或发送"随机"随机选择\n`,
-            randTLT.map((val, i) => val = `${i}.【${val.name}】: ${val.description}`).join('\n')
-        ].join('\n'))
+            [
+                `请发送编号选择3个天赋,如"0 1 2",用空格分割,或发送"随机"随机选择\n`,
+                randTLT.map((val, i) => val = `${i}.【${val.name}】: ${val.description}`).join('\n')
+            ].join('\n'),
+            segment.button(...talentButton)
+        ])
     }
 
     async select(e) {
         if (!e.msg) return false
         const user_id = getUserId(e)
         if (!cache[user_id]) return false
-        const msg = e.msg.trim()
+        const msg = e.msg.trim().replace(/^[#\/]/, '')
         clearTimeout(cache[user_id].timer)
+        e.toQQBotMD = true
         if (cache[user_id].type === 'TLT') {
             const randTLT = cache[user_id].randTLT
             const selectTLTRet = []
@@ -78,12 +109,12 @@ export class remake extends plugin {
                     i = Number(i)
                     if (i < 0 || i > 9) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply('请发送正确的编号')
+                        return await e.reply(['请发送正确的编号', segment.button(...talentButton)])
                     }
                     const talent = randTLT[i]
                     if (selectTLTRet.some(s => s.id == talent.id)) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply('不能选择相同的天赋,请重新选择')
+                        return await e.reply(['不能选择相同的天赋,请重新选择', segment.button(...talentButton)])
                     }
                     selectTLTRet.push(talent)
                 }
@@ -104,9 +135,12 @@ export class remake extends plugin {
             }
             const limit = core.propertyAllocateLimit;
             return await e.reply([
-                `请发送4个数字分配"颜值、智力、体质、家境"4个属性，如"5 5 5 5"，或发送"随机"随机选择；\n`,
-                `可用属性点为${pts}，每个属性不能超过${limit[1]}`
-            ].join('\n'))
+                [
+                    `请发送4个数字分配"颜值、智力、体质、家境"4个属性，如"5 5 5 5"，或发送"随机"随机选择；\n`,
+                    `可用属性点为${pts}，每个属性不能超过${limit[1]}`
+                ].join('\n'),
+                segment.button(...pointButton)
+            ])
         } else if (cache[user_id].type === 'PTS') {
             let selectStatsRet
             const core = cache[user_id].core
@@ -130,21 +164,21 @@ export class remake extends plugin {
                     STR: limit[1] - arr[2],                     // 体质 strength STR
                     MNY: limit[1] - arr[3],                     // 家境 money MNY
                 }
-            } else if (/(\d\s+){3}\d/.test(msg)) {
+            } else if (/(\d+\s+){3}\d+/.test(msg)) {
                 const arr = []
                 let sum = 0
                 for (let i of msg.split(/\s+/)) {
                     i = Number(i)
                     if (i < limit[0] || i > limit[1]) {
                         cache[user_id].timer = setTimer(e, 120)
-                        return await e.reply(`每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`)
+                        return await e.reply([`每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`, segment.button(...pointButton)])
                     }
                     sum += i
                     arr.push(i)
                 }
                 if (sum != pts) {
                     cache[user_id].timer = setTimer(e, 120)
-                    return await e.reply(`属性之和需为${pts}，请重新发送`)
+                    return await e.reply([`属性之和需为${pts}，请重新发送`, segment.button(...pointButton)])
                 }
                 selectStatsRet = {
                     CHR: arr[0],                     // 颜值 charm CHR
@@ -160,17 +194,7 @@ export class remake extends plugin {
             const selectTLTRet = cache[user_id].selectTLTRet
             core.start(selectStatsRet);
             let trajectory;
-            const event = [
-                [
-                    `---------------初始天赋---------------`,
-                    selectTLTRet.map(({ name, description }) => `【${name}】: ${description}`).join('\n')
-                ].join('\n'),
-                [
-                    `---------------初始属性---------------`,
-                    `颜值: ${selectStatsRet.CHR} 智力: ${selectStatsRet.INT} 体质: ${selectStatsRet.STR} 家境: ${selectStatsRet.MNY}`
-                ].join('\n')
-            ]
-            let ent = []
+            const event = []
             do {
                 try {
                     trajectory = core.next();
@@ -180,51 +204,36 @@ export class remake extends plugin {
                 }
                 const { age, content, achievements } = trajectory;
                 const stats = core.propertys
-                ent.push([
-                    `--------------------------------------`,
-                    `\n颜值:${stats.CHR} 智力:${stats.INT} 体质:${stats.STR} 家境:${stats.MNY} 快乐:${stats.SPR}`,
-                    `\n-- ${age} 岁\n   `,
-                    content.map(
-                        ({ type, description, rate, name, postEvent }) => {
-                            switch (type) {
-                                case 'TLT':
-                                    return `天赋【${name}】发动：${description}`;
-                                case 'EVT':
-                                    return description + (postEvent ? `\n    ${postEvent}` : '');
-                            }
+                let str = content.map(
+                    ({ type, description, rate, name, postEvent }) => {
+                        switch (type) {
+                            case 'TLT':
+                                return `天赋【${name}】发动：${description}`;
+                            case 'EVT':
+                                return description + (postEvent ? `<br/>${postEvent}` : '');
                         }
-                    ).join('\n    '),
-                    achievements.length ? '\n' : '',
-                    achievements.map(({ name, description }) => {
-                        return `获得成就【${name}】:\n    ${description}`
-                    }).join('\n')].join('')
-                );
-                if (ent.length == 5) {
-                    event.push(ent.join('\n'))
-                    ent = []
+                    }
+                ).join('<br/>')
+                if (achievements.length) {
+                    str += '<br/>' + achievements.map(({ name, description }) => {
+                        return `获得成就【${name}】:<br/>${description}`
+                    }).join('<br/>')
                 }
+                event.push({
+                    ...core.propertys,
+                    age,
+                    content: str
+                })
             } while (!trajectory.isEnd)
-            if (ent.length) {
-                event.push(ent.join('\n'))
-            }
-            const statsList = [
-                { text: '颜值', key: 'HCHR' },
-                { text: '智力', key: 'HINT' },
-                { text: '体质', key: 'HSTR' },
-                { text: '家境', key: 'HMNY' },
-                { text: '快乐', key: 'HSPR' },
-                { text: '享年', key: 'HAGE' },
-                { text: '总评', key: 'SUM' }
-            ]
             const summary = core.summary
-            const end = [
-                '-----------------总结-----------------'
-            ]
-            for (const { text, key } of statsList) {
-                end.push(`${text}: ${summary[key].value} ${summary[key].judge}`);
+            const data = {
+                selectTLTRet,
+                selectStatsRet,
+                event,
+                summary
             }
-            event.push(end.join('\n'))
-            await e.reply(await common.makeForwardMsg(e, event))
+            await e.runtime.render(pluginName, 'remake/html/index', data)
+            // await e.reply(await common.makeForwardMsg(e, event))
             await saveItem(user_id)
             delete cache[user_id]
             return true

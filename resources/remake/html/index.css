@@ -1,0 +1,184 @@
+@font-face {
+    font-family: "pixel";
+    src: url("./fonts/方正像素12.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: "pixel";
+    color: rgb(233, 255, 255);
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+#container {
+    background: rgb(5, 19, 32);
+    width: 600px;
+    padding-bottom: 10px;
+}
+
+.title {
+    background: url(./imgs/titlebar.png) center no-repeat;
+    background-size: 500px 100px;
+    width: 600px;
+    height: 100px;
+    text-align: center;
+    line-height: 130px;
+}
+
+.title img {
+    width: 30px;
+}
+
+#talent {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+#talent>div {
+    width: 170px;
+    height: 100px;
+    background: url(./imgs/bg_talent.png) center no-repeat;
+    background-size: 170px auto;
+    margin: 0 10px;
+}
+
+.talent_name {
+    margin: 10px auto;
+}
+
+.talent_desc {
+    font-size: 17px;
+    color: rgb(134, 154, 160);
+    padding: 0 10px;
+    letter-spacing: 1px;
+}
+
+#point {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(12, 36, 48);
+    width: fit-content;
+    border-radius: 10px;
+    margin: 0 auto;
+    height: 30px;
+    line-height: 30px;
+}
+
+#point img {
+    vertical-align: -4px;
+    width: 20px;
+}
+
+#point>div {
+    margin: 0 10px;
+}
+
+#event {
+    position: relative;
+    margin: 0 auto;
+    width: 550px;
+    background-color: rgb(12, 36, 48);
+    border: 1px solid rgb(57, 108, 111);
+    background-image:
+        linear-gradient(to bottom, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to right, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to bottom, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to left, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to top, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to right, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to top, rgb(36, 120, 114), rgb(36, 120, 114)),
+        linear-gradient(to left, rgb(36, 120, 114), rgb(36, 120, 114));
+    background-repeat: no-repeat;
+    background-position:
+        top 0 left 0,
+        top 0 left 0,
+        top 0 right 0,
+        top 0 right 0,
+        bottom 0 left 0,
+        bottom 0 left 0,
+        bottom 0 right 0,
+        bottom 0 right 0;
+    background-size:
+        3px 40px,
+        40px 3px,
+        3px 40px,
+        40px 3px,
+        3px 40px,
+        40px 3px,
+        3px 40px,
+        40px 3px;
+}
+
+#event img {
+    vertical-align: -1px;
+    width: 15px;
+}
+
+#event>div {
+    margin: 20px;
+}
+
+.point_now {
+    display: flex;
+    background-color: rgb(22, 60, 79);
+    width: fit-content;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.point_now div {
+    margin-right: 5px;
+}
+
+.event_now {
+    display: flex;
+    margin-top: 5px;
+    line-height: 25px;
+}
+
+.age {
+    color: rgb(182, 214, 126);
+    min-width: 70px;
+    text-align: right;
+}
+
+.text {
+    color: rgb(134, 154, 160);
+}
+
+#summary {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 550px;
+    height: 320px;
+    background: url(./imgs/bg_summary.png) center no-repeat;
+    background-size: 550px auto;
+}
+
+#summary>div {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 13px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 80px 0 60px;
+}
+
+#summary img {
+    vertical-align: -4px;
+    width: 20px;
+}
+
+#summary>div>div:first-child {
+    padding: 0 10px;
+    background-color: rgb(22, 60, 79);
+    width: 120px;
+    border-radius: 5px;
+}
