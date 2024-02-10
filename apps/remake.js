@@ -100,7 +100,7 @@ export class remake extends plugin {
                 pts,
                 selectTLTRet,
                 type: 'PTS',
-                timer: setTimer(e, 10)
+                timer: setTimer(e, 120)
             }
             const limit = core.propertyAllocateLimit;
             return await e.reply([
