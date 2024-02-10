@@ -93,7 +93,7 @@ export class remake extends plugin {
             }
             const core = cache[user_id].core
             core.remake(selectTLTRet.map(({ id }) => id));
-            let pts = core.getPropertyPoints();
+            const pts = core.getPropertyPoints();
 
             cache[user_id] = {
                 core,
@@ -111,6 +111,7 @@ export class remake extends plugin {
             let selectStatsRet
             const core = cache[user_id].core
             const limit = core.propertyAllocateLimit;
+            const pts = cache[user_id].pts
             if (msg == '随机') {
                 const arr = new Array(4).fill(limit[1]);
                 while (pts > 0) {
@@ -141,9 +142,9 @@ export class remake extends plugin {
                     sum += i
                     arr.push(i)
                 }
-                if (sum != cache[user_id].pts) {
+                if (sum != pts) {
                     cache[user_id].timer = setTimer(e, 120)
-                    return await e.reply(`属性之和需为${cache[user_id].pts}，请重新发送`)
+                    return await e.reply(`属性之和需为${pts}，请重新发送`)
                 }
                 selectStatsRet = {
                     CHR: arr[0],                     // 颜值 charm CHR
