@@ -13,7 +13,7 @@ import { user_info_table } from './user_info.js';
  * @property {number} achievement_collection_rate 成就收集率
  * @property {number} times 已重开次数
  */
-const remake_table = sequelize.define('remake_test1', {
+const remake_table = sequelize.define('remake', {
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
