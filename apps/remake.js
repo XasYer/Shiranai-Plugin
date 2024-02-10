@@ -22,15 +22,21 @@ const talentButton = [[
     { text: '随机', callback: '随机' },
 ]]
 
-const pointButton = [
-    [
-        { text: '点击输入', input: '/' },
-        { text: '随机', callback: '随机' }
-    ],
-    [
-        { text: '我也要玩', callback: '/remake' }
-    ]
-]
+const pointButton = [[
+    { text: '1', input: '1' },
+    { text: '2', input: '2' },
+    { text: '3', input: '3' },
+    { text: '4', input: '4' },
+], [
+    { text: '5', input: '5' },
+    { text: '6', input: '6' },
+    { text: '7', input: '7' },
+    { text: '8', input: '8' },
+], [
+    { text: '9', input: '9' },
+    { text: '10', input: '10' },
+    { text: '随机', callback: '随机' },
+]]
 
 export class remake extends plugin {
     constructor() {
@@ -190,7 +196,7 @@ export class remake extends plugin {
                 delete cache[user_id]
                 return await e.reply('人生重开已取消')
             }
-            await e.reply('你的人生正在重开...请稍后')
+            await e.reply(['你的人生正在重开...请稍后', segment.button([{ text: '我也要玩', callback: '/remake' }])])
             const selectTLTRet = cache[user_id].selectTLTRet
             core.start(selectStatsRet);
             let trajectory;
