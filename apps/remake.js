@@ -23,16 +23,17 @@ const talentButton = [[
 ]]
 
 const pointButton = [[
+    { text: '0', input: '0' },
     { text: '1', input: '1' },
     { text: '2', input: '2' },
     { text: '3', input: '3' },
-    { text: '4', input: '4' },
 ], [
+    { text: '4', input: '4' },
     { text: '5', input: '5' },
     { text: '6', input: '6' },
     { text: '7', input: '7' },
-    { text: '8', input: '8' },
 ], [
+    { text: '8', input: '8' },
     { text: '9', input: '9' },
     { text: '10', input: '10' },
     { text: '随机', callback: '随机' },
@@ -157,7 +158,7 @@ export class remake extends plugin {
                 '\n',
                 [
                     `请发送4个数字分配"颜值、智力、体质、家境"4个属性，如"5 5 5 5"，或发送"随机"随机选择；\n`,
-                    `可用属性点为${pts}，每个属性不能超过${limit[1]}`
+                    `可用属性点为${pts}，每个属性不能超过${limit[1]}，不能低于${limit[0]}`
                 ].join('\n'),
                 segment.button(...pointButton)
             ])
