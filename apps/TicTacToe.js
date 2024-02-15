@@ -15,7 +15,7 @@ class TicTacToe {
         }
     }
 
-    toButton() {
+    toButton(add) {
         const buttons = []
         const button = []
         let len = 0
@@ -40,6 +40,9 @@ class TicTacToe {
                 buttons.push([...button])
                 button.length = 0
             }
+        }
+        if (add) {
+            buttons.push(add)
         }
         return segment.button(...buttons)
     }
@@ -175,11 +178,11 @@ export class exp extends plugin {
         }
         if (result.isWin) {
             delete GAME[e.group_id]
-            return e.reply(['恭喜', segment.at(e.user_id), '获得胜利!', segment.button([{ text: '井字棋', callback: '/井字棋' }])])
+            return e.reply(['恭喜', segment.at(e.user_id), '获得胜利!', game.toButton([{ text: '井字棋', callback: '/井字棋' }])])
         }
         if (result.isDraw) {
             delete GAME[e.group_id]
-            return e.reply(['本次平局!', segment.button([{ text: '井字棋', callback: '/井字棋' }])])
+            return e.reply(['本次平局!', game.toButton([{ text: '井字棋', callback: '/井字棋' }])])
         }
         game.timer = setTimer(e)
         return e.reply([
