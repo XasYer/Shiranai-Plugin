@@ -60,6 +60,15 @@ class TicTacToe {
                 user_id: this.playerX
             }
             this.state = { validMove: true, isWin, isDraw, player }; // 下棋成功
+            const emptyIndexes = this.board.reduce((indexes, cell, index) => {
+                if (cell.isEmpty) {
+                    indexes.push(index);
+                }
+                return indexes;
+            }, []);
+            if (emptyIndexes.length == 1) {
+                return this.move(emptyIndexes[0] + 1)
+            }
         } else {
             this.state = { validMove: false, isWin: false, isDraw: false, player }; // 下棋失败
         }
