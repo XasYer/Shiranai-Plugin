@@ -11,6 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "pinyin": "2.0"
+    "pinyin": "3.0.0-alpha.7"
   }
 }
