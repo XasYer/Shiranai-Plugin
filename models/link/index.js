@@ -2,6 +2,7 @@ const config = {
     rows: 5,
     cols: 10,
     level: 0,
+    leftTime: 240
 }
 
 class LinkGame {
@@ -11,6 +12,7 @@ class LinkGame {
         this.rows = config.rows + 2 || 8; // 行数
         this.level = config.level || 0; // 等级
         this.leftDisorderTime = 5; // 剩余重排次数
+        this.leftTime = config.leftTime || 180; // 剩余时间
         this.gifts = [
             '▲',
             '▼',
@@ -51,7 +53,6 @@ class LinkGame {
         this.pictures = []; // 图片集合
         this.linkPictures = [];
         this.preClickInfo = null; // 上一次被点中的图片信息
-        this.leftTime = 180; // 剩余时间
         this.points = []; // 图片可以相消时的拐点集合
         this.timmer = setInterval(() => {
             this.updateCountDown();
