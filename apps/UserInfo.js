@@ -59,7 +59,7 @@ export class game extends plugin {
 
     async help(e) {
         e.toQQBotMD = true
-        return await e.reply([`金币小游戏,所有指令均有一分钟cd,更多小游戏正在开发中...敬请期待`, segment.button(
+        return await e.reply([`金币小游戏,所有指令均有一分钟cd,更多小游戏正在开发中...敬请期待`, toButton([
             [
                 { text: '金币签到', callback: '/金币签到' },
             ],
@@ -71,7 +71,7 @@ export class game extends plugin {
             [
                 { text: '赚金币', callback: '/数字游戏' }
             ]
-        )])
+        ])])
     }
 
     async sign(e) {
@@ -130,7 +130,7 @@ export class game extends plugin {
         return await e.reply([
             segment.at(user_id),
             `\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`,
-            segment.button(...buttons)
+            toButton(buttons)
         ])
     }
 
@@ -207,7 +207,7 @@ export class game extends plugin {
             ],
         ]
         e.toQQBotMD = true
-        return await e.reply([msg, segment.button(...buttons)])
+        return await e.reply([msg, toButton(buttons)])
     }
 
     async rob(e) {
@@ -322,7 +322,7 @@ export class game extends plugin {
         return e.reply([
             segment.at(user_id), `\r`, msg,
             `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r带上id为指定抢,不带为随机抢\r每60秒只能抢一次哦`,
-            segment.button(...buttons)
+            toButton(buttons)
         ])
     }
 
@@ -407,7 +407,7 @@ export class game extends plugin {
                 { text: '金币排行', callback: '/金币排行' },
             ]
         ]
-        return await e.reply([segment.at(user_id), '\r', msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}\r奖池:-20金币到20金币\r每60秒只能抽一次哦`, segment.button(...buttons)])
+        return await e.reply([segment.at(user_id), '\r', msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}\r奖池:-20金币到20金币\r每60秒只能抽一次哦`, toButton(buttons)])
     }
 
     async rename(e) {
@@ -438,14 +438,16 @@ export class game extends plugin {
             `\r抢金币获得的金币: ${user_info.rob_get}\t\t抢金币送出的金币: ${user_info.rob_send}`,
             `\r抽金币次数: ${user_info.draw_count}\t\t抽金币成功率: ${user_info.draw_winning}%`,
             `\r抽金币获得的金币: ${user_info.draw_get}\t\t抽金币送出的金币: ${user_info.draw_send}`,
-            segment.button([
-                { text: '我的信息', callback: '/我的信息' },
-                { text: '金币签到', callback: '/金币签到' },
-                { text: '改名', input: '/改名' },
-            ], [
-                { text: '抢金币', input: '/抢金币' },
-                { text: '抽金币', callback: '/金币抽奖' },
-                { text: '送金币', input: '/送金币' },
+            toButton([
+                [
+                    { text: '我的信息', callback: '/我的信息' },
+                    { text: '金币签到', callback: '/金币签到' },
+                    { text: '改名', input: '/改名' },
+                ], [
+                    { text: '抢金币', input: '/抢金币' },
+                    { text: '抽金币', callback: '/金币抽奖' },
+                    { text: '送金币', input: '/送金币' },
+                ]
             ])
         ])
     }
@@ -489,4 +491,12 @@ function getLength(str) {
         }
     }
     return length
+}
+
+function toButton(buttons) {
+    try {
+        return Bot.Button(buttons)
+    } catch (error) {
+        return segment.button(...buttons)
+    }
 }

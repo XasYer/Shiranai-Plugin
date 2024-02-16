@@ -91,7 +91,7 @@ export class remake extends plugin {
                 `请发送编号选择3个天赋,如"0 1 2",用空格分割,或发送"随机"随机选择\n`,
                 randTLT.map((val, i) => val = `${i}.【${val.name}】: ${val.description}`).join('\n')
             ].join('\n'),
-            segment.button(...talentButton)
+            toButton(talentButton)
         ])
     }
 
@@ -122,7 +122,7 @@ export class remake extends plugin {
                         return await e.reply([
                             segment.at(e.user_id),
                             '\n请发送正确的编号',
-                            segment.button(...talentButton)])
+                            toButton(talentButton)])
                     }
                     const talent = randTLT[i]
                     if (selectTLTRet.some(s => s.id == talent.id)) {
@@ -130,7 +130,7 @@ export class remake extends plugin {
                         return await e.reply([
                             segment.at(e.user_id),
                             '\n不能选择相同的天赋,请重新选择',
-                            segment.button(...talentButton)])
+                            toButton(talentButton)])
                     }
                     selectTLTRet.push(talent)
                 }
@@ -160,7 +160,7 @@ export class remake extends plugin {
                     `请发送4个数字分配"颜值、智力、体质、家境"4个属性，如"5 5 5 5"，或发送"随机"随机选择；\n`,
                     `可用属性点为${pts}，每个属性不能超过${limit[1]}，不能低于${limit[0]}`
                 ].join('\n'),
-                segment.button(...pointButton)
+                toButton(pointButton)
             ])
         } else if (cache[user_id].type === 'PTS') {
             let selectStatsRet
@@ -195,7 +195,7 @@ export class remake extends plugin {
                         return await e.reply([
                             segment.at(e.user_id),
                             `\n每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`,
-                            segment.button(...pointButton)
+                            toButton(pointButton)
                         ])
                     }
                     sum += i
@@ -206,7 +206,7 @@ export class remake extends plugin {
                     return await e.reply([
                         segment.at(e.user_id),
                         `\n属性之和需为${pts}，请重新发送`,
-                        segment.button(...pointButton)
+                        toButton(pointButton)
                     ])
                 }
                 selectStatsRet = {
@@ -225,7 +225,7 @@ export class remake extends plugin {
             await e.reply([
                 segment.at(e.user_id),
                 '\n你的人生正在重开...请稍后',
-                segment.button([{ text: '我也要玩', callback: '/remake' }])
+                toButton([[{ text: '我也要玩', callback: '/remake' }]])
             ])
             const selectTLTRet = cache[user_id].selectTLTRet
             delete cache[user_id]
@@ -300,4 +300,12 @@ function setTimer(e, time = 120) {
             '人生重开已取消'
         ])
     }, time * 1000)
+}
+
+function toButton(buttons) {
+    try {
+        return Bot.Button(buttons)
+    } catch (error) {
+        return segment.button(...buttons)
+    }
 }
