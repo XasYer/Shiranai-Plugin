@@ -44,7 +44,7 @@ class TicTacToe {
         if (add) {
             buttons.push(add)
         }
-        return segment.button(...buttons)
+        return toButton(buttons)
     }
 
     // 下棋
@@ -111,11 +111,11 @@ export class exp extends plugin {
             priority: 1,
             rule: [
                 {
-                    reg: /^#井字棋$/,
+                    reg: /^[#\/]?[井#]字棋$/,
                     fnc: 'start'
                 },
                 {
-                    reg: /^[#\/]?井字棋下\s*\d$/,
+                    reg: /^[#\/]?[井#]字棋下\s*\d$/,
                     fnc: 'ticTacToe'
                 }
             ]
@@ -123,7 +123,7 @@ export class exp extends plugin {
     }
 
     async start(e) {
-        if (e.bot.adapter.name != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
             return false
         }
         e.toQQBotMD = true
@@ -153,25 +153,25 @@ export class exp extends plugin {
         return e.reply([
             segment.at(e.user_id),
             '发起了井字棋\r',
-            '可发送/井字棋 加入对局',
-            segment.button([{ text: '接收挑战', callback: '/井字棋' }])
+            '可发送 井字棋 加入对局',
+            toButton([[{ text: '接收挑战', callback: '/井字棋' }]])
         ])
     }
 
     async ticTacToe(e) {
-        if (e.bot.adapter.name != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
             return false
         }
         e.toQQBotMD = true
         if (!GAME[e.group_id]) {
-            return e.reply(['井字棋未开始', segment.button([{ text: '井字棋', callback: '/井字棋' }])])
+            return e.reply(['井字棋未开始', toButton([[{ text: '井字棋', callback: '/井字棋' }]])])
         }
         const game = GAME[e.group_id]
         clearTimeout(game.timer)
         if (game.nextPlayer.user_id != e.user_id) {
             return e.reply([segment.at(e.user_id), '现在不是你的回合'])
         }
-        const result = game.move(e.msg.replace(/[#\/]?井字棋下\s*/, ''))
+        const result = game.move(e.msg.replace(/[#\/]?[井#]字棋下\s*/, ''))
         if (!result.validMove) {
             game.timer = setTimer(e)
             return e.reply([segment.at(e.user_id), '坐标有误,请重新发送', game.toButton()])
@@ -196,7 +196,15 @@ export class exp extends plugin {
 
 function setTimer(e) {
     return setTimeout(() => {
-        e.reply(['井字棋已超时自动结束', segment.button([{ text: '井字棋', callback: '/井字棋' }])])
+        e.reply(['井字棋已超时自动结束', toButton([[{ text: '井字棋', callback: '/井字棋' }]])])
         delete GAME[e.group_id]
     }, 60 * 3 * 1000)
+}
+
+function toButton(buttons) {
+    try {
+        return Bot.Button(buttons)
+    } catch (error) {
+        return segment.button(...buttons)
+    }
 }

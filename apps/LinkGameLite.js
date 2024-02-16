@@ -3,7 +3,7 @@ import LinkGame from "../models/link/index.js"
 
 const GAME = {}
 
-export class exp extends plugin {
+export class LinkGameLite extends plugin {
     constructor() {
         super({
             name: '轻量版连连看',
@@ -24,7 +24,7 @@ export class exp extends plugin {
     }
 
     async start(e) {
-        if (e.bot.adapter.name != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
             return false
         }
         e.toQQBotMD = true
@@ -32,12 +32,12 @@ export class exp extends plugin {
             delete GAME[e.group_id]
             return e.reply(['连连看已结束', toButton([[{ text: '开始游戏', callback: '/连连看' }]])])
         }
-        if (GAME[e.group_id]) {
-            return true
+        if (!GAME[e.group_id]) {
+            GAME[e.group_id] = new LinkGame();
+            const game = GAME[e.group_id]
+            game.init()
         }
-        GAME[e.group_id] = new LinkGame();
         const game = GAME[e.group_id]
-        game.init()
         const buttons = []
         for (const pic of game.pictures) {
             const button = []
@@ -54,7 +54,7 @@ export class exp extends plugin {
     }
 
     async link(e) {
-        if (e.bot.adapter.name != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
             return false
         }
         e.toQQBotMD = true
@@ -107,5 +107,9 @@ export class exp extends plugin {
 }
 
 function toButton(buttons) {
-    return segment.button(...buttons)
+    try {
+        return Bot.Button(buttons)
+    } catch (error) {
+        return segment.button(...buttons)
+    }
 }
