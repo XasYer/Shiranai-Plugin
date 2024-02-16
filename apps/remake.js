@@ -3,6 +3,7 @@ import config from '../models/remake/config.js'
 import { findUser, createUser } from '../models/db/remake.js'
 import { setItem, saveItem } from '../models/remake/save.js';
 import { pluginName } from '../components/index.js'
+import { toButton, setTimer } from '../models/common.js'
 
 const cache = {}
 
@@ -81,7 +82,10 @@ export class remake extends plugin {
             core,
             randTLT,
             type: 'TLT',
-            timer: setTimer(e, 120)
+            timer: setTimer(e, 120, [
+                segment.at(e.user_id),
+                '人生重开已取消'
+            ], () => delete cache[user_id])
         }
         e.toQQBotMD = true
         return await e.reply([
@@ -118,7 +122,10 @@ export class remake extends plugin {
                 for (let i of msg.split(/\s+/)) {
                     i = Number(i)
                     if (i < 0 || i > 9) {
-                        cache[user_id].timer = setTimer(e, 120)
+                        cache[user_id].timer = setTimer(e, 120, [
+                            segment.at(e.user_id),
+                            '人生重开已取消'
+                        ], () => delete cache[user_id])
                         return await e.reply([
                             segment.at(e.user_id),
                             '\n请发送正确的编号',
@@ -126,7 +133,10 @@ export class remake extends plugin {
                     }
                     const talent = randTLT[i]
                     if (selectTLTRet.some(s => s.id == talent.id)) {
-                        cache[user_id].timer = setTimer(e, 120)
+                        cache[user_id].timer = setTimer(e, 120, [
+                            segment.at(e.user_id),
+                            '人生重开已取消'
+                        ], () => delete cache[user_id])
                         return await e.reply([
                             segment.at(e.user_id),
                             '\n不能选择相同的天赋,请重新选择',
@@ -150,7 +160,10 @@ export class remake extends plugin {
                 pts,
                 selectTLTRet,
                 type: 'PTS',
-                timer: setTimer(e, 120)
+                timer: setTimer(e, 120, [
+                    segment.at(e.user_id),
+                    '人生重开已取消'
+                ], () => delete cache[user_id])
             }
             const limit = core.propertyAllocateLimit;
             return await e.reply([
@@ -191,7 +204,10 @@ export class remake extends plugin {
                 for (let i of msg.split(/\s+/)) {
                     i = Number(i)
                     if (i < limit[0] || i > limit[1]) {
-                        cache[user_id].timer = setTimer(e, 120)
+                        cache[user_id].timer = setTimer(e, 120, [
+                            segment.at(e.user_id),
+                            '人生重开已取消'
+                        ], () => delete cache[user_id])
                         return await e.reply([
                             segment.at(e.user_id),
                             `\n每个属性不能超过${limit[1]}和小于${limit[0]}，请重新发送`,
@@ -202,7 +218,10 @@ export class remake extends plugin {
                     arr.push(i)
                 }
                 if (sum != pts) {
-                    cache[user_id].timer = setTimer(e, 120)
+                    cache[user_id].timer = setTimer(e, 120, [
+                        segment.at(e.user_id),
+                        '人生重开已取消'
+                    ], () => delete cache[user_id])
                     return await e.reply([
                         segment.at(e.user_id),
                         `\n属性之和需为${pts}，请重新发送`,
@@ -269,7 +288,7 @@ export class remake extends plugin {
                 summary
             }
             const img = await e.runtime.render(pluginName, 'remake/html/index', data, { retType: 'base64' })
-            await e.reply([segment.at(e.user_id),'\n', img])
+            await e.reply([segment.at(e.user_id), '\n', img])
             await saveItem(user_id)
             return true
         }
@@ -289,23 +308,4 @@ async function getUserInfo(e) {
         user_info = await createUser(user_id)
     }
     return user_info
-}
-
-function setTimer(e, time = 120) {
-    const user_id = getUserId(e)
-    return setTimeout(() => {
-        delete cache[user_id]
-        return e.reply([
-            segment.at(e.user_id),
-            '人生重开已取消'
-        ])
-    }, time * 1000)
-}
-
-function toButton(buttons) {
-    try {
-        return Bot.Button(buttons)
-    } catch (error) {
-        return segment.button(...buttons)
-    }
 }

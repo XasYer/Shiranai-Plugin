@@ -1,3 +1,4 @@
+import { Version } from '../components/index.js'
 
 /**
  * 计算两个日期之间相差的天数
@@ -40,8 +41,57 @@ function generateRandomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * 转换成Button
+ * @param {Array<Array<button>} buttons
+ * 
+ * @typedef {Object} button
+ * @property {string} text 显示值
+ * @property {string?} callback 回调
+ * @property {string?} input 输入
+ * @property {Boolean?} send 直接发送
+ * @property {string|Array<string>|undefined} permission 有权限点击的用户
+ * @property {Object?} QQBot 其他参数
+ * 
+ * @returns {Object} segment处理后的按钮
+ */
+function toButton(buttons) {
+    if (Version.isTrss) {
+        return segment.button(...buttons)
+    } else {
+        return Bot.Button(buttons)
+    }
+}
+
+/**
+ * 设置一个setTimeout
+ * @param {Object} e 
+ * @param {Number} time 超时时间,秒
+ * @param {string} msg 时间结束后发送的消息
+ * @param {Function} callback 时间结束后执行的方法
+ */
+function setTimer(e, time, msg, callback = () => { }) {
+    return setTimeout(() => {
+        callback()
+        if (msg) {
+            e.reply(msg)
+        }
+    }, time * 1000)
+}
+
+/**
+ * 休眠指定时间
+ * @param {number} ms 毫秒
+ */
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export {
     getDaysBetweenDates,
     getNowDate,
     generateRandomInteger,
+    toButton,
+    setTimer,
+    sleep
 }

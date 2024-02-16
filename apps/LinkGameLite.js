@@ -1,5 +1,5 @@
 import LinkGame from "../models/link/index.js"
-
+import { toButton } from "../models/common.js"
 
 const GAME = {}
 
@@ -104,12 +104,4 @@ export class LinkGameLite extends plugin {
         return e.reply([`连连看,可多选,必须两两成对\t\t\t[结束游戏] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('/结束连连看')}&reply=false&enter=true)\r得分:${game.score}\t\t\t剩余时间:${game.leftTime}`, toButton(buttons)])
     }
 
-}
-
-function toButton(buttons) {
-    try {
-        return Bot.Button(buttons)
-    } catch (error) {
-        return segment.button(...buttons)
-    }
 }

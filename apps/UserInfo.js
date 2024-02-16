@@ -8,6 +8,7 @@ import {
     getNowDate,
     generateRandomInteger,
 } from '../models/index.js'
+import { toButton } from '../models/common.js'
 
 export class game extends plugin {
     constructor() {
@@ -491,12 +492,4 @@ function getLength(str) {
         }
     }
     return length
-}
-
-function toButton(buttons) {
-    try {
-        return Bot.Button(buttons)
-    } catch (error) {
-        return segment.button(...buttons)
-    }
 }

@@ -3,6 +3,7 @@ import {
   createUser,
   updateUser,
 } from '../models/index.js'
+import { toButton, sleep } from '../models/common.js'
 
 const gameCache = {
   '24': {},
@@ -418,10 +419,6 @@ function permute(input) {
   return main(input);
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 function getUserId(e) {
   return e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
 }
@@ -433,12 +430,4 @@ async function getUserInfo(e) {
     user_info = await createUser(user_id)
   }
   return user_info
-}
-
-function toButton(buttons) {
-  try {
-      return Bot.Button(buttons)
-  } catch (error) {
-      return segment.button(...buttons)
-  }
 }
