@@ -43,7 +43,7 @@ export class LinkGameLite extends plugin {
             const button = []
             for (const i of pic) {
                 if (i.pic) {
-                    button.push({ text: i.pic, input: `连线 ${i.row},${i.col}`, QQBot: { action: { reply: true },render_data: { style: 1 } })
+                    button.push({ text: i.pic, input: `连线 ${i.row},${i.col}`, QQBot: { action: { reply: true },render_data: { style: 1 } }})
                 }
             }
             if (button.length) {
@@ -93,7 +93,7 @@ export class LinkGameLite extends plugin {
                     if (i.isEmpty) {
                         button.push({ text: ' ', input: `连线 ${i.row},${i.col}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else {
-                        button.push({ text: i.pic, input: `连线 ${i.row},${i.col}`, QQBot: { action: { reply: true },render_data: { style: 1 } })
+                        button.push({ text: i.pic, input: `连线 ${i.row},${i.col}`, QQBot: { action: { reply: true },render_data: { style: 1 } }})
                     }
                 }
             }
