@@ -1,6 +1,15 @@
 # Shiranai-Plugin
 Shiranai-Plugin for TRSS-Yunzai & QQBot-Plugin
 
+## TODO
+
+|游戏名|可能实现的方式|
+| - | - |
+| 扫雷 | 5*10的按钮 |
+| 找不同 | 发送两遍按钮 |
+| 俄罗斯方块 | 两排(不一定会实现) |
+| 象棋 | 上下 |
+
 ## 鸣谢 (排名不分先后)
 
 - [VickScarlet/lifeRestart](https://github.com/VickScarlet/lifeRestart) 人生重开本体
