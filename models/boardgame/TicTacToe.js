@@ -29,6 +29,11 @@ export default class TicTacToe {
             }
             if (i.isEmpty) {
                 item.permission = this.nextPlayer.user_id
+                item.QQBot = { 
+                     render_data: { 
+                         style: 1 
+                     } 
+                 }
             } else {
                 item.permission = 'xxx'
                 item.QQBot = {
