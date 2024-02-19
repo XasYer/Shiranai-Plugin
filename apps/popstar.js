@@ -142,7 +142,12 @@ function makeButton(arr, page = 6, end = false) {
         index++
         const b = {
             text: clrMap[arr[i]?.clr] + '',
-            callback: '消灭 ' + arr[i]?.index
+            callback: '消灭 ' + arr[i]?.index,
+            QQBot : { 
+                     render_data: { 
+                         style: 1 
+                     } 
+                 }
         }
         if (!arr[i]) {
             b.text = ' '
