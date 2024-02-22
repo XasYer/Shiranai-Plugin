@@ -49,7 +49,7 @@ export class LinkGameLite extends plugin {
             `[结束游戏] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('/结束消灭星星')}&reply=false&enter=true)\r`,
             `得分: ${game.total}\t\t\t目标: ${game.constrol.goal}\r\r>此功能比较刷屏,建议拉一个小群玩`, toButton(buttons.splice(0, 5))]
         await e.reply(msg)
-        await e.reply([' ', toButton(buttons)])
+        await e.reply(['\u200B', toButton(buttons)])
         return true
     }
 
@@ -98,7 +98,7 @@ export class LinkGameLite extends plugin {
         msg.push(toButton(buttons.splice(0, 5)))
         await e.reply(msg)
         if (buttons.length) {
-            await e.reply([' ', toButton(buttons)])
+            await e.reply(['\u200B', toButton(buttons)])
         }
         return true
     }
