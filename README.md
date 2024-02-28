@@ -5,7 +5,6 @@ Shiranai-Plugin for TRSS-Yunzai & QQBot-Plugin
 
 |游戏名|可能实现的方式|
 | - | - |
-| 扫雷 | 5*10的按钮 |
 | 找不同 | 发送两遍按钮 |
 | 俄罗斯方块 | 两排(不一定会实现) |
 | 象棋 | 上下 |
@@ -16,3 +15,4 @@ Shiranai-Plugin for TRSS-Yunzai & QQBot-Plugin
 - [noneplugin/nonebot-plugin-remake](https://github.com/noneplugin/nonebot-plugin-remake) 人生重开结果图片
 - [zhanyuzhang/link-game](https://github.com/zhanyuzhang/link-game) H5消消乐（连连看）小游戏
 - [leeenx/popstar](https://github.com/leeenx/popstar) H5小游戏100例：消灭星星
+- [noneplugin/nonebot-plugin-minesweeper](https://github.com/noneplugin/nonebot-plugin-minesweeper) Nonebot2 扫雷插件
