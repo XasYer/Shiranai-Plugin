@@ -18,5 +18,5 @@ pnpm-debug.log*
 .DS_Store
 
 # vitepress
-docs/.vitepress/dist
-docs/.vitepress/cache
+.vitepress/dist
+.vitepress/cache
