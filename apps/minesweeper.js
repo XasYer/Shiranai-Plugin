@@ -15,7 +15,7 @@ export class exp extends plugin {
             name: '轻量版扫雷',
             dsc: '轻量版扫雷',
             event: 'message',
-            priority: 2,
+            priority: 5001,
             rule: [
                 {
                     reg: /^#扫雷\d*$/,
