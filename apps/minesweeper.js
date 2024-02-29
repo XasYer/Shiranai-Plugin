@@ -50,7 +50,7 @@ export class exp extends plugin {
             const button = []
             let y = 1
             for (const k of i) {
-                button.push({ text: ' ', input: `挖开 ${x},${y}` })
+                button.push({ text: ' ', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
                 y++
             }
             x++
@@ -103,15 +103,15 @@ export class exp extends plugin {
                     } else if (k.isOpen) {
                         button.push({ text: k.count + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else {
-                        button.push({ text: ' ', input: `挖开 ${x},${y}`, permission: 'xxx' })
+                        button.push({ text: ' ', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 1 } } })
                     }
                 } else {
                     if (k.isOpen) {
                         button.push({ text: k.count + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else if (k.marked) {
-                        button.push({ text: '★', input: `挖开 ${x},${y}` })
+                        button.push({ text: '★', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
                     } else {
-                        button.push({ text: ' ', input: `挖开 ${x},${y}` })
+                        button.push({ text: ' ', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
                     }
                 }
                 y++
