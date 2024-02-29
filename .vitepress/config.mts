@@ -7,7 +7,7 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     editLink: {
-      pattern: 'https://github.com/XasYer/ws-plugin-docs/tree/docs/:path',
+      pattern: 'https://github.com/XasYer/Shiranai-Plugin/tree/docs/:path',
       text: '编辑此页面'
     },
     nav: [
