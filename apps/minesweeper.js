@@ -37,8 +37,8 @@ export class exp extends plugin {
         if (game) {
             return true
         }
-        let num = e.msg.replace('#扫雷', '') || mineNum
-        num = Number(num)
+        let num = e.msg.replace(/#扫雷(轻量版?|按钮版?)?/, '')
+        num = Number(num) || mineNum
         if (num < 0 || num > 50) {
             num = mineNum
         }
