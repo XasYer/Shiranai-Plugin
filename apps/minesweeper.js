@@ -18,7 +18,7 @@ export class exp extends plugin {
             priority: 5001,
             rule: [
                 {
-                    reg: /^#扫雷\d*$/,
+                    reg: /^#扫雷(轻量版?|按钮版?)\d*$/,
                     fnc: 'mine'
                 },
                 {
