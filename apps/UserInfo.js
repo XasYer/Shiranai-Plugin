@@ -43,7 +43,7 @@ export class game extends plugin {
                     fnc: 'draw'
                 },
                 {
-                    reg: /^#?修?改(名字?|昵称)\s*.+$/,
+                    reg: /^#修?改(名字?|昵称)\s*.+$/,
                     fnc: 'rename'
                 },
                 // {
