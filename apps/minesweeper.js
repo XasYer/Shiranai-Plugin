@@ -101,13 +101,13 @@ export class exp extends plugin {
                     if (k.isMine) {
                         button.push({ text: '雷', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else if (k.isOpen) {
-                        button.push({ text: k.count + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
+                        button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else {
                         button.push({ text: ' ', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 1 } } })
                     }
                 } else {
                     if (k.isOpen) {
-                        button.push({ text: k.count + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
+                        button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
                     } else if (k.marked) {
                         button.push({ text: '★', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
                     } else {
