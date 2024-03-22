@@ -18,7 +18,7 @@ export class exp extends plugin {
             priority: 5001,
             rule: [
                 {
-                    reg: /^#扫雷(轻量版?|按钮版?)?\d*$/,
+                    reg: /^[#\/]扫雷(轻量版?|按钮版?)?\d*$/,
                     fnc: 'mine'
                 },
                 {
@@ -30,14 +30,14 @@ export class exp extends plugin {
     }
 
     async mine(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         let game = MineGame[e.group_id]
         if (game) {
             return true
         }
-        let num = e.msg.replace(/#扫雷(轻量版?|按钮版?)?/, '')
+        let num = e.msg.replace(/[#\/]扫雷(轻量版?|按钮版?)?/, '')
         num = Number(num) || mineNum
         if (num < 0 || num > 50) {
             num = mineNum
@@ -60,12 +60,12 @@ export class exp extends plugin {
     }
 
     async open(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         let game = MineGame[e.group_id]
         if (!game) {
-            return e.reply(['扫雷未开始', toButton([[{ text: '开始游戏', callback: '/扫雷' }]])])
+            return e.reply(['扫雷未开始', toButton([[{ text: '开始游戏', callback: '#扫雷' }]])])
         }
         const reg = /挖开 \d+,\d+\s*/g
         const mark = e.msg.includes('标记')
@@ -90,8 +90,8 @@ export class exp extends plugin {
         const buttons = []
         let x = 1
         content = {
-            3: `你输了 ${mine}是雷  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('/扫雷')}&reply=false&enter=true)`,
-            2: `你赢了!!  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('/扫雷')}&reply=false&enter=true)`,
+            3: `你输了 ${mine}是雷  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)`,
+            2: `你赢了!!  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)`,
         }[state] || content
         for (const i of game.tiles) {
             const button = []

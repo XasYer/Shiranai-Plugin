@@ -19,27 +19,27 @@ export class game extends plugin {
       priority: 1,
       rule: [
         {
-          reg: /^#?数字游戏$/,
+          reg: /^[#\/]?数字游戏$/,
           fnc: 'help'
         },
         {
-          reg: /^#?(24|60|72)点$/,
+          reg: /^[#\/]?(24|60|72)点$/,
           fnc: 'start24'
         },
         {
-          reg: /^#?解答\s*[\d\+\-\*\/\(\)\s]+$/,
+          reg: /^[#\/]?解答\s*[\d\+\-\*\/\(\)\s]+$/,
           fnc: 'answer24'
         },
         {
-          reg: /^#?结束(24|60|72)点$/,
+          reg: /^[#\/]?结束(24|60|72)点$/,
           fnc: 'stop24'
         },
         {
-          reg: /^#?算术对战$/,
+          reg: /^[#\/]?算术对战$/,
           fnc: 'arithmeticPK'
         },
         {
-          reg: /^#?填入\s*[\+\-x\/÷\*\·]$/,
+          reg: /^[#\/]?填入\s*[\+\-x\/÷\*\·]$/,
           fnc: 'arithmetic'
         },
       ]
@@ -68,7 +68,7 @@ export class game extends plugin {
   async start24(e) {
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
-    const game = /^#?(24|60|72)点$/.exec(e.msg)[1]
+    const game = /^[#\/]?(24|60|72)点$/.exec(e.msg)[1]
     e.toQQBotMD = true
     const buttons = [
       [
@@ -94,7 +94,7 @@ export class game extends plugin {
     ]
     e.toQQBotMD = true
     if (!nowGame) return await e.reply([`现在没有开局哦,请输入/24点来开始游戏!`, toButton(buttons)])
-    let msg = e.msg.replace(/#?解答\s*/, '')
+    let msg = e.msg.replace(/[#\/]?解答\s*/, '')
     const user_id = getUserId(e)
     if (check_result(msg, nowGame.question, nowGame.game)) {
       delete GameName[e.group_id]
@@ -207,7 +207,7 @@ export class game extends plugin {
       //   { text: '认输', callback: '' }
       // ]
     ]
-    let target = e.msg.replace(/#?填入\s*/, '')
+    let target = e.msg.replace(/[#\/]?填入\s*/, '')
     target = {
       '+': '+',
       '-': '-',
