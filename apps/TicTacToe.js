@@ -24,7 +24,7 @@ export class exp extends plugin {
     }
 
     async start(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         e.toQQBotMD = true
@@ -32,12 +32,12 @@ export class exp extends plugin {
             const game = GAME[e.group_id]
             if (game.start) {
                 return e.reply(['井字棋已开始,请等待结束'])
-            } else if (game.playerX == e.user_id) {
+            } else if (game.playerX == (e.sender.user_openid || e.user_id)) {
                 return e.reply(['不能和自己下棋'])
             } else {
                 clearTimeout(game.timer)
                 game.timer = setTimer(e, 180, ['井字棋已超时自动结束', toButton([[{ text: '井字棋', callback: '/井字棋' }]])], () => delete GAME[e.group_id])
-                game.playerO = e.user_id
+                game.playerO = e.sender.user_openid || e.user_id
                 return e.reply([
                     segment.at(e.user_id),
                     '加入了游戏\r请',
@@ -47,10 +47,10 @@ export class exp extends plugin {
                 ])
             }
         }
-        GAME[e.group_id] = new TicTacToe(e.user_id)
+        GAME[e.group_id] = new TicTacToe(e.sender.user_openid || e.user_id)
         const game = GAME[e.group_id]
         game.timer = setTimer(e, 180, ['井字棋已超时自动结束', toButton([[{ text: '井字棋', callback: '/井字棋' }]])], () => delete GAME[e.group_id])
-        game.playerX = e.user_id
+        game.playerX = e.sender.user_openid || e.user_id
         return e.reply([
             segment.at(e.user_id),
             '发起了井字棋\r',
@@ -60,7 +60,7 @@ export class exp extends plugin {
     }
 
     async ticTacToe(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         e.toQQBotMD = true
@@ -69,7 +69,7 @@ export class exp extends plugin {
         }
         const game = GAME[e.group_id]
         clearTimeout(game.timer)
-        if (game.nextPlayer.user_id != e.user_id) {
+        if (game.nextPlayer.user_id != (e.sender.user_openid || e.user_id)) {
             return e.reply([segment.at(e.user_id), '现在不是你的回合'])
         }
         const result = game.move(e.msg.replace(/[#\/]?[井#]字棋下\s*/, ''))

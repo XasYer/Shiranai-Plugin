@@ -19,27 +19,27 @@ export class game extends plugin {
             priority: 1,
             rule: [
                 {
-                    reg: /^#?金币大作战$/,
+                    reg: /^[#\/]?金币大作战$/,
                     fnc: 'help'
                 },
                 {
-                    reg: /^#?金币签到$/,
+                    reg: /^[#\/]?金币签到$/,
                     fnc: 'sign'
                 },
                 {
-                    reg: /^#?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/,
+                    reg: /^[#\/]?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/,
                     fnc: 'rank'
                 },
                 {
-                    reg: /^#?抢金币\s*\d*$/,
+                    reg: /^[#\/]?抢金币\s*\d*$/,
                     fnc: 'rob'
                 },
                 {
-                    reg: /^#?送金币\s*(\d+|\d+[\s\*]+\d+)$/,
+                    reg: /^[#\/]?送金币\s*(\d+|\d+[\s\*]+\d+)$/,
                     fnc: 'give'
                 },
                 {
-                    reg: /^#?金币抽奖$/,
+                    reg: /^[#\/]?金币抽奖$/,
                     fnc: 'draw'
                 },
                 {
@@ -47,11 +47,11 @@ export class game extends plugin {
                     fnc: 'rename'
                 },
                 // {
-                //     reg: /^#?乞讨$/,
+                //     reg: /^[#\/]?乞讨$/,
                 //     fnc: 'beg'
                 // }
                 {
-                    reg: /^#?我的信息$/,
+                    reg: /^[#\/]?我的信息$/,
                     fnc: 'info'
                 }
             ]
@@ -137,7 +137,7 @@ export class game extends plugin {
 
     // TODO 达到次数才上榜
     async rank(e) {
-        const reg = /^#?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/
+        const reg = /^[#\/]?(抢|抽)?金币(次数|胜率|获[得取]|送出|赔)?排行榜?$/
         const regRet = reg.exec(e.msg)
         let field = 'currency'
         let getMsg = (i) => `ID: ${i.id}\t\t金币: ${i.currency}\t\t昵称: ${i.name}`
@@ -237,7 +237,7 @@ export class game extends plugin {
                 i = generateRandomInteger(10, 15)
                 break;
         }
-        let id = e.msg.replace(/^#?抢金币\s*/, '')
+        let id = e.msg.replace(/^[#\/]?抢金币\s*/, '')
         let msg
         if (id == user_info.id) {
             user_info.rob_count++
@@ -333,7 +333,7 @@ export class game extends plugin {
             return e.reply(`不可以这么快哦,一分钟之后再来吧`)
         }
         e.toQQBotMD = true
-        const reg = /^#?送金币\s*(\d+\s*|((\d+)[\s\*]+(\d+)))$/
+        const reg = /^[#\/]?送金币\s*(\d+\s*|((\d+)[\s\*]+(\d+)))$/
         const i = reg.exec(e.msg)
         let id, currency = 5
         if (i[4]) {
@@ -412,7 +412,7 @@ export class game extends plugin {
     }
 
     async rename(e) {
-        const name = e.msg.replace(/^#?修?改(名字?|昵称)\s*/, '')
+        const name = e.msg.replace(/^[#\/]?修?改(名字?|昵称)\s*/, '')
         if (getLength(name) > 6) {
             return await e.reply(`长度不能超过6哦`)
         }

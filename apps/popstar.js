@@ -28,7 +28,7 @@ export class LinkGameLite extends plugin {
     }
 
     async start(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         e.toQQBotMD = true
@@ -54,7 +54,7 @@ export class LinkGameLite extends plugin {
     }
 
     async popstar(e) {
-        if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+        if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
             return false
         }
         e.toQQBotMD = true
@@ -104,7 +104,7 @@ export class LinkGameLite extends plugin {
     }
 
     // async changeView(e) {
-    //     if (e.bot.adapter.name != 'QQBot' && e.adapter != 'QQBot') {
+    //     if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
     //         return false
     //     }
     //     e.toQQBotMD = true
