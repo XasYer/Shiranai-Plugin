@@ -35,7 +35,8 @@ export class exp extends plugin {
         }
         let game = MineGame[e.group_id]
         if (game) {
-            return true
+            e.msg = '挖开 0,0'
+            return false
         }
         let num = e.msg.replace(/[#\/]扫雷(轻量版?|按钮版?)?/, '')
         num = Number(num) || mineNum
