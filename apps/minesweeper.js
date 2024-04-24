@@ -57,7 +57,7 @@ export class exp extends plugin {
             x++
             buttons.push(button)
         }
-        return await e.reply([`点击格子扫雷,可多选`, toButton(buttons)])
+        return await e.reply([`请点击按钮,可多选`, toButton(buttons)])
     }
 
     async open(e) {
@@ -66,7 +66,7 @@ export class exp extends plugin {
         }
         let game = MineGame[e.group_id]
         if (!game) {
-            return e.reply(['扫雷未开始', toButton([[{ text: '开始游戏', callback: '#扫雷' }]])])
+            return e.reply(['游戏未开始', toButton([[{ text: '开始游戏', callback: '#扫雷' }]])])
         }
         const reg = /挖开 \d+,\d+\s*/g
         const mark = e.msg.includes('标记')
@@ -78,7 +78,7 @@ export class exp extends plugin {
             log += `${x},${y}`
             return { x: Number(x), y: Number(y) }
         })
-        let content = `点击按钮扫雷,可多选\r[点击切换标记模式或者在文字最后加上标记] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('标记')}&reply=false&enter=false)\r你的选择为: ${log}`
+        let content = `请点击按钮,可多选\r[点击切换标记模式或者在文字最后加上标记] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('标记')}&reply=false&enter=false)\r你的选择为: ${log}`
         let state = 0, mine
         for (const { x, y } of target) {
             const ret = game[mark ? 'mark' : 'open'](x - 1, y - 1)
