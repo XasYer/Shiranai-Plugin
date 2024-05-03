@@ -21,7 +21,7 @@ export class example extends plugin {
           fnc: 'action'
         },
         {
-          reg: '^#?!!评论',
+          reg: '^#?评论',
           fnc: 'review'
         },
         {
@@ -73,7 +73,7 @@ export class example extends plugin {
 
   async review (e) {
     if (!checkEnable(e)) return false
-    const message = e.msg.replace(/#?!!评论\s*/, '')
+    const message = e.msg.replace(/#?评论\s*/, '')
     if (!message) {
       return false
     }
