@@ -1,83 +1,51 @@
-import fs from 'fs'
 import YAML from 'yaml'
-import _ from 'lodash'
-import chokidar from 'chokidar'
+import fs from 'fs'
 
+/**
+ * YamlReader类提供了对YAML文件的动态读写功能
+ */
 export default class YamlReader {
   /**
-   * 读写yaml文件
-   *
-   * @param yamlPath yaml文件绝对路径
-   * @param isWatch 是否监听文件变化
+     * 创建一个YamlReader实例。
+     * @param {string} filePath - 文件路径
+     */
+  constructor (filePath) {
+    this.filePath = filePath
+    this.document = this.parseDocument()
+  }
+
+  /**
+     * 解析YAML文件并返回Document对象，保留注释。
+     * @returns {Document} 包含YAML数据和注释的Document对象
+     */
+  parseDocument () {
+    const fileContent = fs.readFileSync(this.filePath, 'utf8')
+    return YAML.parseDocument(fileContent)
+  }
+
+  /**
+   * 修改指定参数的值。
+   * @param {string} key - 参数键名
+   * @param {any} value - 新的参数值
    */
-  constructor(yamlPath, isWatch = false) {
-    this.yamlPath = yamlPath
-    this.isWatch = isWatch
-    this.initYaml()
+  set (key, value) {
+    this.document.set(key, value)
+    this.write()
   }
 
-  initYaml() {
-    // parseDocument 将会保留注释
-    this.document = YAML.parseDocument(fs.readFileSync(this.yamlPath, 'utf8'))
-    if (this.isWatch && !this.watcher) {
-      this.watcher = chokidar.watch(this.yamlPath).on('change', () => {
-        if (this.isSave) {
-          this.isSave = false
-          return
-        }
-        this.initYaml()
-      })
-    }
+  /**
+   * 从YAML文件中删除指定参数。
+   * @param {string} key - 要删除的参数键名
+   */
+  rm (key) {
+    this.document.delete(key)
+    this.write()
   }
 
-  /** 返回读取的对象 */
-  get jsonData() {
-    if (!this.document) {
-      return null
-    }
-    return this.document.toJSON()
-  }
-
-  /* 检查集合是否包含key的值 */
-  has(keyPath) {
-    return this.document.hasIn(keyPath.split('.'))
-  }
-
-  /* 返回key的值 */
-  get(keyPath) {
-    return _.get(this.jsonData, keyPath)
-  }
-
-  /* 修改某个key的值 */
-  set(keyPath, value) {
-    this.document.setIn([keyPath], value)
-    this.save()
-  }
-
-  /* 删除key */
-  delete(keyPath) {
-    this.document.deleteIn(keyPath.split('.'))
-    this.save()
-  }
-
-  // 数组添加数据
-  addIn(keyPath, value) {
-    this.document.addIn(keyPath.split('.'), value)
-    this.save()
-  }
-
-  // 彻底删除某个key
-  deleteKey(keyPath) {
-    let keys = keyPath.split('.')
-    keys = this.mapParentKeys(keys)
-    this.document.deleteIn(keys)
-    this.save()
-  }
-
-  // 保存yaml文件，写入文件
-  save() {
-    this.isSave = true
-    let yaml = this.document.toString()
-    fs.writeFileSync(this.yamlPath, yaml, 'utf8')
+  /**
+     * 将更新后的Document对象写入YAML文件中。
+     */
+  write () {
+    fs.writeFileSync(this.filePath, this.document.toString(), 'utf8')
   }
 }

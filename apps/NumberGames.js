@@ -1,17 +1,18 @@
+/* eslint-disable no-eval */
 import {
   findUser,
   createUser,
-  updateUser,
+  updateUser
 } from '../models/index.js'
 import { toButton, sleep } from '../models/common.js'
 
 const gameCache = {
-  '24': {},
-  'arithmetic': {}
+  24: {},
+  arithmetic: {}
 }
 
 export class game extends plugin {
-  constructor() {
+  constructor () {
     super({
       name: '数字游戏',
       dsc: '数字游戏',
@@ -19,38 +20,39 @@ export class game extends plugin {
       priority: 1,
       rule: [
         {
-          reg: /^[#\/]?数字游戏$/,
+          reg: /^[#/]?数字游戏$/,
           fnc: 'help'
         },
         {
-          reg: /^[#\/]?(24|60|72)点$/,
+          reg: /^[#/]?(24|60|72)点$/,
           fnc: 'start24'
         },
         {
-          reg: /^[#\/]?解答\s*[\d\+\-\*\/\(\)\s]+$/,
+          reg: /^[#/]?解答\s*[-\d+*/()\s]+$/,
           fnc: 'answer24'
         },
         {
-          reg: /^[#\/]?结束(24|60|72)点$/,
+          reg: /^[#/]?结束(24|60|72)点$/,
           fnc: 'stop24'
         },
         {
-          reg: /^[#\/]?算术对战$/,
+          reg: /^[#/]?算术对战$/,
           fnc: 'arithmeticPK'
         },
         {
-          reg: /^[#\/]?填入\s*[\+\-x\/÷\*\·]$/,
+          reg: /^[#/]?填入\s*[-+\x/÷*·]$/,
           fnc: 'arithmetic'
-        },
+        }
       ]
     })
   }
-  async help(e) {
+
+  async help (e) {
     const buttons = [
       [
         { text: '24点', callback: '/24点' },
         { text: '60点', callback: '/60点' },
-        { text: '72点', callback: '/72点' },
+        { text: '72点', callback: '/72点' }
       ],
       [
         { text: '算术对战', callback: '/算术对战' }
@@ -65,10 +67,10 @@ export class game extends plugin {
     return await e.reply([msg.join(''), toButton(buttons)])
   }
 
-  async start24(e) {
+  async start24 (e) {
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
-    const game = /^[#\/]?(24|60|72)点$/.exec(e.msg)[1]
+    const game = /^[#/]?(24|60|72)点$/.exec(e.msg)[1]
     e.toQQBotMD = true
     const buttons = [
       [
@@ -82,19 +84,19 @@ export class game extends plugin {
     return await e.reply([`请使用以下数字通过+-*/算出${game}(可使用括号)\r发送'/解答'+答案:\r${question.join('  ')}`, toButton(buttons)])
   }
 
-  async answer24(e) {
+  async answer24 (e) {
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
     let buttons = [
       [
         { text: '24点', callback: '/24点' },
         { text: '60点', callback: '/60点' },
-        { text: '72点', callback: '/72点' },
+        { text: '72点', callback: '/72点' }
       ]
     ]
     e.toQQBotMD = true
-    if (!nowGame) return await e.reply([`现在没有开局哦,请输入/24点来开始游戏!`, toButton(buttons)])
-    let msg = e.msg.replace(/[#\/]?解答\s*/, '')
+    if (!nowGame) return await e.reply(['现在没有开局哦,请输入/24点来开始游戏!', toButton(buttons)])
+    let msg = e.msg.replace(/[#/]?解答\s*/, '')
     const user_id = getUserId(e)
     if (check_result(msg, nowGame.question, nowGame.game)) {
       delete GameName[e.group_id]
@@ -112,7 +114,7 @@ export class game extends plugin {
     return await e.reply([segment.at(user_id), '答案不对或输入格式有误!(仅可使用+-*/和括号)', toButton(buttons)])
   }
 
-  async stop24(e) {
+  async stop24 (e) {
     e.toQQBotMD = true
     const GameName = gameCache['24']
     const nowGame = GameName[e.group_id]
@@ -120,36 +122,36 @@ export class game extends plugin {
       [
         { text: '24点', callback: '/24点' },
         { text: '60点', callback: '/60点' },
-        { text: '72点', callback: '/72点' },
+        { text: '72点', callback: '/72点' }
       ]
     ]
-    if (!nowGame) return await e.reply([`现在没有开局哦,请输入/24点来开始游戏!`, toButton(buttons)])
+    if (!nowGame) return await e.reply(['现在没有开局哦,请输入/24点来开始游戏!', toButton(buttons)])
     delete GameName[e.group_id]
     return await e.reply([`游戏已结束,参考答案: ${nowGame.answer.replace(/\*/g, 'x').replace(/\//g, '÷')}`, toButton(buttons)])
   }
 
-  async arithmeticPK(e) {
+  async arithmeticPK (e) {
     e.toQQBotMD = true
-    const GameName = gameCache['arithmetic']
+    const GameName = gameCache.arithmetic
     const nowGame = GameName[e.group_id]
     if (nowGame) {
       if (nowGame.start) {
-        return await e.reply([`算术对战已经开始了哦,请等待结束吧`, toButton(buttons)])
+        return await e.reply(['算术对战已经开始了哦,请等待结束吧'])
       }
       const user_id = getUserId(e)
       nowGame.user.push({
         id: nowGame.user[0].id == user_id ? '菜菜' : user_id,
-        str: `(1 + ? - ?) x ? ÷ ?`,
+        str: '(1 + ? - ?) x ? ÷ ?',
         sum: 0,
-        ops: { '+': true, '-': true, 'x': true, '÷': true }
+        ops: { '+': true, '-': true, x: true, '÷': true }
       })
       const buttons = [
         [
           { text: '+', callback: '/填入+' },
           { text: '-', callback: '/填入-' },
           { text: '*', callback: '/填入x' },
-          { text: '/', callback: '/填入÷' },
-        ],
+          { text: '/', callback: '/填入÷' }
+        ]
         // [
         //   { text: '认输', callback: '' }
         // ]
@@ -168,9 +170,9 @@ export class game extends plugin {
       start: false,
       user: [{
         id: getUserId(e),
-        str: `(1 + ? - ?) x ? ÷ ?`,
+        str: '(1 + ? - ?) x ? ÷ ?',
         sum: 0,
-        ops: { '+': true, '-': true, 'x': true, '÷': true }
+        ops: { '+': true, '-': true, x: true, '÷': true }
       }],
       nowUser: 0,
       nowNum: 0,
@@ -182,12 +184,12 @@ export class game extends plugin {
         { text: '接受挑战', callback: '/算术对战' }
       ]
     ]
-    return await e.reply([`游戏规则:\r(1 + ? - ?) x ? ÷ ?\r依次给予4个1-9的数字,每次可选择填入其中某个?\r最后计算谁的数字大谁就赢\r想要对战的玩家发送/算术对战 即可加入游戏\r再次发送/算术对战 就是和菜菜挑战哦`, toButton(buttons)])
+    return await e.reply(['游戏规则:\r(1 + ? - ?) x ? ÷ ?\r依次给予4个1-9的数字,每次可选择填入其中某个?\r最后计算谁的数字大谁就赢\r想要对战的玩家发送/算术对战 即可加入游戏\r再次发送/算术对战 就是和菜菜挑战哦', toButton(buttons)])
   }
 
-  async arithmetic(e) {
+  async arithmetic (e) {
     e.toQQBotMD = true
-    const GameName = gameCache['arithmetic']
+    const GameName = gameCache.arithmetic
     const nowGame = GameName[e.group_id]
     if (!nowGame) {
       return await e.reply(['还没有开始游戏哦', toButton([[{ text: '开始游戏', input: '/算术对战', send: true }]])])
@@ -201,17 +203,17 @@ export class game extends plugin {
         { text: '+', callback: '/填入+' },
         { text: '-', callback: '/填入-' },
         { text: '*', callback: '/填入x' },
-        { text: '/', callback: '/填入÷' },
-      ],
+        { text: '/', callback: '/填入÷' }
+      ]
       // [
       //   { text: '认输', callback: '' }
       // ]
     ]
-    let target = e.msg.replace(/[#\/]?填入\s*/, '')
+    let target = e.msg.replace(/[#/]?填入\s*/, '')
     target = {
       '+': '+',
       '-': '-',
-      'x': 'x',
+      x: 'x',
       '÷': '÷',
       '*': 'x',
       '·': 'x',
@@ -233,6 +235,7 @@ export class game extends plugin {
     if (nowGame.count == 4) {
       let str = nowUser.str
       str = str.replace('x', '*').replace('÷', '/')
+      // eslint-disable-next-line no-eval
       let ret = eval(str)
       nowUser.sum = ret % 1 == 0 ? ret : ret.toFixed(2)
       if (nowGame.nowUser == 0) {
@@ -249,9 +252,9 @@ export class game extends plugin {
         const num1 = Number(nowGame.user[0].sum)
         const num2 = Number(nowGame.user[1].sum)
         if (num1 > num2) {
-          return await e.reply([`恭喜`, segment.at(nowGame.user[0].id), '获得胜利!', toButton(buttons)])
+          return await e.reply(['恭喜', segment.at(nowGame.user[0].id), '获得胜利!', toButton(buttons)])
         } else if (num1 == num2) {
-          return await e.reply([`是平局!`, toButton(buttons)])
+          return await e.reply(['是平局!', toButton(buttons)])
         }
         return await e.reply(['恭喜', segment.at(nowGame.user[1].id), '获得胜利!', toButton(buttons)])
       }
@@ -261,7 +264,7 @@ export class game extends plugin {
         await e.reply(`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到菜菜了哦`)
         clearTimeout(nowGame.time)
         for (let i = 0; i < 4; i++) {
-          const rand = Math.floor(Math.random() * 9) + 1;
+          const rand = Math.floor(Math.random() * 9) + 1
           const arr = ['÷', '-', '+', 'x']
           if (rand > 4) {
             arr.reverse()
@@ -294,12 +297,12 @@ export class game extends plugin {
           await updateUser(user_info1.user_id, user_info1)
           return await e.reply([segment.at(user_info1.user_id), `\r恭喜你赢了菜菜!\r\r>获得5金币\rID: ${user_info1.id}\t\t昵称: ${user_info1.name}\r剩余金币: ${user_info1.currency}`, toButton(buttons)])
         } else if (num1 == num2) {
-          return await e.reply([`是平局!`, toButton(buttons)])
+          return await e.reply(['是平局!', toButton(buttons)])
         }
         const user_info2 = await getUserInfo({ user_id: nowGame.user[1].id })
         user_info2.currency += 5
         await updateUser(user_info2.user_id, user_info2)
-        return await e.reply([`是菜菜赢了哦!`, toButton(buttons)])
+        return await e.reply(['是菜菜赢了哦!', toButton(buttons)])
       }
       await e.reply([`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到`, segment.at(nowUser.id), '了'])
       nowGame.count = 0
@@ -307,60 +310,59 @@ export class game extends plugin {
     }
     return await e.reply(['请', segment.at(nowUser.id), `开始选择,\r现在的表达式:\r${nowUser.str}\r本次数字:\r${rand}`, toButton(buttons)])
   }
-
 }
 
-function sixty(cards, sum) {
-  let bds_list = [];
-  let ops = ['+', '-', '*', '/'];
-  let permutations = permute(cards);
+function sixty (cards, sum) {
+  let bds_list = []
+  let ops = ['+', '-', '*', '/']
+  let permutations = permute(cards)
   permutations.forEach(nums => {
     ops.forEach(op1 => {
       ops.forEach(op2 => {
         ops.forEach(op3 => {
           if (nums.length === 4) {
-            let bds1 = `(${nums[0]}${op1}${nums[1]})${op2}(${nums[2]}${op3}${nums[3]})`;
-            let bds2 = `((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]}`;
+            let bds1 = `(${nums[0]}${op1}${nums[1]})${op2}(${nums[2]}${op3}${nums[3]})`
+            let bds2 = `((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]}`
             let bds3 = `${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]}))`;
             [bds1, bds2, bds3].forEach(bds => {
               try {
                 if (Math.abs(eval(bds) - sum) < 1e-10) {
-                  bds_list.push(bds);
+                  bds_list.push(bds)
                 }
               } catch (e) {
-                console.log(e);
+                console.log(e)
               }
-            });
+            })
           } else {
             ops.forEach(op4 => {
-              let bds1 = `(((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]})${op4}${nums[4]}`;
-              let bds2 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}(${nums[3]}${op4}${nums[4]}))))`;
-              let bds3 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]})))${op4}${nums[4]}`;
+              let bds1 = `(((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]})${op4}${nums[4]}`
+              let bds2 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}(${nums[3]}${op4}${nums[4]}))))`
+              let bds3 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]})))${op4}${nums[4]}`
               let bds4 = `(${nums[0]}${op1}((${nums[1]}${op2}${nums[2]})${op3}${nums[3]}))${op4}${nums[4]}`;
               [bds1, bds2, bds3, bds4].forEach(bds => {
                 try {
                   if (Math.abs(eval(bds) - sum) < 1e-10) {
-                    bds_list.push(bds);
+                    bds_list.push(bds)
                   }
                 } catch (e) {
-                  console.log(e);
+                  console.log(e)
                 }
-              });
-            });
+              })
+            })
           }
-        });
-      });
-    });
-  });
+        })
+      })
+    })
+  })
   if (bds_list.length > 0 && (sum == 24 ? bds_list.length < 30 : true)) {
     // if (bds_list.length > 0) {
-    return bds_list[Math.floor(Math.random() * bds_list.length)];
+    return bds_list[Math.floor(Math.random() * bds_list.length)]
   } else {
-    return false;
+    return false
   }
 }
 
-function random_question(sum) {
+function random_question (sum) {
   sum = Number(sum)
   const count = {
     24: 4,
@@ -372,58 +374,58 @@ function random_question(sum) {
     for (let i = 0; i < count; i++) {
       cards.push(Math.floor(Math.random() * 9) + 1)
     }
-    let able = sixty(cards, sum);
+    let able = sixty(cards, sum)
     if (able) {
-      return [cards, able];
+      return [cards, able]
     }
   }
 }
 
-function check_result(submit, question, sum) {
+function check_result (submit, question, sum) {
   try {
     if (!/[a-zA-Z]/.test(submit) && eval(submit) === Number(sum)) {
-      let num = submit.replace(/[+\-*/()]/g, ',').split(',');
+      let num = submit.replace(/[+\-*/()]/g, ',').split(',')
       for (let i = 0; i < question.length; i++) {
         if (num.includes(question[i].toString())) {
-          num.splice(num.indexOf(question[i].toString()), 1);
+          num.splice(num.indexOf(question[i].toString()), 1)
         }
       }
-      num = num.filter(item => item !== '');
+      num = num.filter(item => item !== '')
       if (num.length === 0) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   } catch (e) {
-    return false;
+    return false
   }
 }
 
-function permute(input) {
-  let permArr = [],
-    usedChars = [];
-  function main(input) {
-    let i, ch;
+function permute (input) {
+  let permArr = []
+  let usedChars = []
+  function main (input) {
+    let i, ch
     for (i = 0; i < input.length; i++) {
-      ch = input.splice(i, 1)[0];
-      usedChars.push(ch);
+      ch = input.splice(i, 1)[0]
+      usedChars.push(ch)
       if (input.length === 0) {
-        permArr.push(usedChars.slice());
+        permArr.push(usedChars.slice())
       }
-      main(input);
-      input.splice(i, 0, ch);
-      usedChars.pop();
+      main(input)
+      input.splice(i, 0, ch)
+      usedChars.pop()
     }
     return permArr
   }
-  return main(input);
+  return main(input)
 }
 
-function getUserId(e) {
+function getUserId (e) {
   return e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
 }
 
-async function getUserInfo(e) {
+async function getUserInfo (e) {
   const user_id = getUserId(e)
   let user_info = await findUser(user_id)
   if (!user_info) {
