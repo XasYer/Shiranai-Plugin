@@ -3,5 +3,7 @@ data/
 config/config/*
 models/db/data.db
 models/db/alter_proc.json
+models/todaySuperPower/db
+resources/todaySuperPower/data.json
 **/test.js
 !.gitignore

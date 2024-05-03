@@ -1,0 +1,33 @@
+# 是否启用功能
+enable: false
+
+# 相较于Shiranai-Plugin的路径,建议每次都不同，防止冲突
+path: "data/festival.json"
+
+# QQBot相关信息,建议name为简称
+QQBotInfo:
+  qq: 3889000138
+  name: "菜菜"
+
+# 需要野生机器人,没有就填false
+pushInfo:
+  qq: false
+  # 推送消息的群号
+  group:
+    - 123456789
+  # 可以引用野生发送的消息进行回复
+  # 引用回复的前缀 这里是 .
+  # !!!改动了这里需要重启
+  quoteReplyReg: '.'
+  #回复消息的前缀,为false或''时不添加
+  quoteReplyMsgPrefix: '来自开发者的消息:\r',
+  # 1: 不进行处理,直接发送,可能会被转换成md
+  # 2: 使用普通消息,不会转换成md,发送时会指定at
+  sendType: 2
+
+# 可以换成对应的节日,用于统计
+festivalReg: "^#?(五一(劳动节?日?)?|节日|五一节日?)快乐[!！~]?$"
+
+sendMsg:
+  - type: text
+    text: "祝大家节日快乐！"

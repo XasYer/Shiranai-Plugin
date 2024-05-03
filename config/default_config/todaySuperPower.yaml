@@ -1,0 +1,35 @@
+# 是否启用本功能
+enable: false
+
+# 野生Bot信息,用于审核评论以及推送明日超能力
+otherBotInfo:
+  # 野生Bot的QQ号
+  QQ: 123456789
+  # 野生Bot和QQbot需要在一个群里
+  group: 1111111111
+  # 建议将野生Bot设置为master,或者配置此项,野生bot在QQBot的id
+  QQBotID: 987654321:xxx
+
+# 官方Bot信息,用于审核评论以及推送明日超能力
+QQBotInfo:
+  # 官方Bot的QQ号
+  QQ: 987654321
+
+# 审核评论 需要野生Bot
+examineReviewInfo:
+  # 是否启用审核评论功能
+  enable: false
+
+# 明日超能力 需要野生Bot
+TomorrowSuperPowerInfo:
+  # 是否启用明日超能力推送功能
+  enable: true
+  # 什么时候进行推送
+  cron: "0 30 23 * * ?"
+
+# 启用此功能的适配器,达成条件才会开启
+adapter:
+  - key: "e.adapter_name"
+    value: "QQBot"
+  - key: "e.bot.config.markdown"
+    value: true

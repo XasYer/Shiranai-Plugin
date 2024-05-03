@@ -2,7 +2,7 @@ import Life from '../models/remake/life.js'
 import config from '../models/remake/config.js'
 import { findUser, createUser } from '../models/db/remake.js'
 import { setItem, saveItem } from '../models/remake/save.js'
-import { pluginName } from '../components/index.js'
+import { Version } from '../components/index.js'
 import { toButton, setTimer } from '../models/common.js'
 
 const cache = {}
@@ -289,7 +289,7 @@ export class remake extends plugin {
         event,
         summary
       }
-      const img = await e.runtime.render(pluginName, 'remake/html/index', data, { retType: 'base64' })
+      const img = await e.runtime.render(Version.pluginName, 'remake/html/index', data, { retType: 'base64' })
       await e.reply([segment.at(e.user_id), '\n', img])
       await saveItem(user_id)
       return true

@@ -1,0 +1,256 @@
+import fs from 'node:fs'
+
+/**
+ * 保存到文件持久化
+ */
+const path = 'data/festival.json'
+
+/**
+ * 懒得判断时间了
+ */
+const stats = (() => {
+  if (fs.existsSync(path)) {
+    return JSON.parse(fs.readFileSync(path, 'utf-8'))
+  } else {
+    return {
+      total: 0,
+      user: {},
+      msg: {},
+      err: {}
+    }
+  }
+})()
+
+/**
+ * 每次stats改变都会调用这个方法,自己看着改吧
+ */
+const saveStats = () => {
+  fs.writeFileSync(path, JSON.stringify(stats, null, 2), 'utf-8')
+}
+
+/**
+ * 不用管
+ */
+const ids = {
+  index: 0,
+  keys: {}
+}
+
+/**
+ * QQBotInfo: 机器人信息
+ */
+const QQBotInfo = {
+  qq: 3889000138,
+  name: '菜菜'
+}
+
+/**
+ * pushInfo: 如果有野生就填,推送想说的话
+ *           没有就填 qq: false
+ *           可以去path查看
+ */
+const pushInfo = {
+  qq: 2016486764,
+  group: [
+    749801098
+  ],
+  /**
+   * 可以引用野生发送的消息进行回复
+   * 引用回复的前缀 这里是 .
+   */
+  quoteReplyReg: /^#?\./,
+  /**
+   * 回复消息的前缀,为false或''时不添加
+   */
+  quoteReplyMsgPrefix: '来自开发者的消息:\r',
+  /**
+   * 1: 不进行处理,直接发送,可能会被转换成md
+   * 2: 使用普通消息,不会转换成md,发送时会指定at
+   */
+  sendType: 1
+}
+
+/**
+ * 什么节日
+ */
+const festivalReg = /^#?(五一(劳动节?日?)?|节日|五一节日?)快乐[!！~]?$/
+
+/**
+ * 简单过滤一下
+ */
+const forbiddenWord = ['你妈', 'nm', '滚', 'gun', 'sb', '妈的', '死', '牛魔', '操', '艹', '傻', '逼', '草']
+
+/**
+ * 一般不用管
+ */
+const talkToCaiMsg = `我想对${QQBotInfo.name}说`
+
+/**
+ * msg: 主动推送的消息
+ */
+const msg = [
+  `${QQBotInfo.name}祝大家五一假期快乐！要开开心心！健健康康哦!不要太劳累了！mua~ (>ω･* )ﾉ`,
+  segment.button([
+    { text: '节日快乐!', callback: '节日快乐' },
+    { text: talkToCaiMsg, input: talkToCaiMsg }
+  ])
+]
+
+/**
+ * 节日快乐的回复
+ * @param {*} userId 点击的用户
+ */
+const statsMsg = (userId) => [
+  `${QQBotInfo.name}希望你每天都快乐哦~\r\r>你是今天第${stats.user[userId].index}位和${QQBotInfo.name}说节日快乐！\r>你今天共和${QQBotInfo.name}说了${stats.user[userId].total}次节日快乐！\r>今天${QQBotInfo.name}一共收到了${stats.total}次节日快乐！`,
+  segment.button([
+    { text: '节日快乐!', callback: '节日快乐' },
+    { text: talkToCaiMsg, input: talkToCaiMsg }
+  ])]
+
+/**
+ * 不用管
+ */
+const talkToCaiReg = new RegExp(`^#?!!${talkToCaiMsg}`)
+
+export class example extends plugin {
+  constructor () {
+    super({
+      name: '一键群发',
+      dsc: '一键群发+统计数据',
+      event: 'message',
+      priority: -5000,
+      rule: [
+        {
+          reg: '^#一键群发$',
+          fnc: 'massSend'
+        },
+        {
+          reg: festivalReg,
+          fnc: 'happy'
+        },
+        {
+          reg: talkToCaiReg,
+          fnc: 'talkToCai'
+        },
+        {
+          reg: pushInfo.quoteReplyReg,
+          fnc: 'quoteReply'
+        }
+      ]
+    })
+  }
+
+  async massSend (e) {
+    if (!e.isMaster || e.adapter_name != 'QQBot') return
+    for (const i of e.bot.gl.keys()) {
+      const sendRet = await Bot[QQBotInfo.qq].pickGroup(i).sendMsg(msg)
+      if (sendRet.error.length) {
+        stats.err[i] = sendRet.error.map(m => m.message)
+      }
+    }
+  }
+
+  async happy (e) {
+    stats.total++
+    const user = e.user_id
+    if (!stats.user[user]) {
+      stats.user[user] = {
+        total: 0,
+        index: Object.keys(stats.user).length + 1
+      }
+    }
+    stats.user[user].total++
+    await e.reply(statsMsg(user))
+    saveStats()
+  }
+
+  async talkToCai (e) {
+    await e.reply(`${QQBotInfo.name}收到了哦~`)
+    const img = await e.member.getAvatarUrl()
+    const msg = e.message.map(i => {
+      if (i.type === 'text') {
+        i.text = i.text.replace(talkToCaiReg, '').trim()
+        if (forbiddenWord.some(s => i.text.includes(s)) || !i.text) {
+          return false
+        }
+        return i
+      } else if (i.type === 'image') {
+        return {
+          ...i,
+          file: i.url
+        }
+      } else {
+        return false
+      }
+    }).filter(Boolean)
+    if (!msg.length) return
+    ids.index++
+    ids.keys[ids.index] = {
+      msgId: e.message_id,
+      groupId: e.group_id,
+      timer: setTimeout(() => {
+        delete ids[e.user_id]
+      }, 1000 * 60 * 5)
+    }
+    if (!stats.msg[e.user_id]) {
+      stats.msg[e.user_id] = []
+    }
+    stats.msg[e.user_id].push(msg)
+    if (pushInfo.qq === false) return
+    for (const i of pushInfo.group) {
+      await Bot[pushInfo.qq].pickGroup(Number(i)).sendMsg([segment.image(img), `id: ${ids.index}\n`, e.user_id + '说：\n', ...msg])
+      await new Promise(resolve => setTimeout(resolve, 3000))
+    }
+    saveStats()
+  }
+
+  async quoteReply (e) {
+    if (!e.source || !e.isMaster) return
+    const msg = (await e.group.getChatHistory(e.source.seq, 1)).pop()
+    const sendMsg = e.message.map(i => {
+      if (i.type === 'text') {
+        return {
+          ...i,
+          text: i.text.trim().replace(pushInfo.quoteReplyReg, '')
+        }
+      } else if (i.type === 'image') {
+        return {
+          ...i,
+          file: i.url
+        }
+      } else {
+        return false
+      }
+    }).filter(Boolean)
+    if (sendMsg.length === 0) return e.reply('没有回复内容')
+    if (pushInfo.quoteReplyMsgPrefix) {
+      sendMsg.unshift({
+        type: 'text',
+        text: pushInfo.quoteReplyMsgPrefix
+      })
+    }
+    for (const i of msg.message) {
+      if (i.type === 'text') {
+        const regRet = /id:\s(.+)\s/.exec(i.text)
+        if (regRet) {
+          const id = Number(regRet[1])
+          if (ids.keys[id]) {
+            const { msgId, groupId } = ids.keys[id]
+            const bot = Bot[QQBotInfo.qq]
+            if (pushInfo.sendType === 1) {
+              sendMsg.unshift({
+                type: 'reply',
+                id: msgId
+              })
+              await bot.pickGroup(groupId).sendMsg(sendMsg)
+            } else {
+              await bot.sdk.sendGroupMessage(groupId.replace(`${QQBotInfo.qq}${bot.adapter.sep}`, ''), sendMsg, { id: msgId })
+            }
+            return e.reply('已回复~')
+          }
+        }
+      }
+    }
+    return e.reply('未回复成功,可能的原因: 超过五分钟')
+  }
+}

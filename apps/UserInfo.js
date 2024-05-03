@@ -5,7 +5,7 @@ import {
   findUsersSortedBy,
   countUsers,
   getDaysBetweenDates,
-  getNowDate,
+  getTime,
   generateRandomInteger
 } from '../models/index.js'
 import { toButton } from '../models/common.js'
@@ -112,7 +112,7 @@ export class game extends plugin {
       user_info.currency += i
       user_info.sign_count++
       user_info.sign_get += i
-      user_info.last_sign = getNowDate()
+      user_info.last_sign = getTime()
     }
     msg += `\r已签到${user_info.sign_count}天\r现在有${user_info.currency}个金币`
     await updateUser(user_id, user_info)

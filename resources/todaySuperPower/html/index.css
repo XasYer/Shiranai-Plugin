@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+#container {
+    width: 600px;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px;
+}
+
+.box:not(:first-child) {
+    border-top: 1px black dashed;
+}
+
+.avatar {
+    display: flex;
+}
+
+img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+svg {
+  width: 25px;
+  height: 25px;
+}
+
+span {
+  font-size: 15px;
+  color: gray;
+}
+.id {
+  height: 25px;
+  display: flex;
+  align-items: center;
+}

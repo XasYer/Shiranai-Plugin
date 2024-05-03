@@ -8,9 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "XasYer",
+  "license": "MIT",
   "dependencies": {
-    "pinyin": "3.0.0-alpha.7"
+    "pinyin": "3.0.0-alpha.7",
+    "level": "^8.0.1"
   }
 }

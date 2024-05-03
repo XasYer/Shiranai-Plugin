@@ -9,10 +9,10 @@ import Talent from './talent.js'
 import Achievement from './achievement.js'
 import Character from './character.js'
 
-import { pluginPath } from '../../components/index.js'
+import { Version } from '../../components/index.js'
 import { join } from 'path'
 
-const loadFile = name => JSON.parse(readFileSync(join(pluginPath, 'resources', 'remake', `${name}.json`), 'utf-8'))
+const loadFile = name => JSON.parse(readFileSync(join(Version.pluginPath, 'resources', 'remake', `${name}.json`), 'utf-8'))
 
 class Life {
   constructor (user_id) {
