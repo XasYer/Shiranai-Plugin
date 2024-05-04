@@ -11,3 +11,6 @@ git clone --depth=1 https://github.com/XasYer/Shiranai-Plugin.git ./plugins/Shir
 pnpm install --filter=Shiranai-Plugin
 ```
 
+## 注意事项
+
+1. 主要以`TRSS-Yunzai`以及`QQBot-Plugin`为主,若不是这两个插件,请自行查看是否可用

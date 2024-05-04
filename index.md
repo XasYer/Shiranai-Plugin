@@ -5,21 +5,22 @@ layout: home
 hero:
   name: "Shiranai-Plugin"
   # text: "希腊奶文档"
-  tagline: 专注于QQBot的游戏插件
+  tagline: 专注于QQBot的插件
+  image:
+    src: https://count.getloli.com/get/@XasYer-Shiranai-Plugin?theme=rule34
   actions:
     - theme: brand
       text: 快速开始
-      link: /start
+      link: /intro/start/
     - theme: alt
-      text: 游戏文档
-      link: /api-examples
+      text: 详细功能
+      link: /feature/minesweeper/
 
 features:
-  - title: 游戏
-    details: 致力于大部分经典游戏
-  - title: 按钮
-    details: 使用按钮进行交互
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 不如TRSS
+    details: 不如TRSS
+  - title: 不如TRSS
+    details: 不如TRSS
+  - title: 不如TRSS
+    details: 不如TRSS
 ---
-
