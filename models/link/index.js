@@ -121,7 +121,9 @@ class LinkGame {
     if (pictures[curRow][curCol].isEmpty || pictures[preRow][preCol].isEmpty) {
       return
     }
-    if (isNaN(preIndex)) {
+
+    // eslint-disable-next-line no-self-compare
+    if (preIndex !== preIndex) { // NaN
       return
     }
 
