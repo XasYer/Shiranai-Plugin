@@ -212,8 +212,8 @@ export default class TodaySuperPower {
       })
       msg.push(toButton([
         [
-          { text: '通过', callback: '#通过评论' + id + 1 },
-          { text: '删除', callback: '#删除评论' + id + 1 }
+          { text: '通过', callback: '#通过评论' + (id + 1) },
+          { text: '删除', callback: '#删除评论' + (id + 1) }
         ]
       ]))
     } else {
