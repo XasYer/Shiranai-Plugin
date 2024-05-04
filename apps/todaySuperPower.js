@@ -80,9 +80,10 @@ export class example extends plugin {
     const id = todaySuperPower.addReview(message, e.user_id, await e.friend.getAvatarUrl())
     if (Config.todaySuperPower.examineReviewInfo.enable) {
       await e.reply('评论成功,等待审核中~')
-      const bot = Bot[Config.todaySuperPower.otherBotInfo.QQ]
+      const bot = Bot[Config.todaySuperPower.otherBotInfo.QQ].pickGroup(Config.todaySuperPower.otherBotInfo.group)
       const msg = [segment.at(Number(Config.todaySuperPower.QQBotInfo.QQ)), ' #查看评论' + id]
-      await bot.pickGroup(Config.todaySuperPower.otherBotInfo.group).sendMsg(msg)
+      const { message_id } = await bot.sendMsg(msg)
+      await bot.recallMsg(message_id)
     } else {
       await e.reply('评论成功~')
       todaySuperPower.setReview('pass', id - 1)

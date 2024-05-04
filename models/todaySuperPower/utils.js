@@ -36,9 +36,10 @@ export default class TodaySuperPower {
     })
     if (Config.todaySuperPower.TomorrowSuperPowerInfo.enable) {
       schedule.scheduleJob(Config.todaySuperPower.TomorrowSuperPowerInfo.cron, async () => {
-        const bot = Bot[Config.todaySuperPower.otherBotInfo.QQ]
+        const bot = Bot[Config.todaySuperPower.otherBotInfo.QQ].pickGroup(Config.todaySuperPower.otherBotInfo.group)
         const msg = [segment.at(Number(Config.todaySuperPower.QQBotInfo.QQ)), ' #明日超能力']
-        await bot.pickGroup(Config.todaySuperPower.otherBotInfo.group).sendMsg(msg)
+        const { message_id } = await bot.sendMsg(msg)
+        await bot.recallMsg(message_id)
       })
     }
   }
@@ -205,13 +206,14 @@ export default class TodaySuperPower {
           select: {
             press: '按下',
             notPress: '不按'
-          }[this.todaySuperPower.user[i.userId]] || '未选择'
+          }[this.todaySuperPower.user[i.userId]] || '未选择',
+          show: true
         }
       })
       msg.push(toButton([
         [
-          { text: '通过', callback: '#通过评论' + id },
-          { text: '删除', callback: '#删除评论' + id }
+          { text: '通过', callback: '#通过评论' + id + 1 },
+          { text: '删除', callback: '#删除评论' + id + 1 }
         ]
       ]))
     } else {
@@ -225,7 +227,8 @@ export default class TodaySuperPower {
           select: {
             press: '按下',
             notPress: '不按'
-          }[this.todaySuperPower.user[i.userId]] || '未选择'
+          }[this.todaySuperPower.user[i.userId]] || '未选择',
+          show: i.show
         }
       })
       msg.push(toButton([
@@ -235,7 +238,13 @@ export default class TodaySuperPower {
         ]
       ]))
     }
-    const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', renderData, { retType: 'base64' })
+    const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', renderData, {
+      retType: 'base64',
+      beforeRender: ({ data }) => {
+        data.pageGotoParams.waitUntil = 'load'
+        return data
+      }
+    })
     msg.unshift(img)
     return msg
   }

@@ -11,6 +11,7 @@
 <body style="transform:scale(0.7)">
     <div id="container">
     {{each review i}}
+    {{if i.show}}
     <div class="box">
         <div class="id">{{i.id}}&nbsp;&nbsp;&nbsp;&nbsp;<span>TA的选择为: {{i.select}} </span>&nbsp;&nbsp;&nbsp;&nbsp;
         <svg t="1711984577321" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -32,6 +33,7 @@
             </div>
         </div>
         </div>
+        {{/if}}
         {{/each}}
 </div>
 </body>
