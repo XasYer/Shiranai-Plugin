@@ -191,7 +191,6 @@ export default class TodaySuperPower {
    * @returns msg
    */
   async getReviewImg (e, id = -1, isMaster = false) {
-    if (!this.todaySuperPower.review.some(i => i.show)) return '还没有评论哦~'
     const msg = []
     const renderData = {}
     if (id != -1 && isMaster) {
@@ -217,6 +216,7 @@ export default class TodaySuperPower {
         ]
       ]))
     } else {
+      if (!this.todaySuperPower.review.some(i => i.show)) return '还没有评论哦~'
       renderData.review = this.todaySuperPower.review.map(i => {
         return {
           id: i.nickname,
