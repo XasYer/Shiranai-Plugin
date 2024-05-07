@@ -4,6 +4,13 @@ import { Config, Version } from '../components/index.js'
 const todaySuperPower = new TodaySuperPower()
 todaySuperPower.init()
 
+const reg = {
+  todaySuperPower: /^#?(刷新)?[今昨明][日天]超能力$/,
+  action: /^#?(不按|按下)$/,
+  review: /^#?评论\s*(.*)$/,
+  lookReview: /^#?(?:一键)?(点赞|点踩|查看|通过|删除)(?:待审核?)?评论\s*([0-9]*)$/
+}
+
 export class example extends plugin {
   constructor () {
     super({
@@ -11,24 +18,10 @@ export class example extends plugin {
       dsc: '今日超能力',
       event: 'message',
       priority: 1,
-      rule: [
-        {
-          reg: '^#?(刷新)?[今昨明][日天]超能力$',
-          fnc: 'todaySuperPower'
-        },
-        {
-          reg: '^#?(不按|按下)$',
-          fnc: 'action'
-        },
-        {
-          reg: '^#?评论',
-          fnc: 'review'
-        },
-        {
-          reg: /^#?(点赞|点踩|查看|通过|删除)评论\s*[0-9]*$/,
-          fnc: 'lookReview'
-        }
-      ]
+      rule: Object.keys(reg).map(key => ({
+        reg: reg[key],
+        fnc: key
+      }))
     })
   }
 
@@ -93,19 +86,19 @@ export class example extends plugin {
 
   async lookReview (e) {
     if (!checkEnable(e)) return false
-    const reg = /^#?(点赞|举报|点踩|查看|通过|删除)评论\s*([0-9]*)$/
-    const regRet = reg.exec(e.msg)
+    const regRet = reg.lookReview.exec(e.msg)
     const id = regRet[2] ? regRet[2] - 1 : -1
+    const isMaster = e.isMaster || e.user_id == Config.todaySuperPower.otherBotInfo.QQBotID
     if (regRet[1] == '查看') {
-      const isMaster = e.isMaster || e.user_id == Config.todaySuperPower.otherBotInfo.QQBotID
       const msg = await todaySuperPower.getReviewImg(e, id, isMaster)
       return await e.reply(msg)
     } else if (regRet[1] == '通过') {
-      if (!e.isMaster) return true
-      const msg = todaySuperPower.setReview('pass', id)
+      if (!isMaster) return true
+      const key = e.msg.includes('一键') ? 'passAll' : 'pass'
+      const msg = todaySuperPower.setReview(key, id)
       await e.reply(msg, true, { recallMsg: 30 })
     } else if (regRet[1] == '删除') {
-      if (!e.isMaster) return true
+      if (!isMaster) return true
       const msg = todaySuperPower.setReview('delete', id)
       await e.reply(msg, true, { recallMsg: 30 })
     } else {

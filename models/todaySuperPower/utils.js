@@ -139,6 +139,7 @@ export default class TodaySuperPower {
       nickname: id,
       message,
       show: false,
+      del: false,
       like: {},
       dislike: {},
       report: {}
@@ -170,12 +171,23 @@ export default class TodaySuperPower {
           msg = `${tip}成功~`
         }
         break
+      case 'passAll':
+        this.todaySuperPower.review.map(i => {
+          if (!i.del) {
+            i.show = true
+          }
+          return i
+        })
+        msg = '已全部通过~'
+        break
       case 'pass':
         this.todaySuperPower.review[id].show = true
+        this.todaySuperPower.review[id].del = false
         msg = '已通过~'
         break
       case 'delete':
         this.todaySuperPower.review[id].show = false
+        this.todaySuperPower.review[id].del = true
         msg = '已删除~'
         break
       default:
@@ -193,7 +205,30 @@ export default class TodaySuperPower {
   async getReviewImg (e, id = -1, isMaster = false) {
     const msg = []
     const renderData = {}
-    if (id != -1 && isMaster) {
+    if (e.msg.includes('待审') && isMaster) {
+      const data = this.todaySuperPower.review.filter(i => (!i.show && !i.del))
+      if (data.length == 0) return '没有待审评论哦~'
+      renderData.review = data.map(i => {
+        return {
+          id: i.nickname,
+          avatar: i.avatar,
+          likeTotal: Object.keys(i.like).length,
+          dislikeTotal: Object.keys(i.dislike).length,
+          message: this.encodeHtml(i.message),
+          select: {
+            press: '按下',
+            notPress: '不按'
+          }[this.todaySuperPower.user[i.userId]] || '未选择',
+          show: true
+        }
+      })
+      msg.push(toButton([
+        [
+          { text: '一键通过', callback: '#一键通过评论' },
+          { text: '指定删除', input: '#删除评论' }
+        ]
+      ]))
+    } else if (id != -1 && isMaster) {
       if (!this.todaySuperPower.review[id]) return '没有这条评论~'
       renderData.review = [this.todaySuperPower.review[id]].map(i => {
         return {
