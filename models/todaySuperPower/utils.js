@@ -326,8 +326,8 @@ export default class TodaySuperPower {
     return msg
   }
 
-  getTomorrowMsg (isMaster = false) {
-    const data = this.getTomorrowSuperPower()
+  async getTomorrowMsg (isMaster = false) {
+    const data = await this.getTomorrowSuperPower()
     const msg = this.getMsg(data, '')
     if (isMaster) {
       msg.push(toButton([

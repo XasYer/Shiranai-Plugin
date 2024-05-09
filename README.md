@@ -1,13 +1,13 @@
 # Shiranai-Plugin
 Shiranai-Plugin for TRSS-Yunzai & QQBot-Plugin
 
-## TODO
+<!-- ## TODO
 
 |游戏名|可能实现的方式|
 | - | - |
 | 找不同 | 发送两遍按钮 |
 | 俄罗斯方块 | 两排(不一定会实现) |
-| 象棋 | 上下 |
+| 象棋 | 上下 | -->
 
 ## 鸣谢 (排名不分先后)
 

@@ -39,7 +39,7 @@ export class example extends plugin {
       if (e.msg.includes('刷新') && e.isMaster) {
         await todaySuperPower.getTomorrowSuperPower(true)
       }
-      msg = todaySuperPower.getTomorrowMsg(e.isMaster)
+      msg = await todaySuperPower.getTomorrowMsg(e.isMaster)
     }
     return await e.reply(msg)
   }

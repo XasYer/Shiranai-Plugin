@@ -123,7 +123,7 @@ function readFile (path, options = {}) {
     switch (ext) {
       case '.json':
         return JSON.parse(data)
-      case 'yaml':
+      case '.yaml':
       case '.yml':
         return YAML.parse(data)
       default:
