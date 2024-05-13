@@ -3,6 +3,7 @@ import chokidar from 'chokidar'
 import fs from 'node:fs'
 import YamlReader from './YamlReader.js'
 import Version from './Version.js'
+import _ from 'lodash'
 
 class Config {
   constructor () {
@@ -22,6 +23,16 @@ class Config {
     for (let file of files) {
       if (!fs.existsSync(`${path}${file}`)) {
         fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
+      } else {
+        const config = YAML.parse(fs.readFileSync(`${path}${file}`, 'utf8'))
+        const defConfig = YAML.parse(fs.readFileSync(`${pathDef}${file}`, 'utf8'))
+        const { differences, result } = this.mergeObjectsWithPriority(config, defConfig)
+        if (differences) {
+          fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
+          for (const key in result) {
+            this.modify(file.replace('.yaml', ''), key, result[key])
+          }
+        }
       }
       this.watch(`${path}${file}`, file.replace('.yaml', ''), 'config')
     }
@@ -94,6 +105,31 @@ class Config {
     let path = `${Version.pluginPath}/config/${type}/${name}.yaml`
     new YamlReader(path).set(key, value)
     delete this.config[`${type}.${name}`]
+  }
+
+  mergeObjectsWithPriority (objA, objB) {
+    let differences = false
+
+    function customizer (objValue, srcValue, key, object, source, stack) {
+      if (_.isArray(objValue) && _.isArray(srcValue)) {
+        return objValue
+      } else if (_.isPlainObject(objValue) && _.isPlainObject(srcValue)) {
+        if (!_.isEqual(objValue, srcValue)) {
+          return _.mergeWith({}, objValue, srcValue, customizer)
+        }
+      } else if (!_.isEqual(objValue, srcValue)) {
+        differences = true
+        return objValue !== undefined ? objValue : srcValue
+      }
+      return objValue !== undefined ? objValue : srcValue
+    }
+
+    let result = _.mergeWith({}, objA, objB, customizer)
+
+    return {
+      differences,
+      result
+    }
   }
 }
 export default new Config()

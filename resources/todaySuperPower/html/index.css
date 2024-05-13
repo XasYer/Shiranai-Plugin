@@ -5,17 +5,20 @@
 }
 
 #container {
-    width: 600px;
+  width: 980px;
+  column-count: 3;
+  column-gap: 10px;
 }
 
 .box {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 10px;
-}
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px;
+  width: 300px;
+  border: 1px black dashed;
 
-.box:not(:first-child) {
-    border-top: 1px black dashed;
+  break-inside: avoid;
+  margin-bottom: 5px;
 }
 
 .avatar {

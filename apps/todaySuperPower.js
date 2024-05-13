@@ -1,5 +1,7 @@
 import TodaySuperPower from '../models/todaySuperPower/utils.js'
 import { Config, Version } from '../components/index.js'
+import fetch from 'node-fetch'
+import { toButton } from '../models/common.js'
 
 const todaySuperPower = new TodaySuperPower()
 todaySuperPower.init()
@@ -27,6 +29,17 @@ export class example extends plugin {
 
   async todaySuperPower (e) {
     if (!checkEnable(e)) return false
+    if (Config.todaySuperPower.api.enable) {
+      try {
+        const data = await fetch(Config.todaySuperPower.api.url + '/get').then(res => res.json())
+        const msg = todaySuperPower.getTodayMsg('', data)
+        return await e.reply(msg)
+      } catch (error) {
+        console.log(error)
+        return await e.reply('获取今日超能力失败~')
+      }
+    }
+
     let msg
     if (e.msg.includes('今')) {
       if (e.msg.includes('刷新') && e.isMaster) {
@@ -58,7 +71,16 @@ export class example extends plugin {
           oppositeAction: 'press',
           tip: '不按'
         }
-
+    if (Config.todaySuperPower.api.enable) {
+      try {
+        const res = await fetch(Config.todaySuperPower.api.url + `/action/${data.action}/${e.user_id}`).then(res => res.json())
+        const msg = todaySuperPower.getTodayMsg(data.tip, res)
+        return await e.reply(msg)
+      } catch (error) {
+        console.log(error)
+        return await e.reply('获取今日超能力失败~')
+      }
+    }
     const select = todaySuperPower.setAction(e.user_id, data)
     const msg = todaySuperPower.getTodayMsg(select)
     return await e.reply(msg)
@@ -69,6 +91,22 @@ export class example extends plugin {
     const message = e.msg.replace(/#?评论\s*/, '')
     if (!message) {
       return false
+    }
+    if (Config.todaySuperPower.api.enable) {
+      try {
+        const res = await fetch(Config.todaySuperPower.api.url + '/review', {
+          method: 'POST',
+          body: JSON.stringify({
+            message,
+            userId: e.user_id,
+            avatar: await e.friend.getAvatarUrl()
+          })
+        }).then(res => res.json())
+        return await e.reply(res.message)
+      } catch (error) {
+        console.log(error)
+        return await e.reply('获取今日超能力失败~')
+      }
     }
     const id = todaySuperPower.addReview(message, e.user_id, await e.friend.getAvatarUrl())
     if (Config.todaySuperPower.examineReviewInfo.enable) {
@@ -90,6 +128,27 @@ export class example extends plugin {
     const id = regRet[2] ? regRet[2] - 1 : -1
     const isMaster = e.isMaster || e.user_id == Config.todaySuperPower.otherBotInfo.QQBotID
     if (regRet[1] == '查看') {
+      if (Config.todaySuperPower.api.enable) {
+        try {
+          const res = await fetch(Config.todaySuperPower.api.url + '/lookReview').then(res => res.json())
+          const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', { review: res.data }, {
+            retType: 'base64',
+            beforeRender: ({ data }) => {
+              data.pageGotoParams.waitUntil = 'load'
+              return data
+            }
+          })
+          return await e.reply([img, toButton([
+            [
+              { text: '点赞评论', input: '/点赞评论' },
+              { text: '点踩评论', input: '/点踩评论' }
+            ]
+          ])])
+        } catch (error) {
+          console.log(error)
+          return await e.reply('获取今日超能力失败~')
+        }
+      }
       const msg = await todaySuperPower.getReviewImg(e, id, isMaster)
       return await e.reply(msg)
     } else if (regRet[1] == '通过') {
@@ -107,6 +166,15 @@ export class example extends plugin {
         点赞: 'like',
         点踩: 'dislike'
       }[tip]
+      if (Config.todaySuperPower.api.enable) {
+        try {
+          const res = await fetch(Config.todaySuperPower.api.url + `/review/${type}/${+id + 1}/${e.user_id}`).then(res => res.json())
+          return await e.reply(res.message)
+        } catch (error) {
+          console.log(error)
+          return await e.reply('获取今日超能力失败~')
+        }
+      }
       const msg = todaySuperPower.setReview(type, id, e.user_id, tip)
       await e.reply(msg, true, { recallMsg: 30 })
     }
