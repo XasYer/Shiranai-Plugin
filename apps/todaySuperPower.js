@@ -100,7 +100,10 @@ export class example extends plugin {
             message,
             userId: e.user_id,
             avatar: await e.friend.getAvatarUrl()
-          })
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }).then(res => res.json())
         return await e.reply(res.message)
       } catch (error) {
