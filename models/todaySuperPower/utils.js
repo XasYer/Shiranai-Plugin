@@ -277,7 +277,11 @@ export default class TodaySuperPower {
     const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', renderData, {
       retType: 'base64',
       beforeRender: ({ data }) => {
-        data.pageGotoParams.waitUntil = 'load'
+        if (data.pageGotoParams) {
+          data.pageGotoParams.waitUntil = 'load'
+        } else {
+          data.pageGotoParams = { waitUntil: 'load' }
+        }
         return data
       }
     })
@@ -288,7 +292,7 @@ export default class TodaySuperPower {
   getMsg (superPower, select) {
     const tip = select ? `***\r>你选择了${select}\r\r` : ''
     return [
-        `\r#你会按下这个按钮吗?\r${superPower.will}\r\r#但是:\r ${superPower.but}\r\r${tip}>已有${superPower.press}人选择按下,${superPower.notPress}人选择不按`
+      `\r#你会按下这个按钮吗?\r${superPower.will}\r\r#但是:\r ${superPower.but}\r\r${tip}>已有${superPower.press}人选择按下,${superPower.notPress}人选择不按`
     ]
   }
 
