@@ -137,7 +137,11 @@ export class example extends plugin {
           const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', { review: res.data }, {
             retType: 'base64',
             beforeRender: ({ data }) => {
-              data.pageGotoParams.waitUntil = 'load'
+              if (data.pageGotoParams) {
+                data.pageGotoParams.waitUntil = 'load'
+              } else {
+                data.pageGotoParams = { waitUntil: 'load' }
+              }
               return data
             }
           })
