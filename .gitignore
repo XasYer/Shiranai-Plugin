@@ -1,5 +1,6 @@
 node_modules/
-data/
+data/db/level/*
+data/db/sqlite/*
 config/config/*
 models/db/data.db
 models/db/alter_proc.json

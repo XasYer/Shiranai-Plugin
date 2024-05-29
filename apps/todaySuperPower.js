@@ -1,10 +1,10 @@
-import TodaySuperPower from '../models/todaySuperPower/utils.js'
+import TodaySuperPower from '../models/todaySuperPower/index.js'
 import { Config, Version } from '../components/index.js'
 import fetch from 'node-fetch'
 import { toButton } from '../models/common.js'
 
 const todaySuperPower = new TodaySuperPower()
-todaySuperPower.init()
+await todaySuperPower.init()
 
 export const app = {
   id: 'todaySuperPower',

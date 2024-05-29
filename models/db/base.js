@@ -1,15 +1,24 @@
-import { dirname, join, resolve } from 'path'
-import { fileURLToPath } from 'url'
-import TaskQueue from './TaskQueue.js'
-import { Sequelize, DataTypes, Op } from 'sequelize'
 import fs from 'node:fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+import TaskQueue from './TaskQueue.js'
+import { Version } from '../../components/index.js'
+import { Sequelize, DataTypes, Op } from 'sequelize'
+import { moveFileOrFolder, mkdirSync } from '../common.js'
+
+mkdirSync('data', 'db', 'sqlite')
+
+const dataPath = join(Version.pluginPath, 'data', 'db', 'sqlite', 'data.db')
+
+// 移动旧data.db文件到新路径
+moveFileOrFolder(join(Version.pluginPath, 'models', 'db', 'data.db'), dataPath)
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: resolve(__dirname, 'data.db'),
+  storage: dataPath,
   logging: false
 })
 

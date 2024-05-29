@@ -154,6 +154,67 @@ function writeFile (path, data) {
   }
 }
 
+/**
+ * 移动文件或文件夹到指定路径
+ * @param {string} sourcePath 原路径
+ * @param {string} targetPath 新路径
+ */
+function moveFileOrFolder (sourcePath, targetPath) {
+  // 判断源文件或文件夹是否存在
+  if (!fs.existsSync(sourcePath)) {
+    return
+  }
+  // 获取源文件或文件夹的状态信息
+  const stats = fs.statSync(sourcePath)
+
+  if (stats.isFile()) {
+    // 如果是文件，则移动文件
+    fs.renameSync(sourcePath, targetPath)
+  } else if (stats.isDirectory()) {
+    // 如果是文件夹，则递归移动文件夹中的内容
+    moveFolderContents(sourcePath, targetPath)
+  }
+}
+
+/**
+ * 移动文件夹到指定路径
+ * @param {string} sourceDir 原路径
+ * @param {string} targetDir 新路径
+ */
+function moveFolderContents (sourceDir, targetDir) {
+  // 创建目标文件夹
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir)
+  }
+
+  // 读取源文件夹中的内容
+  const files = fs.readdirSync(sourceDir)
+
+  // 遍历文件夹中的每个文件或子文件夹
+  files.forEach(file => {
+    const sourcePath = join(sourceDir, file)
+    const targetPath = join(targetDir, file)
+    moveFileOrFolder(sourcePath, targetPath)
+  })
+
+  // 移动完所有文件后，删除源文件夹
+  fs.rmdirSync(sourceDir)
+}
+
+/**
+ * 创建文件夹
+ * @param  {...string} dirPath 路径
+ */
+function mkdirSync (...dirPath) {
+  let path = Version.pluginPath
+  for (const i of dirPath) {
+    path = join(path, i)
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path)
+    }
+  }
+}
+
 export {
   getDaysBetweenDates,
   getTime,
@@ -162,5 +223,8 @@ export {
   setTimer,
   sleep,
   readFile,
-  writeFile
+  writeFile,
+  moveFileOrFolder,
+  moveFolderContents,
+  mkdirSync
 }
