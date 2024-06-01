@@ -8,7 +8,7 @@ import {
   getTime,
   generateRandomInteger
 } from '../models/index.js'
-import { toButton } from '../models/common.js'
+import { toButton } from '../models/button/index.js'
 
 export const app = {
   id: 'UserInfo',
@@ -32,7 +32,7 @@ export const rule = {
         [
           { text: '赚金币', callback: '/数字游戏' }
         ]
-      ])])
+      ], 'QQBot')])
     }
   },
   sign: {
@@ -93,7 +93,7 @@ export const rule = {
       return await e.reply([
         segment.at(user_id),
               `\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r${msg}`,
-              toButton(buttons)
+              toButton(buttons, 'QQBot')
       ])
     }
   },
@@ -172,7 +172,7 @@ export const rule = {
         ]
       ]
       e.toQQBotMD = true
-      return await e.reply([msg, toButton(buttons)])
+      return await e.reply([msg, toButton(buttons, 'QQBot')])
     }
   },
   rob: {
@@ -289,7 +289,7 @@ export const rule = {
       return e.reply([
         segment.at(user_id), '\r', msg,
               `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r>剩余金币: ${user_info.currency}\r带上id为指定抢,不带为随机抢\r每60秒只能抢一次哦`,
-              toButton(buttons)
+              toButton(buttons, 'QQBot')
       ])
     }
   },
@@ -378,7 +378,7 @@ export const rule = {
           { text: '金币排行', callback: '/金币排行' }
         ]
       ]
-      return await e.reply([segment.at(user_id), '\r', msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}\r奖池:-20金币到20金币\r每60秒只能抽一次哦`, toButton(buttons)])
+      return await e.reply([segment.at(user_id), '\r', msg, `\r\r>ID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}\r奖池:-20金币到20金币\r每60秒只能抽一次哦`, toButton(buttons, 'QQBot')])
     }
   },
   rename: {
@@ -423,7 +423,7 @@ export const rule = {
               { text: '抽金币', callback: '/金币抽奖' },
               { text: '送金币', input: '/送金币' }
             ]
-          ])
+          ], 'QQBot')
       ])
     }
   }

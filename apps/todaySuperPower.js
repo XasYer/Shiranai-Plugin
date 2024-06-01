@@ -1,7 +1,7 @@
 import TodaySuperPower from '../models/todaySuperPower/index.js'
 import { Config, Version } from '../components/index.js'
 import fetch from 'node-fetch'
-import { toButton } from '../models/common.js'
+import { toButton } from '../models/button/index.js'
 
 const todaySuperPower = new TodaySuperPower()
 await todaySuperPower.init()
@@ -144,7 +144,7 @@ export const rule = {
                 { text: '点赞评论', input: '/点赞评论' },
                 { text: '点踩评论', input: '/点踩评论' }
               ]
-            ])])
+            ], 'QQBot')])
           } catch (error) {
             console.log(error)
             return await e.reply('获取今日超能力失败~')

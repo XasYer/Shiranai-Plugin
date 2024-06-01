@@ -1,5 +1,5 @@
 import MineSweeper from '../models/boardgame/minesweeper.js'
-import { toButton } from '../models/common.js'
+import { toButton, extLetterToNumber } from '../models/button/index.js'
 
 // 多少行
 const row = 5
@@ -19,9 +19,6 @@ export const rule = {
   mine: {
     reg: /^[#/]扫雷(轻量版?|按钮版?)?\d*$/,
     fnc: async e => {
-      if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
-        return false
-      }
       let game = MineGame[e.group_id]
       if (game) {
         e.msg = '挖开 0,0'
@@ -40,70 +37,73 @@ export const rule = {
         const button = []
         let y = 1
         for (let k = 0; k < i.length; k++) {
-          button.push({ text: ' ', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
+          button.push({ text: ' ', input: `挖开 ${x},${y}`, style: 1, QQBot: { render_data: { style: 1 } } })
           y++
         }
         x++
         buttons.push(button)
       }
-      return await e.reply(['请点击按钮,可多选', toButton(buttons)])
+      const msg = e.adapter_name === 'QQBot' ? '请点击按钮,可多选' : '使用 “挖开”+位置 挖开方块，使用 “标记”+位置 标记方块，\n可同时加多个位置，如：“挖开 A1 B2”'
+      return await e.reply([msg, await toButton(buttons, e.adapter_name)])
     }
   },
   open: {
-    reg: /^((\s*标记\s*)?挖开 \d+,\d+\s*(标记\s*)?)+$/,
+    reg: /^((挖开|标记)\s*(\d+,\d+|[A-Za-z0-9]|\s)*)+$/,
     fnc: async e => {
-      if (e.bot.adapter.name != 'QQBot' && !e.bot.config?.markdown) {
-        return false
-      }
       let game = MineGame[e.group_id]
       if (!game) {
-        return e.reply(['游戏未开始', toButton([[{ text: '开始游戏', callback: '#扫雷' }]])])
+        return e.reply(['游戏未开始', await toButton([[{ text: '开始游戏', callback: '#扫雷' }]], e.adapter_name, { defRetType: 'text' })])
       }
-      const reg = /挖开 \d+,\d+\s*/g
-      const mark = e.msg.includes('标记')
+      const target = e.msg.includes('标记') ? 'mark' : 'open'
       let log = ''
-      const target = e.msg.match(reg).map(i => {
-        const msg = i.replace('挖开 ', '').trim()
-        const [x, y] = msg.split(',')
-        if (log) log += ' '
-        log += `${x},${y}`
-        return { x: Number(x), y: Number(y) }
-      })
-      let content = `请点击按钮,可多选\r[点击切换标记模式或者在文字最后加上标记] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('标记')}&reply=false&enter=false)\r你的选择为: ${log}`
       let state = 0; let mine
-      for (const { x, y } of target) {
-        const ret = game[mark ? 'mark' : 'open'](x - 1, y - 1)
-        if (ret == 2 || ret == 3) {
-          state = ret
-          mine = x + ',' + y
-          break
+      for (const i of e.msg.replace(/(挖开|标记)/g, '').split(' ')) {
+        if (!i) continue
+        const [x, y] = i.includes(',') ? i.split(',') : extLetterToNumber(i)
+        if (x && y) {
+          const ret = game[target](+x - 1, +y - 1)
+          if (log) log += ' '
+          log += `${x},${y}`
+          if (ret == 2 || ret == 3) {
+            state = ret
+            mine = x + ',' + y
+            break
+          }
         }
       }
       const buttons = []
       let x = 1
-      content = {
-        3: `你输了 ${mine}是雷  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)`,
-        2: `你赢了!!  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)`
-      }[state] || content
+      const content = (() => {
+        let msg = ''
+        if (state == 3) {
+          msg = `你输了 ${mine}是雷`
+          return e.adapter_name === 'QQBot' ? msg + `  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)` : msg
+        } else if (state == 2) {
+          msg = '你赢了!!'
+          return e.adapter_name === 'QQBot' ? msg + `  [再来一局] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('#扫雷')}&reply=false&enter=true)` : msg
+        } else {
+          return e.adapter_name === 'QQBot' ? `[点击切换标记模式或者在文字最后加上标记] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('标记')}&reply=false&enter=false)` : ''
+        }
+      })()
       for (const i of game.tiles) {
         const button = []
         let y = 1
         for (const k of i) {
           if (state == 3 || state == 2) {
             if (k.isMine) {
-              button.push({ text: '雷', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
+              button.push({ text: '雷', input: `挖开 ${x},${y}`, style: 0, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
             } else if (k.isOpen) {
-              button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
+              button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, style: 0, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
             } else {
-              button.push({ text: ' ', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 1 } } })
+              button.push({ text: ' ', input: `挖开 ${x},${y}`, permission: 'xxx', style: 1, QQBot: { render_data: { style: 1 } } })
             }
           } else {
             if (k.isOpen) {
-              button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
+              button.push({ text: (k.count || ' ') + '', input: `挖开 ${x},${y}`, style: 0, permission: 'xxx', QQBot: { render_data: { style: 0 } } })
             } else if (k.marked) {
-              button.push({ text: '★', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
+              button.push({ text: '★', input: `挖开 ${x},${y}`, style: 1, QQBot: { render_data: { style: 1 } } })
             } else {
-              button.push({ text: ' ', input: `挖开 ${x},${y}`, QQBot: { render_data: { style: 1 } } })
+              button.push({ text: ' ', input: `挖开 ${x},${y}`, style: 1, QQBot: { render_data: { style: 1 } } })
             }
           }
           y++
@@ -114,7 +114,7 @@ export const rule = {
       if (state == 3 || state == 2) {
         MineGame[e.group_id] = null
       }
-      return await e.reply([content, toButton(buttons)])
+      return await e.reply([content, await toButton(buttons, e.adapter_name)])
     }
   }
 }

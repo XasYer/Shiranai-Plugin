@@ -2,7 +2,7 @@ const config = {
   rows: 5,
   cols: 10,
   level: 0,
-  leftTime: 240
+  leftTime: 360
 }
 
 class LinkGame {

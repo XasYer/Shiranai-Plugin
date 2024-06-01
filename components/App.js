@@ -33,6 +33,12 @@ export default class {
           rule
         })
       }
+
+      accept (e) {
+        if (!Version.isTrss) {
+          e.adapter_name = e.adapter || 'ICQQ'
+        }
+      }
     }
 
     for (const { name, reg, fnc, cfg } of this.apps) {

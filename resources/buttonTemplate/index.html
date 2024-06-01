@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{pluResPath}}buttonTemplate/index.css">
+    <title>按钮</title>
+</head>
+
+<body>
+    <div id="container">
+        <!-- <div class="row-header">
+            <div class="item-header item-header-2"> </div>
+            <div class="item-header"> 1</div>
+            <div class="item-header"> 2</div>
+            <div class="item-header"> 3</div>
+            <div class="item-header"> 4</div>
+            <div class="item-header"> 5</div>
+            <div class="item-header"> 6</div>
+            <div class="item-header"> 7</div>
+            <div class="item-header"> 8</div>
+            <div class="item-header"> 9</div>
+            <div class="item-header"> 10</div>
+        </div> -->
+
+        {{each buttons button }}
+        <div class="row">
+            {{each button item index}}
+            <div class="item">
+                <div class="content  color-{{item.style || 0}}">
+                    {{item.text}}
+                    <div class="index">{{index+1}}</div>
+                </div>
+            </div>
+            {{/each}}
+
+        </div>
+        {{/each}}
+
+
+    </div>
+
+    <script>
+        function generateArray(length) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = [];
+            let currentIndex = 0;
+
+            while (result.length < length) {
+                let value = '';
+                let tempIndex = currentIndex;
+
+                do {
+                    value = alphabet[tempIndex % 26] + value;
+                    tempIndex = Math.floor(tempIndex / 26) - 1;
+                } while (tempIndex >= 0);
+
+                result.push(value);
+                currentIndex++;
+            }
+
+            return result;
+        }
+        // 动态设置container width
+        const rows = document.querySelectorAll('.row');
+
+        const container = document.getElementById('container');
+
+        // 初始宽度
+        let maxWidth = container.offsetWidth - 37
+
+        function setRowsWidth() {
+            rows.forEach(row => {
+                const items = row.querySelectorAll('.item');
+
+                const margin = 5
+
+                // 一行的宽度
+                const rowWidth = items.length * 50
+                // 看看有没有超过最大宽度
+                const totalWidth = maxWidth + (rowWidth > maxWidth ? (rowWidth - maxWidth) : 0)
+                if (totalWidth > maxWidth) {
+                    maxWidth = totalWidth
+                    // 超过了最大宽度重新设置
+                    setRowsWidth()
+                    return
+                }
+
+                // 计算每一个格子的宽度
+                const itemWidth = (totalWidth - margin * (items.length - 1)) / items.length;
+
+                items.forEach(item => {
+                    item.style.width = `${itemWidth}px`;
+                });
+            });
+        }
+        setRowsWidth()
+        container.style.width = `${maxWidth + 37}px`
+
+        const arr = generateArray(rows.length)
+
+        // 再遍历一次rows
+        rows.forEach(i => {
+            // 创建一个新的div元素
+            const div = document.createElement('div');
+
+            // 类名
+            div.className = 'item-header item-header-1';
+
+            div.textContent = arr.shift();
+
+            // 将这个新的div元素插入到当前.row元素的最前面
+            i.insertBefore(div, i.firstChild);
+
+        })
+    </script>
+</body>
+
+</html>

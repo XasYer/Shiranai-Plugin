@@ -1,4 +1,4 @@
-import { toButton } from '../common.js'
+import { toButton } from '../button/index.js'
 
 export default class TicTacToe {
   constructor (user_id) {
@@ -17,7 +17,7 @@ export default class TicTacToe {
     }
   }
 
-  toButton (add) {
+  toButton (adapterName, add = []) {
     const buttons = []
     const button = []
     let len = 0
@@ -29,6 +29,7 @@ export default class TicTacToe {
       }
       if (i.isEmpty) {
         item.permission = this.nextPlayer.user_id
+        item.style = 1
         item.QQBot = {
           render_data: {
             style: 1
@@ -36,6 +37,7 @@ export default class TicTacToe {
         }
       } else {
         item.permission = 'xxx'
+        item.style = 0
         item.QQBot = {
           render_data: {
             style: 0
@@ -48,10 +50,10 @@ export default class TicTacToe {
         button.length = 0
       }
     }
-    if (add) {
+    if (add.length) {
       buttons.push(add)
     }
-    return toButton(buttons)
+    return toButton(buttons, adapterName)
   }
 
   // 下棋
@@ -78,7 +80,7 @@ export default class TicTacToe {
         }
         return indexes
       }, [])
-      if (emptyIndexes.length == 1) {
+      if (emptyIndexes.length == 1 && isWin == false) {
         return this.move(emptyIndexes[0] + 1)
       }
     } else {

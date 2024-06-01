@@ -1,5 +1,6 @@
-import { Version } from '../components/index.js'
 import { join } from 'path'
+import puppeteer from '../../../lib/puppeteer/puppeteer.js'
+import { Version } from '../components/index.js'
 
 function scale (pct = 1) {
   let scale = Math.min(2, Math.max(0.5, 100 / 100))
@@ -45,6 +46,17 @@ const Render = {
         }
       }
     })
+  },
+  async simpleRender (path, params) {
+    path = path.replace(/.html$/, '')
+    const data = {
+      tplFile: `${Version.pluginPath}/resources/${path}.html`,
+      pluResPath: `${Version.pluginPath}/resources/`,
+      saveId: path.split('/').pop(),
+      imgType: 'jpeg',
+      ...params
+    }
+    return await puppeteer.screenshot(path, data)
   }
 }
 

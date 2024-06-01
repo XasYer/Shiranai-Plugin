@@ -1,4 +1,4 @@
-import { toButton } from '../models/common.js'
+import { toButton } from '../models/button/index.js'
 
 export const app = {
   id: 'help',
@@ -25,7 +25,7 @@ export const rule = {
           { text: '重生模拟器', callback: '#remake' }
         ]
       ]
-      return e.reply(['\r#小游戏帮助', toButton(buttons)])
+      return e.reply(['\r#小游戏帮助', toButton(buttons, 'QQBot')])
     }
   }
 }

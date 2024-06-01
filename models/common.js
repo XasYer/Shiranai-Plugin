@@ -47,28 +47,6 @@ function generateRandomInteger (min, max) {
 }
 
 /**
- * 转换成Button
- * @param {Array<Array<button>} buttons
- *
- * @typedef {Object} button
- * @property {string} text 显示值
- * @property {string?} callback 回调
- * @property {string?} input 输入
- * @property {Boolean?} send 直接发送
- * @property {string|Array<string>|undefined} permission 有权限点击的用户
- * @property {Object?} QQBot 其他参数
- *
- * @returns {Object} segment处理后的按钮
- */
-function toButton (buttons) {
-  if (Version.isTrss) {
-    return segment.button(...buttons)
-  } else {
-    return Bot.Button(buttons)
-  }
-}
-
-/**
  * 设置一个setTimeout
  * @param {Object} e
  * @param {Number} time 超时时间,秒
@@ -219,7 +197,6 @@ export {
   getDaysBetweenDates,
   getTime,
   generateRandomInteger,
-  toButton,
   setTimer,
   sleep,
   readFile,
