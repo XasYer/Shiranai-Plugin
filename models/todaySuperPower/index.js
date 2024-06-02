@@ -1,5 +1,6 @@
 import db from './db.js'
-import { getTime, readFile, writeFile, toButton } from '../common.js'
+import { getTime, readFile, writeFile } from '../common.js'
+import { toButton } from '../button/index.js'
 import schedule from 'node-schedule'
 import { Version, Config } from '../../components/index.js'
 import fs from 'node:fs'
@@ -228,7 +229,7 @@ export default class TodaySuperPower {
           { text: '一键通过', callback: '#一键通过评论' },
           { text: '指定删除', input: '#删除评论' }
         ]
-      ]))
+      ], 'QQBot'))
     } else if (id != -1 && isMaster) {
       if (!this.todaySuperPower.review[id]) return '没有这条评论~'
       renderData.review = [this.todaySuperPower.review[id]].map(i => {
@@ -250,7 +251,7 @@ export default class TodaySuperPower {
           { text: '通过', callback: '#通过评论' + (id + 1) },
           { text: '删除', callback: '#删除评论' + (id + 1) }
         ]
-      ]))
+      ], 'QQBot'))
     } else {
       if (!this.todaySuperPower.review.some(i => i.show)) return '还没有评论哦~'
       renderData.review = this.todaySuperPower.review.map(i => {
@@ -272,7 +273,7 @@ export default class TodaySuperPower {
           { text: '点赞评论', input: '/点赞评论' },
           { text: '点踩评论', input: '/点踩评论' }
         ]
-      ]))
+      ], 'QQBot'))
     }
     const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', renderData, {
       retType: 'base64',
@@ -309,7 +310,7 @@ export default class TodaySuperPower {
           text: '查看评论', callback: '/查看评论'
         }
       ]
-    ]))
+    ], 'QQBot'))
     return msg
   }
 
@@ -324,7 +325,7 @@ export default class TodaySuperPower {
             text: '查看评论', callback: '/查看昨日评论'
           }
         ]
-      ]))
+      ], 'QQBot'))
     } else {
       msg.push('昨日没有超能力哦~')
     }
@@ -339,7 +340,7 @@ export default class TodaySuperPower {
         [
           { text: '刷新明日超能力', callback: '/刷新明日超能力' }
         ]
-      ]))
+      ], 'QQBot'))
     }
     return msg
   }

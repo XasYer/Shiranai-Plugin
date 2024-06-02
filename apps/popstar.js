@@ -165,7 +165,7 @@ function makeButton (arr, page = 6, end = false, adapterName) {
     }
     button.push(b)
     if (index % 10 == 0) {
-      if (!button.every(a => a.permission) && adapterName !== 'QQBot') {
+      if (!button.every(a => a.permission) || adapterName !== 'QQBot') {
         buttons.push([...button])
       }
       button.length = 0
