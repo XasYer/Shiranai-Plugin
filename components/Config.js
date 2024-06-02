@@ -43,6 +43,16 @@ class Config {
     return this.getDefOrConfig('todaySuperPower')
   }
 
+  /** 连连看相关 */
+  get linkGame () {
+    return this.getDefOrConfig('linkGame')
+  }
+
+  /** 人生重开模拟器相关 */
+  get remake () {
+    return this.getDefOrConfig('remake')
+  }
+
   /** 默认配置和用户配置 */
   getDefOrConfig (name) {
     let def = this.getdefSet(name)

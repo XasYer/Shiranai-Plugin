@@ -1,5 +1,5 @@
 import Life from '../models/remake/life.js'
-import config from '../models/remake/config.js'
+import getConfig from '../models/remake/config.js'
 import { findUser, createUser } from '../models/db/remake.js'
 import { setItem, saveItem } from '../models/remake/save.js'
 import { Version } from '../components/index.js'
@@ -63,7 +63,7 @@ export const rule = {
         setItem(user_id, i, data[i])
       }
       const core = new Life(user_id)
-      core.config(config)
+      core.config(getConfig())
       await core.initial()
       const randTLT = core.talentRandom()
       cache[user_id] = {

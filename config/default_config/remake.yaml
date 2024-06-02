@@ -1,0 +1,19 @@
+# 初始属性点
+defaultPropertyPoints: 20
+
+# 初始选择属性点
+# min: 最小值
+# max: 最大值
+propertyAllocateLimit:
+  min: 0
+  max: 10
+
+# 初始属性
+# SPR: 快乐
+defaultPropertys:
+  SPR: 5
+
+# 天赋配置
+# talentPullCount: 初始可选择的天赋数量
+talentConfig:
+  talentPullCount: 10

@@ -1,49 +1,14 @@
-const config = {
-  rows: 5,
-  cols: 10,
-  level: 0,
-  leftTime: 360
-}
+import { Config } from '../../components/index.js'
 
 class LinkGame {
   constructor () {
     this.score = 0 // 得分
-    this.cols = config.cols + 2 || 10 // 列数
-    this.rows = config.rows + 2 || 8 // 行数
-    this.level = config.level || 0 // 等级
+    this.cols = Config.linkGame.cols + 2 || 10 // 列数
+    this.rows = Config.linkGame.rows + 2 || 8 // 行数
+    this.level = Config.linkGame.level || 0 // 等级
     this.leftDisorderTime = 5 // 剩余重排次数
-    this.leftTime = config.leftTime || 180 // 剩余时间
-    this.gifts = [
-      '▲',
-      '▼',
-      '●',
-      '◆',
-      '■',
-      '★',
-      '▶',
-      '◀',
-      '∈',
-      '∩',
-      '∅',
-      '∑',
-      '☼',
-      '☽',
-      '♀',
-      '♂',
-      '◐',
-      '☑',
-      '☒',
-      '√',
-      '×',
-      '㊣',
-      '卐',
-      '☠',
-      '✈',
-      '☢',
-      '☁',
-      '✪',
-      '卍'
-    ]
+    this.leftTime = Config.linkGame.leftTime || 180 // 剩余时间
+    this.gifts = Config.linkGame.design
   }
 
   init (isReset) {

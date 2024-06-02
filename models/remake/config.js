@@ -1,11 +1,13 @@
-export default {
-  defaultPropertyPoints: 20, // default number of points for a property
-  talentSelectLimit: 3, // max number of talents that can be selected
-  propertyAllocateLimit: [0, 10], // scoop of properties that can be allocated,
-  defaultPropertys: { SPR: 5 }, // default properties
-  talentConfig: { // config for talent
-    talentPullCount: 10, // number of talents to pull from the talent pool
-    talentRate: { 1: 100, 2: 10, 3: 1, total: 1000 }, // rate of talent pull
+import { Config } from '../../components/index.js'
+
+export default () => ({
+  defaultPropertyPoints: Config.remake.defaultPropertyPoints,
+  talentSelectLimit: Config.remake.talentSelectLimit,
+  propertyAllocateLimit: [Config.remake.propertyAllocateLimit.min, Config.remake.propertyAllocateLimit.max],
+  defaultPropertys: Config.remake.defaultPropertys,
+  talentConfig: {
+    ...Config.remake.talentConfig,
+    talentRate: { 1: 100, 2: 10, 3: 1, total: 1000 },
     additions: {
       TMS: [
         [10, { 2: 1 }],
@@ -23,7 +25,7 @@ export default {
       ]
     }
   },
-  propertyConfig: { // config for property
+  propertyConfig: {
     judge: {
       // type: [min, grade, judge]
       RTLT: [
@@ -157,4 +159,4 @@ export default {
       [5, 1]
     ]
   }
-}
+})
