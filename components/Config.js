@@ -38,9 +38,9 @@ class Config {
     }
   }
 
-  /** 今日超能力相关 */
-  get todaySuperPower () {
-    return this.getDefOrConfig('todaySuperPower')
+  /** 圈小猫 */
+  get catchTheCat () {
+    return this.getDefOrConfig('catchTheCat')
   }
 
   /** 连连看相关 */
@@ -51,6 +51,11 @@ class Config {
   /** 人生重开模拟器相关 */
   get remake () {
     return this.getDefOrConfig('remake')
+  }
+
+  /** 今日超能力相关 */
+  get todaySuperPower () {
+    return this.getDefOrConfig('todaySuperPower')
   }
 
   /** 默认配置和用户配置 */

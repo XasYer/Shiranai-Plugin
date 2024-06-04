@@ -78,7 +78,7 @@ const isMiao = !!packageJson.dependencies.sequelize
 const isTrss = !!Array.isArray(Bot.uin)
 
 const pluginName = 'Shiranai-Plugin'
-const pluginPath = join(process.cwd(), 'plugins', pluginName)
+const pluginPath = join(process.cwd(), 'plugins', pluginName).replace(/\\/g, '/')
 
 export default {
   isMiao,

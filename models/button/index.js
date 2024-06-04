@@ -46,8 +46,8 @@ function toButton (buttons, adapterName, cfg = { defRetType: 'image' }) {
  * @returns {Array<number>}
  */
 function extLetterToNumber (inputString) {
-  const alphaPattern = /[a-zA-Z]/
-  const numericPattern = /\d/
+  const alphaPattern = /[a-zA-Z]+/
+  const numericPattern = /\d+/
 
   let letter = inputString.match(alphaPattern)
   let number = inputString.match(numericPattern)
@@ -68,6 +68,26 @@ function letterToNumber (letters) {
 }
 
 /**
+ * 将数组形式的坐标转换成A1形式
+ * @param {string} inputString 坐标
+ * @returns {Array<number>}
+ */
+function restoreNumberToLetter (array) {
+  const letter = numberToLetter(array[0] - 1).toUpperCase()
+  const number = array[1]
+  return `${letter}${number}`
+}
+
+function numberToLetter (num) {
+  let letter = ''
+  while (num >= 0) {
+    letter = String.fromCharCode((num % 26) + 65) + letter
+    num = Math.floor(num / 26) - 1
+  }
+  return letter
+}
+
+/**
  * 将坐标转换成序号
  * @param {number} row 行
  * @param {number} column 列
@@ -81,5 +101,6 @@ function coordinateToIndex (row, column, numberOfColumns = 10) {
 export {
   toButton,
   extLetterToNumber,
+  restoreNumberToLetter,
   coordinateToIndex
 }

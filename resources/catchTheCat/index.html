@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{pluResPath}}catchTheCat/index.css">
+    <title>圈小猫</title>
+</head>
+
+<body>
+    <div id="container">
+        <div id="title">
+            <h3>{{message}}</h3>
+        </div>
+        <div id="main">
+        </div>
+        <div id="tip">
+            <div>
+                #重置抓小猫
+            </div>
+            <div>
+                #点击 A1
+            </div>
+            <div>
+                #回退抓小猫
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateArray(length) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = [];
+            let currentIndex = 0;
+
+            while (result.length < length) {
+                let value = '';
+                let tempIndex = currentIndex;
+
+                do {
+                    value = alphabet[tempIndex % 26] + value;
+                    tempIndex = Math.floor(tempIndex / 26) - 1;
+                } while (tempIndex >= 0);
+
+                result.push(value);
+                currentIndex++;
+            }
+
+            return result;
+        }
+        function transpose(matrix) {
+            return matrix.reduce((acc, row) => {
+                row.forEach((item, index) => {
+                    if (!acc[index]) {
+                        acc[index] = [];
+                    }
+                    acc[index].push(item);
+                });
+                return acc;
+            }, []);
+        }
+        const blocks = transpose(JSON.parse(`{{@ blocks}}`))
+        const cat = JSON.parse(`{{@ cat}}`)
+        const arr = generateArray(blocks.length)
+        const main = document.getElementById('main')
+        const container = document.getElementById('container');
+        let index = 1
+        let blockWidth = 0
+        for (const block of blocks) {
+            blockWidth = block.length
+            const e = arr.shift()
+            const row = document.createElement('div');
+            row.className = 'row';
+            for (const i of block) {
+                const item = document.createElement('div');
+                item.className = 'item';
+                const content = document.createElement('div');
+                const style = i._isWall ? 'color-1' : 'color-0';
+                content.className = 'content ' + style;
+                if (i.i === cat.i && i.j === cat.j) {
+                    const image = document.createElement('img');
+                    image.src = `{{@ pluResPath}}catchTheCat/1.svg`
+                    image.className = 'img'
+                    content.appendChild(image)
+                } else {
+                    content.innerHTML = e + (i.i + 1)
+                }
+                item.appendChild(content)
+                row.appendChild(item)
+            }
+            if (index % 2 === 0) {
+                row.className += ' left-margin'
+            }
+            main.appendChild(row)
+            index++
+        }
+
+        const width = (blockWidth + 1) * 42 - 22
+        main.style.width = width + 'px'
+        container.style.width = width + 40 + 'px'
+
+    </script>
+</body>
+
+</html>
