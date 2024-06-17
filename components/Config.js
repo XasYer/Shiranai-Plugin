@@ -63,6 +63,11 @@ class Config {
     return this.getDefOrConfig('shindan')
   }
 
+  /** 淫语相关 */
+  get yinlish () {
+    return this.getDefOrConfig('yinlish')
+  }
+
   /** 默认配置和用户配置 */
   getDefOrConfig (name) {
     let def = this.getdefSet(name)
