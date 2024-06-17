@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "pinyin": "3.0.0-alpha.7",
-    "level": "^8.0.1"
+    "level": "^8.0.1",
+    "cheerio": "1.0.0-rc.12"
   }
 }

@@ -20,7 +20,7 @@ for (const i of files) {
     }
     apps[app.id] = app.create()
   } catch (error) {
-    logger.error(`[${Version.pluginName}]加载js: ${i}错误`, error)
+    logger.error(`[${Version.pluginName}]加载js: apps/${i}错误\n`, error)
   }
 }
 

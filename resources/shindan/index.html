@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{pluResPath}}shindan/index.css">
+  <title>占卜结果</title>
+  <script src="{{pluResPath}}shindan/app.js"></script>
+  {{if hasChart}}
+  <script src="{{pluResPath}}shindan/chart.js"></script>
+  {{/if}}
+  <style>
+    #main-container {
+      padding: 0;
+    }
+
+    #container {
+      width: 750px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="main-container">
+      {{@ titleAndResult}}
+    </div>
+  </div>
+  {{@ resultJS}}
+
+  <script>
+      let originalRequestAnimationFrame = window.requestAnimationFrame;
+      let originalSetInterval = window.setInterval;
+      let originalSetTimeout = window.setTimeout;
+      let animationSpeed = 100000;
+      let lastTime = 0;
+
+      window.requestAnimationFrame = function (callback) {
+        let adjustedCallback = function (time) {
+          if (time - lastTime >= 1000 / (60 * animationSpeed)) {
+            lastTime = time;
+            callback(time);
+          } else {
+            originalRequestAnimationFrame(adjustedCallback);
+          }
+        };
+        originalRequestAnimationFrame(adjustedCallback);
+      };
+
+      window.setInterval = function (callback, delay, ...args) {
+        let adjustedDelay = delay / animationSpeed;
+        return originalSetInterval(callback, adjustedDelay, ...args);
+      };
+
+      window.setTimeout = function (callback, delay, ...args) {
+        let adjustedDelay = delay / animationSpeed;
+        return originalSetTimeout(callback, adjustedDelay, ...args);
+      };
+  </script>
+</body>
+
+</html>

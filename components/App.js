@@ -1,4 +1,6 @@
 import Version from './Version.js'
+import PluginsLoader from '../../../lib/plugins/loader.js'
+import lodash from 'lodash'
 
 export default class {
   constructor ({
@@ -50,5 +52,28 @@ export default class {
       cls.prototype[name] = fnc
     }
     return cls
+  }
+
+  change () {
+    try {
+      const app = this.create()
+      const apps = {
+        [app.id]: app
+      }
+      const key = Version.pluginName
+      lodash.forEach(apps, P => {
+        const plugin = new P()
+        for (const i in PluginsLoader.priority) {
+          if (PluginsLoader.priority[i].key === key && PluginsLoader.priority[i].name === plugin.name) {
+            PluginsLoader.priority[i].class = P
+            PluginsLoader.priority[i].priority = plugin.priority
+            break
+          }
+        }
+      })
+      PluginsLoader.priority = lodash.orderBy(PluginsLoader.priority, ['priority'], ['asc'])
+    } catch (error) {
+      logger.error(`[${Version.pluginName}]重载js: apps/${this.id}.js错误\n`, error)
+    }
   }
 }

@@ -58,6 +58,11 @@ class Config {
     return this.getDefOrConfig('todaySuperPower')
   }
 
+  /** 占卜相关 */
+  get shindan () {
+    return this.getDefOrConfig('shindan')
+  }
+
   /** 默认配置和用户配置 */
   getDefOrConfig (name) {
     let def = this.getdefSet(name)

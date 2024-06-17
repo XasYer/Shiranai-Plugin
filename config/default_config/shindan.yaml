@@ -1,0 +1,14 @@
+# 添加更多占卜
+# id: 占卜id
+# command: 指令
+# title: 标题
+shindanList:
+  - id: 162207
+    command: 今天是什么少女
+    title: 你的二次元少女化形象
+  - id: 917962
+    command: 人设生成
+    title: 人设生成器
+  - id: 790697
+    command: 中二称号
+    title: 奇妙的中二称号生成器

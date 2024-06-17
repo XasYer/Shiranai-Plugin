@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{pluResPath}}shindan/list.css">
+  <title>占卜列表</title>
+</head>
+
+<body>
+  <div id="container">
+    <div class="list">
+      <table>
+        {{each shindanList i}}
+        <tr>
+          <td>
+            <div class="id">{{i.id}}</div>
+          </td>
+          <td>
+            <div class="line">
+              <div class="command">{{i.command}}</div>
+              <div class="title">（{{i.title}}）</div>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>
