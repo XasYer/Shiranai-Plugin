@@ -23,7 +23,7 @@ export default class TicTacToe {
     let len = 0
     for (const i of this.board) {
       len++
-      let item = {
+      const item = {
         text: i.player,
         callback: `/井字棋下 ${len}`
       }

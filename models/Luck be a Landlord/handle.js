@@ -2127,7 +2127,7 @@ const Symbols = {
     event.callback.push(
       /** @param {event} event */
       (SlotMachine, event) => {
-        let payout = 0
+        const payout = 0
         // TODO: 忘记这里是什么了
         // for (const a of getAdjacentPositions(SlotMachine[i].x, SlotMachine[i].y)) {
         //   if (SlotMachine[a] && (SlotMachine[a].coin + SlotMachine[a].payout) > payout) {

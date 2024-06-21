@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import YamlReader from './YamlReader.js'
 import Version from './Version.js'
 import _ from 'lodash'
+import { logger } from '#lib'
 
 class Config {
   constructor () {
@@ -16,11 +17,11 @@ class Config {
 
   /** 初始化配置 */
   initCfg () {
-    let path = `${Version.pluginPath}/config/config/`
+    const path = `${Version.pluginPath}/config/config/`
     if (!fs.existsSync(path)) fs.mkdirSync(path)
-    let pathDef = `${Version.pluginPath}/config/default_config/`
+    const pathDef = `${Version.pluginPath}/config/default_config/`
     const files = fs.readdirSync(pathDef).filter(file => file.endsWith('.yaml'))
-    for (let file of files) {
+    for (const file of files) {
       if (!fs.existsSync(`${path}${file}`)) {
         fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
       } else {
@@ -70,8 +71,8 @@ class Config {
 
   /** 默认配置和用户配置 */
   getDefOrConfig (name) {
-    let def = this.getdefSet(name)
-    let config = this.getConfig(name)
+    const def = this.getdefSet(name)
+    const config = this.getConfig(name)
     return { ...def, ...config }
   }
 
@@ -91,8 +92,8 @@ class Config {
    * @param name 名称
    */
   getYaml (type, name) {
-    let file = `${Version.pluginPath}/config/${type}/${name}.yaml`
-    let key = `${type}.${name}`
+    const file = `${Version.pluginPath}/config/${type}/${name}.yaml`
+    const key = `${type}.${name}`
 
     if (this.config[key]) return this.config[key]
 
@@ -107,7 +108,7 @@ class Config {
 
   /** 监听配置文件 */
   watch (file, name, type = 'default_config') {
-    let key = `${type}.${name}`
+    const key = `${type}.${name}`
     if (this.watcher[key]) return
 
     const watcher = chokidar.watch(file)
@@ -127,7 +128,7 @@ class Config {
    * @param {'config'|'default_config'} type 配置文件或默认
    */
   modify (name, key, value, type = 'config') {
-    let path = `${Version.pluginPath}/config/${type}/${name}.yaml`
+    const path = `${Version.pluginPath}/config/${type}/${name}.yaml`
     new YamlReader(path).set(key, value)
     delete this.config[`${type}.${name}`]
   }
@@ -149,7 +150,7 @@ class Config {
       return objValue !== undefined ? objValue : srcValue
     }
 
-    let result = _.mergeWith({}, objA, objB, customizer)
+    const result = _.mergeWith({}, objA, objB, customizer)
 
     return {
       differences,

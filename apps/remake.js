@@ -2,9 +2,10 @@ import Life from '../models/remake/life.js'
 import getConfig from '../models/remake/config.js'
 import { findUser, createUser } from '../models/db/remake.js'
 import { setItem, saveItem } from '../models/remake/save.js'
-import { Version } from '../components/index.js'
+import { App, Render } from '#components'
 import { setTimer } from '../models/common.js'
 import { toButton } from '../models/button/index.js'
+import { segment } from '#lib'
 
 const cache = {}
 
@@ -50,7 +51,8 @@ export const rule = {
   remake: {
     reg: /^[#/]?(人生重[开启来]|remake|liferestart)$/,
     fnc: async e => {
-      const user_id = getUserId(e)
+      console.log('e', e)
+      const user_id = e.user_id
       if (cache[user_id]) {
         delete cache[user_id]
         return await e.reply([segment.at(e.user_id),
@@ -91,7 +93,7 @@ export const rule = {
     reg: /^[#/]?((\s*\d+\s*){3,4}|随机)$/,
     fnc: async e => {
       if (!e.msg) return false
-      const user_id = getUserId(e)
+      const user_id = e.user_id
       if (!cache[user_id]) return false
       const msg = e.msg.trim().replace(/^[#/]/, '')
       clearTimeout(cache[user_id].timer)
@@ -279,7 +281,9 @@ export const rule = {
           event,
           summary
         }
-        const img = await e.runtime.render(Version.pluginName, 'remake/html/index', data, { retType: 'base64' })
+        const img = await Render.simpleRender('remake/html/index', {
+          ...data
+        })
         await e.reply([segment.at(e.user_id), '\n', img])
         await saveItem(user_id)
         return true
@@ -292,12 +296,10 @@ export const rule = {
   }
 }
 
-function getUserId (e) {
-  return e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
-}
+export const remake = new App(app, rule).create()
 
 async function getUserInfo (e) {
-  const user_id = getUserId(e)
+  const user_id = e.user_id
   let user_info = await findUser(user_id)
   if (!user_info) {
     user_info = await createUser(user_id)

@@ -1,5 +1,6 @@
 import MineSweeper from '../models/boardgame/minesweeper.js'
 import { toButton, extLetterToNumber } from '../models/button/index.js'
+// import { App } from '#components'
 
 // 多少行
 const row = 5
@@ -19,7 +20,7 @@ export const rule = {
   mine: {
     reg: /^[#/]扫雷(轻量版?|按钮版?)?\d*$/,
     fnc: async e => {
-      let game = MineGame[e.group_id]
+      const game = MineGame[e.group_id]
       if (game) {
         e.msg = '挖开 0,0'
         return false
@@ -50,7 +51,7 @@ export const rule = {
   open: {
     reg: /^((挖开|标记)\s*(\d+,\d+|[A-Za-z0-9]|\s)*)+$/,
     fnc: async e => {
-      let game = MineGame[e.group_id]
+      const game = MineGame[e.group_id]
       if (!game) {
         return e.reply(['游戏未开始', await toButton([[{ text: '开始游戏', callback: '#扫雷' }]], e.adapter_name, { defRetType: 'text' })])
       }
@@ -118,3 +119,5 @@ export const rule = {
     }
   }
 }
+
+// export const minesweeper = new App(app, rule).create()

@@ -1,21 +1,20 @@
 import { join } from 'path'
-import puppeteer from '../../../lib/puppeteer/puppeteer.js'
-import { Version } from '../components/index.js'
+import { Version } from '#components'
+import { puppeteer } from '#lib'
 
 function scale (pct = 1) {
-  let scale = Math.min(2, Math.max(0.5, 100 / 100))
+  const scale = Math.min(2, Math.max(0.5, 100 / 100))
   pct = pct * scale
   return `style=transform:scale(${pct})`
 }
 
 const Render = {
   async render (path, params, cfg = { retType: 'default' }) {
-    let { e } = cfg
+    const { e } = cfg
     if (!e.runtime) {
       console.log('未找到e.runtime，请升级至最新版Yunzai')
     }
 
-    let BotName = Version.isTrss ? 'Trss-Yunzai' : Version.isMiao ? 'Miao-Yunzai' : 'Yunzai-Bot'
     return e.runtime.render(Version.pluginName, path, params, {
       retType: cfg.retType,
       beforeRender ({ data }) {
@@ -26,7 +25,7 @@ const Render = {
             pluginName += `<span class="version">${data.pluginVersion || Version.version}`
           }
         }
-        let resPath = data.pluResPath
+        const resPath = data.pluResPath
         const layoutPath = join(Version.pluginPath, 'resources', 'common', 'layout')
         return {
           ...data,
@@ -39,7 +38,7 @@ const Render = {
           sys: {
             scale: scale(cfg.scale || 1)
           },
-          copyright: `Created By ${BotName}<span class="version">${Version.yunzai}</span>${pluginName}</span>`,
+          copyright: `Created By ${Version.BotName}<span class="version">${Version.BotVersion}</span>${pluginName}</span>`,
           pageGotoParams: {
             waitUntil: 'networkidle2'
           }
@@ -57,7 +56,7 @@ const Render = {
       ...params
     }
     return await puppeteer.screenshot(path, data)
-  }
+  },
 }
 
 export default Render

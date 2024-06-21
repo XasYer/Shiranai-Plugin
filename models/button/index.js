@@ -1,4 +1,5 @@
-import { Render, Version } from '../../components/index.js'
+import { Render, Version } from '#components'
+import { segment, Bot } from '#lib'
 
 /**
  * 转换成Button
@@ -20,10 +21,15 @@ function toButton (buttons, adapterName, cfg = { defRetType: 'image' }) {
   switch (adapterName) {
     case 'QQBot':
     case 'QQGuild':
-      if (Version.isTrss) {
-        return segment.button(...buttons)
-      } else {
-        return Bot.Button(buttons)
+      switch (Version.BotName) {
+        case 'Karin':
+          return segment.text('')
+        case 'Trss-Yunzai':
+          return segment.button(...buttons)
+        case 'Miao-Yunzai':
+          return Bot.Button(buttons)
+        default:
+          return ''
       }
     case false:
     case undefined:
@@ -49,8 +55,8 @@ function extLetterToNumber (inputString) {
   const alphaPattern = /[a-zA-Z]+/
   const numericPattern = /\d+/
 
-  let letter = inputString.match(alphaPattern)
-  let number = inputString.match(numericPattern)
+  const letter = inputString.match(alphaPattern)
+  const number = inputString.match(numericPattern)
 
   return (letter && number) ? [letterToNumber(letter[0].toUpperCase()), parseInt(number[0])] : []
 }

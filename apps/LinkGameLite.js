@@ -1,5 +1,6 @@
 import LinkGame from '../models/link/index.js'
 import { toButton, extLetterToNumber } from '../models/button/index.js'
+// import { App } from '#components'
 
 const GAME = {}
 
@@ -92,3 +93,5 @@ export const rule = {
     }
   }
 }
+
+// export const LinkGameLite = new App(app, rule).create()

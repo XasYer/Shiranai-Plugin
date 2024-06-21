@@ -1,6 +1,8 @@
 import { setTimer } from '../models/common.js'
 import { toButton } from '../models/button/index.js'
 import TicTacToe from '../models/boardgame/TicTacToe.js'
+// import { App } from '#components'
+import { segment } from '#lib'
 
 const GAME = {}
 
@@ -81,3 +83,5 @@ export const rule = {
     }
   }
 }
+
+// export const ticTacToe = new App(app, rule).create()

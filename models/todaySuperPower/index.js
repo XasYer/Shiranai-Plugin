@@ -2,9 +2,10 @@ import db from './db.js'
 import { getTime, readFile, writeFile } from '../common.js'
 import { toButton } from '../button/index.js'
 import schedule from 'node-schedule'
-import { Version, Config } from '../../components/index.js'
+import { Version, Config } from '#components'
 import fs from 'node:fs'
 import { join } from 'node:path'
+import { Bot, segment } from '#lib'
 
 const dataPath = 'resources/todaySuperPower/data.json'
 if (!fs.existsSync(dataPath)) {

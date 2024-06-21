@@ -1,4 +1,5 @@
-import { Version } from './components/index.js'
+import { Version } from '#components'
+import { logger } from '#lib'
 
 logger.info('-----------------')
 logger.info(`${Version.pluginName}${Version.version}初始化~`)

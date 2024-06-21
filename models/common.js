@@ -1,5 +1,5 @@
 import { join, extname } from 'path'
-import { Version } from '../components/index.js'
+import { Version } from '#components'
 import fs from 'fs'
 import YAML from 'yaml'
 

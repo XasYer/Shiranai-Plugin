@@ -1,7 +1,7 @@
 import TodaySuperPower from '../models/todaySuperPower/index.js'
-import { Config, Version } from '../components/index.js'
-import fetch from 'node-fetch'
+import { Config, Version } from '#components'
 import { toButton } from '../models/button/index.js'
+import { segment, Bot } from '#lib'
 
 const todaySuperPower = new TodaySuperPower()
 await todaySuperPower.init()
@@ -206,3 +206,5 @@ function checkEnable (e) {
   }
   return true
 }
+
+// export const todaySuperPower = new App(app, rule).create()

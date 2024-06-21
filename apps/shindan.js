@@ -1,5 +1,6 @@
 import { getShindanTitle, makeShindan } from '../models/shindan/index.js'
-import { Config, Render, App } from '../components/index.js'
+import { Config, Render, App } from '#components'
+import { getGroupMemberInfo } from '../models/groupApi/index.js'
 
 export const app = {
   id: 'shindan',
@@ -19,11 +20,12 @@ export const rule = {
         return
       }
       if (!name) {
-        if (e.at) {
-          const info = await e.bot.pickMember(e.group_id, e.at).getInfo()
-          name = info.card || info.nickname || e.at
+        const at = Array.isArray(e.at) ? e.at[e.at.length - 1] : e.at
+        if (at) {
+          const info = await getGroupMemberInfo(e, e.group_id, at)
+          name = info.card || info.nickname || info.nick || at
         } else {
-          name = e.sender.card || e.sender.nickname || e.user_id
+          name = e.sender.card || e.sender.nickname || e.sender.nick || e.user_id
         }
       }
       for (const i of Config.shindan.shindanList) {
@@ -87,7 +89,7 @@ export const rule = {
         const r = rule[key]
         cls.rule(key, r.reg, r.fnc, r.cfg)
       }
-      cls.change()
+      await cls.change()
     }
   },
   shindanList: {
@@ -98,3 +100,5 @@ export const rule = {
     }
   }
 }
+
+export const shindan = new App(app, rule).create()

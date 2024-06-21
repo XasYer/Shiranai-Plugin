@@ -1,5 +1,6 @@
 import { Level } from 'level'
-import { Version } from '../../components/index.js'
+import { Version } from '#components'
+import { logger } from '#lib'
 
 export default class level {
   constructor (path) {

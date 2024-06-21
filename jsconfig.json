@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "#Karin": [
+        "lib/imports/index.js"
+      ],
+      "#template": [
+        "lib/imports/template.js"
+      ],
+      "#components": [
+        "components/index.js"
+      ],
+      "#models": [
+        "models/index.js"
+      ],
+      "#lib": [
+        "lib/shiranai/index.js"
+      ]
+    }
+  },
+  "exclude": [
+    "**/node_modules/*",
+    "**/resources/*",
+    "**/temp/*",
+    "**/data/*"
+  ],
+  "extends": "../../jsconfig.json",
+  "include": [
+    "./**/*"
+  ]
+}

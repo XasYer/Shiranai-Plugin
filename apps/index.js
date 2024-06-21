@@ -1,7 +1,8 @@
-import { App, Version } from '../components/index.js'
+import { App, Version } from '#components'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs'
+import { logger } from '#lib'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

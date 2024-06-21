@@ -1,6 +1,7 @@
 import { MainScene } from '../models/catchTheCat/index.js'
-import { Config, Render } from '../components/index.js'
+import { Config, Render, App } from '#components'
 import { extLetterToNumber, toButton } from '../models/button/index.js'
+import { segment } from '#lib'
 
 const GAME = {}
 
@@ -55,6 +56,8 @@ export const rule = {
     }
   }
 }
+
+export const catchTheCat = new App(app, rule).create()
 
 async function render (game, message, user_id) {
   const img = await Render.simpleRender('catchTheCat/index', {

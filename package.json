@@ -14,6 +14,15 @@
     "pinyin": "3.0.0-alpha.7",
     "level": "^8.0.1",
     "cheerio": "1.0.0-rc.12",
-    "@node-rs/jieba": "^1.6.2"
+    "@node-rs/jieba": "^1.6.2",
+    "sequelize": "^6.37.3",
+    "sqlite3": "5.1.6"
+  },
+  "imports": {
+    "#Karin": "./lib/imports/index.js",
+    "#template": "./lib/imports/template.js",
+    "#components": "./components/index.js",
+    "#models": "./models/index.js",
+    "#lib": "./lib/shiranai/index.js"
   }
 }

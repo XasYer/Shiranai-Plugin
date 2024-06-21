@@ -1,8 +1,13 @@
 import fs from 'fs'
 import lodash from 'lodash'
-import { join } from 'path'
+import { join, dirname, basename } from 'path'
+import { fileURLToPath } from 'url'
 
-let packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+const __filename = fileURLToPath(import.meta.url)
+
+const __dirname = dirname(__filename)
+
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 
 const getLine = function (line) {
   line = line.replace(/(^\s*\*|\r)/g, '')
@@ -15,9 +20,9 @@ const getLine = function (line) {
 }
 
 const readLogFile = function (root, versionCount = 4) {
-  let logPath = `${root}/CHANGELOG.md`
+  const logPath = `${root}/CHANGELOG.md`
   let logs = {}
-  let changelogs = []
+  const changelogs = []
   let currentVersion
 
   try {
@@ -31,9 +36,9 @@ const readLogFile = function (root, versionCount = 4) {
         if (versionCount <= -1) {
           return false
         }
-        let versionRet = /^#\s*([0-9a-zA-Z\\.~\s]+?)\s*$/.exec(line)
+        const versionRet = /^#\s*([0-9a-zA-Z\\.~\s]+?)\s*$/.exec(line)
         if (versionRet && versionRet[1]) {
-          let v = versionRet[1].trim()
+          const v = versionRet[1].trim()
           if (!currentVersion) {
             currentVersion = v
           } else {
@@ -47,7 +52,7 @@ const readLogFile = function (root, versionCount = 4) {
 
           temp = {
             version: v,
-            logs: []
+            logs: [],
           }
         } else {
           if (!line.trim()) {
@@ -56,7 +61,7 @@ const readLogFile = function (root, versionCount = 4) {
           if (/^\*/.test(line)) {
             lastLine = {
               title: getLine(line),
-              logs: []
+              logs: [],
             }
             temp.logs.push(lastLine)
           } else if (/^\s{2,}\*/.test(line)) {
@@ -71,28 +76,41 @@ const readLogFile = function (root, versionCount = 4) {
   return { changelogs, currentVersion }
 }
 
-const { changelogs, currentVersion } = readLogFile(join(process.cwd(), 'plugins', 'Shiranai-Plugin'))
+const pluginPath = join(__dirname, '..').replace(/\\/g, '/')
 
-const yunzaiVersion = packageJson.version
-const isMiao = !!packageJson.dependencies.sequelize
-const isTrss = !!Array.isArray(Bot.uin)
+const pluginName = basename(pluginPath)
 
-const pluginName = 'Shiranai-Plugin'
-const pluginPath = join(process.cwd(), 'plugins', pluginName).replace(/\\/g, '/')
+/**
+ * @type {'Karin'|'Miao-Yunzai'|'Trss-Yunzai'|'Miao-Yunza V4'}
+ */
+const BotName = (() => {
+  if (/^karin/i.test(pluginName)) {
+    return 'Karin'
+  } else if (packageJson.dependencies.react) {
+    return 'Miao-Yunza V4'
+  } else if (Array.isArray(global.Bot?.uin)) {
+    return 'Trss-Yunzai'
+  } else if (packageJson.dependencies.sequelize) {
+    return 'Miao-Yunzai'
+  } else {
+    throw new Error('还有人玩Yunzai-Bot??')
+  }
+})()
+
+const BotVersion = packageJson.version
+
+const { changelogs, currentVersion } = readLogFile(pluginPath)
 
 export default {
-  isMiao,
-  isTrss,
   get version () {
     return currentVersion
-  },
-  get yunzai () {
-    return yunzaiVersion
   },
   get changelogs () {
     return changelogs
   },
   readLogFile,
   pluginName,
-  pluginPath
+  pluginPath,
+  BotName,
+  BotVersion
 }

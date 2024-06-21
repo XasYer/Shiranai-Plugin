@@ -1,4 +1,5 @@
 import { toButton } from '../models/button/index.js'
+// import { App } from '#components'
 
 export const app = {
   id: 'help',
@@ -29,3 +30,5 @@ export const rule = {
     }
   }
 }
+
+// export const help = new App(app, rule).create()

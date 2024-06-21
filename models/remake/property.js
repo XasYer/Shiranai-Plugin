@@ -329,7 +329,7 @@ class Property {
   }
 
   effect (effects) {
-    for (let prop in effects) {
+    for (const prop in effects) {
       this.change(
         this.hookSpecial(prop),
         Number(effects[prop])

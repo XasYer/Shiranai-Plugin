@@ -1,4 +1,5 @@
 import { sequelize, DataTypes, executeSync, alter } from './base.js'
+import { logger } from '#lib'
 
 /**
  * @typedef {Object} remake

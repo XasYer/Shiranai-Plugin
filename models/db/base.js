@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import TaskQueue from './TaskQueue.js'
-import { Version } from '../../components/index.js'
+import { Version } from '#components'
 import { Sequelize, DataTypes, Op } from 'sequelize'
 import { moveFileOrFolder, mkdirSync } from '../common.js'
 
@@ -25,7 +25,7 @@ const sequelize = new Sequelize({
 await sequelize.authenticate()
 
 const taskQueueConfig = 10
-let shouldCancel = false
+const shouldCancel = false
 let executeSync
 
 if (taskQueueConfig > 0) {

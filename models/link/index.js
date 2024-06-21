@@ -1,4 +1,4 @@
-import { Config } from '../../components/index.js'
+import { Config } from '#components'
 
 class LinkGame {
   constructor () {
@@ -62,25 +62,25 @@ class LinkGame {
 
   // 打乱顺序
   disorder () {
-    let pictures = this.pictures
-    let random = this.random.bind(this)
+    const pictures = this.pictures
+    const random = this.random.bind(this)
     for (let i = 0; i < this.count * 10; i++) {
       // 随机选中2张图片，调用this.swapProperties交换俩人的pic和isEmpty属性
-      let picture1 = pictures[random(1, this.rows - 2)][random(1, this.cols - 2)]
-      let picture2 = pictures[random(1, this.rows - 2)][random(1, this.cols - 2)]
+      const picture1 = pictures[random(1, this.rows - 2)][random(1, this.cols - 2)]
+      const picture2 = pictures[random(1, this.rows - 2)][random(1, this.cols - 2)]
       this.swapProperties(picture1, picture2, ['pic', 'isEmpty'])
     }
   }
 
   // 检测连通性
   checkMatch (curClickInfo, preClickInfo) {
-    let pictures = this.pictures
-    let preRow = +preClickInfo.row
-    let preCol = +preClickInfo.col
-    let preIndex = `${preClickInfo.row},${preClickInfo.col}`
-    let curRow = +curClickInfo.row
-    let curCol = +curClickInfo.col
-    let curIndex = `${curClickInfo.row},${curClickInfo.col}`
+    const pictures = this.pictures
+    const preRow = +preClickInfo.row
+    const preCol = +preClickInfo.col
+    const preIndex = `${preClickInfo.row},${preClickInfo.col}`
+    const curRow = +curClickInfo.row
+    const curCol = +curClickInfo.col
+    const curIndex = `${curClickInfo.row},${curClickInfo.col}`
 
     // 如果点击的图片是空白的，则退出
     if (pictures[curRow][curCol].isEmpty || pictures[preRow][preCol].isEmpty) {
@@ -119,10 +119,10 @@ class LinkGame {
   }
 
   countPoints (start, end) {
-    let points = []
-    let pictures = this.pictures
+    const points = []
+    const pictures = this.pictures
     if (start[0] === end[0]) { // 同列
-      let x = start[0]
+      const x = start[0]
       if (start[1] > end[1]) { // 从下到上
         for (let i = start[1]; i >= end[1]; i--) {
           points.push(pictures[i][x])
@@ -133,7 +133,7 @@ class LinkGame {
         }
       }
     } else if (start[1] === end[1]) { // 同行
-      let y = start[1]
+      const y = start[1]
       if (start[0] > end[0]) { // 从右到左
         for (let i = start[0]; i >= end[0]; i--) {
           points.push(pictures[y][i])
@@ -164,7 +164,7 @@ class LinkGame {
   // 交换对象属性
   swapProperties (obj1, obj2, properties) {
     properties.forEach(function (property) {
-      let temp = obj1[property]
+      const temp = obj1[property]
       obj1[property] = obj2[property]
       obj2[property] = temp
     })
@@ -209,7 +209,7 @@ class LinkGame {
   }
 
   addPoints () {
-    let args = arguments; let len = args.length; let i = 0
+    const args = arguments; const len = args.length; let i = 0
 
     for (; i < len;) {
       this.points.push(args[i++])

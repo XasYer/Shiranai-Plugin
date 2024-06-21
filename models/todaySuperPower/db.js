@@ -1,6 +1,6 @@
 import Level from '../db/level.js'
 import { join } from 'node:path'
-import { Version } from '../../components/index.js'
+import { Version } from '#components'
 import { moveFileOrFolder, mkdirSync } from '../common.js'
 
 mkdirSync('data', 'db', 'level')

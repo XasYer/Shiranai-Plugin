@@ -1,6 +1,7 @@
 import Popstar from '../models/popstar/Popstar.js'
 import { toButton, extLetterToNumber, coordinateToIndex } from '../models/button/index.js'
 import { sleep } from '../models/common.js'
+// import { App } from '#components'
 
 const GAME = {}
 
@@ -26,7 +27,7 @@ export const rule = {
       const game = GAME[e.group_id]
       game.page = 6
       const buttons = makeButton(game.model.grid, game.page, false, e.adapter_name)
-      let msg = [
+      const msg = [
               `消灭星星\t\t关卡: ${game.level + 1}\t\t`,
               // `[结束游戏] (mqqapi://aio/inlinecmd?command=${encodeURIComponent('/结束消灭星星')}&reply=false&enter=true)\r`,
               `得分: ${game.total}\t\t\t目标: ${game.constrol.goal}`
@@ -181,3 +182,5 @@ const clrMap = {
   3: '💚',
   4: '💙'
 }
+
+// export const popstar = new App(app, rule).create()

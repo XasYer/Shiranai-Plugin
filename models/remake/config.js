@@ -1,4 +1,4 @@
-import { Config } from '../../components/index.js'
+import { Config } from '#components'
 
 export default () => ({
   defaultPropertyPoints: Config.remake.defaultPropertyPoints,

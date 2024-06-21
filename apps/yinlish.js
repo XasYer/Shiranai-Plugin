@@ -1,8 +1,8 @@
 import { tag } from '@node-rs/jieba'
-import { Config } from '../components/index.js'
+import { App, Config } from '#components'
 
 export const app = {
-  id: "yinlish",
+  id: 'yinlish',
   name: '淫语翻译'
 }
 
@@ -16,6 +16,8 @@ export const rule = {
     }
   }
 }
+
+export const yinlish = new App(app, rule).create()
 
 function wordConversion (x, y, lewdnessLevel) {
   if (Math.random() > lewdnessLevel) {

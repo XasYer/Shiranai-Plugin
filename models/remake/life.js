@@ -9,7 +9,7 @@ import Talent from './talent.js'
 import Achievement from './achievement.js'
 import Character from './character.js'
 
-import { Version } from '../../components/index.js'
+import { Version } from '#components'
 import { join } from 'path'
 
 const loadFile = name => JSON.parse(readFileSync(join(Version.pluginPath, 'resources', 'remake', `${name}.json`), 'utf-8'))

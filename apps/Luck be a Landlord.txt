@@ -1,7 +1,7 @@
 import { getOrSetEvent, getChoiceSymbols, getNextRentPaidInfo, addSymbolToAllSymbols, randomSlotMachinePosition, toRenderSymbol, handle, Symbols } from '../models/index.js'
 import puppeteer from "../../../lib/puppeteer/puppeteer.js";
 import { join } from 'node:path'
-import { pluginName, pluginPath } from '../components/index.js';
+import { pluginName, pluginPath } from '#components';
 
 const pluResPath = join(pluginPath, 'resources')
 

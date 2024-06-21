@@ -6,6 +6,8 @@ import {
 } from '../models/index.js'
 import { sleep } from '../models/common.js'
 import { toButton } from '../models/button/index.js'
+// import { App } from '#components'
+import { segment } from '#lib'
 
 const gameCache = {
   24: {},
@@ -73,8 +75,8 @@ export const rule = {
       ]
       e.toQQBotMD = true
       if (!nowGame) return await e.reply(['现在没有开局哦,请输入/24点来开始游戏!', toButton(buttons, 'QQBot')])
-      let msg = e.msg.replace(/[#/]?解答\s*/, '')
-      const user_id = getUserId(e)
+      const msg = e.msg.replace(/[#/]?解答\s*/, '')
+      const user_id = e.user_id(e)
       if (check_result(msg, nowGame.question, nowGame.game)) {
         delete GameName[e.group_id]
         const user_info = await getUserInfo(e)
@@ -97,7 +99,7 @@ export const rule = {
       e.toQQBotMD = true
       const GameName = gameCache['24']
       const nowGame = GameName[e.group_id]
-      let buttons = [
+      const buttons = [
         [
           { text: '24点', callback: '/24点' },
           { text: '60点', callback: '/60点' },
@@ -119,7 +121,7 @@ export const rule = {
         if (nowGame.start) {
           return await e.reply(['算术对战已经开始了哦,请等待结束吧'])
         }
-        const user_id = getUserId(e)
+        const user_id = e.user_id(e)
         nowGame.user.push({
           id: nowGame.user[0].id == user_id ? '菜菜' : user_id,
           str: '(1 + ? - ?) x ? ÷ ?',
@@ -150,7 +152,7 @@ export const rule = {
       GameName[e.group_id] = {
         start: false,
         user: [{
-          id: getUserId(e),
+          id: e.user_id(e),
           str: '(1 + ? - ?) x ? ÷ ?',
           sum: 0,
           ops: { '+': true, '-': true, x: true, '÷': true }
@@ -178,7 +180,7 @@ export const rule = {
         return await e.reply(['还没有开始游戏哦', toButton([[{ text: '开始游戏', input: '/算术对战', send: true }]], 'QQBot')])
       }
       let nowUser = nowGame.user[nowGame.nowUser]
-      if (nowUser.id != getUserId(e)) {
+      if (nowUser.id != e.user_id(e)) {
         return await e.reply([segment.at(e.user_id), '现在不是你的回合哦'])
       }
       const buttons = [
@@ -218,7 +220,7 @@ export const rule = {
       if (nowGame.count == 4) {
         let str = nowUser.str
         str = str.replace('x', '*').replace('÷', '/')
-        // eslint-disable-next-line no-eval
+
         let ret = eval(str)
         nowUser.sum = ret % 1 == 0 ? ret : ret.toFixed(2)
         if (nowGame.nowUser == 0) {
@@ -241,7 +243,7 @@ export const rule = {
           }
           return await e.reply(['恭喜', segment.at(nowGame.user[1].id), '获得胜利!', toButton(buttons, 'QQBot')])
         }
-        let oldUser = nowUser
+        const oldUser = nowUser
         nowUser = nowGame.user[1]
         if (nowUser.id == '菜菜') {
           await e.reply(`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到菜菜了哦`)
@@ -297,17 +299,17 @@ export const rule = {
 }
 
 function sixty (cards, sum) {
-  let bds_list = []
-  let ops = ['+', '-', '*', '/']
-  let permutations = permute(cards)
+  const bds_list = []
+  const ops = ['+', '-', '*', '/']
+  const permutations = permute(cards)
   permutations.forEach(nums => {
     ops.forEach(op1 => {
       ops.forEach(op2 => {
         ops.forEach(op3 => {
           if (nums.length === 4) {
-            let bds1 = `(${nums[0]}${op1}${nums[1]})${op2}(${nums[2]}${op3}${nums[3]})`
-            let bds2 = `((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]}`
-            let bds3 = `${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]}))`;
+            const bds1 = `(${nums[0]}${op1}${nums[1]})${op2}(${nums[2]}${op3}${nums[3]})`
+            const bds2 = `((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]}`
+            const bds3 = `${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]}))`;
             [bds1, bds2, bds3].forEach(bds => {
               try {
                 if (Math.abs(eval(bds) - sum) < 1e-10) {
@@ -319,10 +321,10 @@ function sixty (cards, sum) {
             })
           } else {
             ops.forEach(op4 => {
-              let bds1 = `(((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]})${op4}${nums[4]}`
-              let bds2 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}(${nums[3]}${op4}${nums[4]}))))`
-              let bds3 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]})))${op4}${nums[4]}`
-              let bds4 = `(${nums[0]}${op1}((${nums[1]}${op2}${nums[2]})${op3}${nums[3]}))${op4}${nums[4]}`;
+              const bds1 = `(((${nums[0]}${op1}${nums[1]})${op2}${nums[2]})${op3}${nums[3]})${op4}${nums[4]}`
+              const bds2 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}(${nums[3]}${op4}${nums[4]}))))`
+              const bds3 = `(${nums[0]}${op1}(${nums[1]}${op2}(${nums[2]}${op3}${nums[3]})))${op4}${nums[4]}`
+              const bds4 = `(${nums[0]}${op1}((${nums[1]}${op2}${nums[2]})${op3}${nums[3]}))${op4}${nums[4]}`;
               [bds1, bds2, bds3, bds4].forEach(bds => {
                 try {
                   if (Math.abs(eval(bds) - sum) < 1e-10) {
@@ -358,7 +360,7 @@ function random_question (sum) {
     for (let i = 0; i < count; i++) {
       cards.push(Math.floor(Math.random() * 9) + 1)
     }
-    let able = sixty(cards, sum)
+    const able = sixty(cards, sum)
     if (able) {
       return [cards, able]
     }
@@ -386,8 +388,8 @@ function check_result (submit, question, sum) {
 }
 
 function permute (input) {
-  let permArr = []
-  let usedChars = []
+  const permArr = []
+  const usedChars = []
   function main (input) {
     let i, ch
     for (i = 0; i < input.length; i++) {
@@ -405,15 +407,13 @@ function permute (input) {
   return main(input)
 }
 
-function getUserId (e) {
-  return e.raw?.sender?.user_id || e.raw?.operator_id || e.user_id
-}
-
 async function getUserInfo (e) {
-  const user_id = getUserId(e)
+  const user_id = e.user_id(e)
   let user_info = await findUser(user_id)
   if (!user_info) {
     user_info = await createUser(user_id)
   }
   return user_info
 }
+
+// export const numberGames = new App(app, rule).create()
