@@ -51,7 +51,6 @@ export const rule = {
   remake: {
     reg: /^[#/]?(人生重[开启来]|remake|liferestart)$/,
     fnc: async e => {
-      console.log('e', e)
       const user_id = e.user_id
       if (cache[user_id]) {
         delete cache[user_id]
