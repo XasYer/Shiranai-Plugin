@@ -81,13 +81,13 @@ const pluginPath = join(__dirname, '..').replace(/\\/g, '/')
 const pluginName = basename(pluginPath)
 
 /**
- * @type {'Karin'|'Miao-Yunzai'|'Trss-Yunzai'|'Miao-Yunza V4'}
+ * @type {'Karin'|'Miao-Yunzai'|'Trss-Yunzai'|'Miao-Yunzai V4'}
  */
 const BotName = (() => {
   if (/^karin/i.test(pluginName)) {
     return 'Karin'
   } else if (packageJson.dependencies.react) {
-    return 'Miao-Yunza V4'
+    return 'Miao-Yunzai V4'
   } else if (Array.isArray(global.Bot?.uin)) {
     return 'Trss-Yunzai'
   } else if (packageJson.dependencies.sequelize) {
