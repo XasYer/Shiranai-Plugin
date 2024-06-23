@@ -1,6 +1,6 @@
 import { join } from 'path'
-import { Version } from '#components'
 import { puppeteer } from '#lib'
+import { Version } from '#components'
 
 function scale (pct = 1) {
   const scale = Math.min(2, Math.max(0.5, 100 / 100))

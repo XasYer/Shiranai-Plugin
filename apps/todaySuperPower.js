@@ -1,7 +1,6 @@
-import TodaySuperPower from '../models/todaySuperPower/index.js'
-import { Config, Version } from '#components'
-import { toButton } from '../models/button/index.js'
 import { segment, Bot } from '#lib'
+import { Config, Version } from '#components'
+import { toButton, TodaySuperPower } from '#models'
 
 const todaySuperPower = new TodaySuperPower()
 await todaySuperPower.init()

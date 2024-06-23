@@ -83,11 +83,11 @@ export default class Cat {
   }
 
   step () {
-    let direction = this.solver(this.scene.blocksData, this.i, this.j)
+    const direction = this.solver(this.scene.blocksData, this.i, this.j)
     if (direction < 0 || direction > 6) {
       return false
     }
-    let result = this.stepDirection(direction)
+    const result = this.stepDirection(direction)
     if (!result) {
       return false
     }
@@ -97,7 +97,7 @@ export default class Cat {
   isCaught () {
     return !this.getCurrentNeighbours()
       .some((neighbour, direction) => {
-        let block = this.scene.getBlock(neighbour.i, neighbour.j)
+        const block = this.scene.getBlock(neighbour.i, neighbour.j)
         return block !== null && !block.isWall
       })
   }
@@ -107,14 +107,14 @@ export default class Cat {
   }
 
   moveForward () {
-    let neighbour = this.getCurrentNeighbours()[this.direction]
+    const neighbour = this.getCurrentNeighbours()[this.direction]
     this.setIJ(neighbour.i, neighbour.j)
     this.checkState()
   }
 
   stepForward () {
-    let neighbour = this.getCurrentNeighbours()[this.direction]
-    let block = this.scene.getBlock(neighbour.i, neighbour.j)
+    const neighbour = this.getCurrentNeighbours()[this.direction]
+    const block = this.scene.getBlock(neighbour.i, neighbour.j)
     if (block === null) {
       return false
     }

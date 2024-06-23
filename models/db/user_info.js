@@ -1,5 +1,5 @@
-import { sequelize, DataTypes, executeSync, alter } from './base.js'
 import { logger } from '#lib'
+import { sequelize, DataTypes, executeSync, alter } from './base.js'
 
 /**
  * @typedef {Object} user_info
@@ -197,7 +197,7 @@ await sequelize.sync({ alter: isAlter })
  * @returns {Promise<user_info>}
  * 该函数创建一个具有默认值的新用户条目。name 为空字符串，其他数值型字段默认为 0。
  */
-async function createUser (user_id) {
+async function userInfoTableCreateUser (user_id) {
   user_id = String(user_id)
   return executeSync(async () => {
     return (await user_info_table.create({
@@ -217,7 +217,7 @@ async function createUser (user_id) {
  * 例如，要更新 name 和 currency，传入 { name: '新名字', currency: 100 }。
  * 可以包含任何 user_info 表中的字段。
  */
-async function updateUser (user_id, updateValues, type = 'user_id') {
+async function userInfoTableUpdateUser (user_id, updateValues, type = 'user_id') {
   const where = {}
   if (type == 'id') {
     where.id = Number(user_id)
@@ -249,7 +249,7 @@ async function updateUser (user_id, updateValues, type = 'user_id') {
  * @param {'id'|'user_id'} type - 根据id还是user_id查询,默认user_id
  * @returns {Promise<user_info>}
  */
-async function findUser (user_id, type = 'user_id') {
+async function userInfoTableFindUser (user_id, type = 'user_id') {
   const where = {}
   if (type == 'id') {
     where.id = Number(user_id)
@@ -271,7 +271,7 @@ async function findUser (user_id, type = 'user_id') {
  * @param {number} limit - 查询结果的数量限制。
  * @returns {Promise<user_info[]>}
  */
-async function findUsersSortedBy (field, order = 'DESC', limit = 10) {
+async function userInfoTableFindUsersSortedBy (field, order = 'DESC', limit = 10) {
   return executeSync(async () => {
     return await user_info_table.findAll({
       order: [
@@ -288,7 +288,7 @@ async function findUsersSortedBy (field, order = 'DESC', limit = 10) {
  * 查询用户总数
  * 该函数返回 user_info 表中的用户总数。
  */
-async function countUsers () {
+async function userInfoTableCountUsers () {
   return executeSync(async () => {
     return await user_info_table.count()
   })
@@ -296,9 +296,9 @@ async function countUsers () {
 
 export {
   user_info_table,
-  createUser,
-  updateUser,
-  findUser,
-  findUsersSortedBy,
-  countUsers
+  userInfoTableCreateUser,
+  userInfoTableUpdateUser,
+  userInfoTableFindUser,
+  userInfoTableFindUsersSortedBy,
+  userInfoTableCountUsers
 }

@@ -72,7 +72,7 @@ export default class Model {
         count += 20
         // 色砖数量
         while (count-- > 0) {
-          let tile = this.tiles[subtotal++]
+          const tile = this.tiles[subtotal++]
           // 删除 originIndex ---- 提前删除可以提升性能
           delete tile.originIndex
           tile.clr = clr
@@ -120,9 +120,9 @@ export default class Model {
   // 上节点颜色对比
   compareTopTile (index, rowIndex, colIndex, clr) {
     // 上节点索引
-    let topIndex = index - this.col
+    const topIndex = index - this.col
     // 上边界「行」索引
-    let topBoundary = this.wall[colIndex].start
+    const topBoundary = this.wall[colIndex].start
     // 在最顶部
     if (rowIndex === topBoundary) {
       return false
@@ -138,9 +138,9 @@ export default class Model {
   // 右节点颜色对比
   compareRightTile (index, rowIndex, colIndex, clr) {
     // 右节点索引
-    let rightIndex = index + 1
+    const rightIndex = index + 1
     // 右边界「列」索引
-    let rightBoundary = this.wall.length - 1
+    const rightBoundary = this.wall.length - 1
     // 在最右部
     if (colIndex === rightBoundary) return false
     // 非最右部
@@ -155,9 +155,9 @@ export default class Model {
   // 下节点颜色对比
   compareBottomTile (index, rowIndex, colIndex, clr) {
     // 下节点索引
-    let bottomIndex = index + this.col
+    const bottomIndex = index + this.col
     // 下边界「行」索引
-    let bottomBoundary = this.wall[colIndex].end
+    const bottomBoundary = this.wall[colIndex].end
     // 在最底部
     if (rowIndex === bottomBoundary) return false
     // 非最底部
@@ -172,9 +172,9 @@ export default class Model {
   // 左节点颜色对比
   compareLeftTile (index, rowIndex, colIndex, clr) {
     // 左节点索引
-    let leftIndex = index - 1
+    const leftIndex = index - 1
     // 右边界「列」索引
-    let leftBoundary = 0
+    const leftBoundary = 0
     // 在最左部
     if (colIndex === leftBoundary) return false
     // 非最左部
@@ -188,9 +188,9 @@ export default class Model {
 
   // 检查是否存在相邻的同色砖块
   hasNeighbour (index, rowIndex, colIndex) {
-    let tile = this.grid[index]
+    const tile = this.grid[index]
     if (tile === undefined) return false
-    let clr = tile.clr
+    const clr = tile.clr
     if (this.compareTopTile(index, rowIndex, colIndex, clr) !== false) return true
     else if (this.compareRightTile(index, rowIndex, colIndex, clr) !== false) return true
     else if (this.compareBottomTile(index, rowIndex, colIndex, clr) !== false) return true
@@ -200,7 +200,7 @@ export default class Model {
 
   // 寻找相邻同色砖块
   searchSameClr (index, rowIndex, colIndex, clr) {
-    let sameClrTiles = [
+    const sameClrTiles = [
       this.compareTopTile(index, rowIndex, colIndex, clr),
       this.compareRightTile(index, rowIndex, colIndex, clr),
       this.compareBottomTile(index, rowIndex, colIndex, clr),
@@ -211,7 +211,7 @@ export default class Model {
 
   // 删除指字的单元格
   deleteCell (index, rowIndex, colIndex, count) {
-    let tile = this.grid[index]
+    const tile = this.grid[index]
     // 表示已经被删除过了
     if (tile === undefined) return false
     // 标记分值
@@ -228,13 +228,13 @@ export default class Model {
   // 清除指定索引的色块及其相邻的同色块
   clean (index) {
     // 当前的行列坐标 - 纯粹是为了提高一点性能
-    let colIndex = index % this.col; let rowIndex = index / this.col >> 0
+    const colIndex = index % this.col; const rowIndex = index / this.col >> 0
     // 周边没有相同颜色砖块，直接中断
     if (this.hasNeighbour(index, rowIndex, colIndex) === false) return 0
     // 周边有相同颜色砖块
     else {
       // 当前砖块
-      let tile = this.grid[index]; let clr = tile.clr
+      const tile = this.grid[index]; const clr = tile.clr
 
       // 同色砖块
       let sameClrTiles = this.searchSameClr(index, rowIndex, colIndex, clr)
@@ -247,10 +247,10 @@ export default class Model {
 
       while (true) {
         // 下一次循环的 sameClrTiles 数组
-        let nextSameClrTiles = []
+        const nextSameClrTiles = []
         sameClrTiles.forEach(index => {
           // 当前的行列坐标 - 纯粹是为了提高一点性能
-          let colIndex = index % this.col; let rowIndex = index / this.col >> 0
+          const colIndex = index % this.col; const rowIndex = index / this.col >> 0
           nextSameClrTiles.push(...this.searchSameClr(index, rowIndex, colIndex, clr))
           this.deleteCell(index, rowIndex, colIndex, count) && ++count
         })
@@ -271,9 +271,9 @@ export default class Model {
     let count = 0
     let score = 0
     for (let col = 0, len = this.wall.length; col < len; ++col) {
-      let colInfo = this.wall[col]
+      const colInfo = this.wall[col]
       for (let row = colInfo.start; row <= colInfo.end; ++row) {
-        let tile = this.grid[row * this.col + col]
+        const tile = this.grid[row * this.col + col]
         score += -20 - 40 * count++
         tile.removed = true
       }
@@ -284,7 +284,7 @@ export default class Model {
   // 更新列信息
   updateColInfo (index, rowIndex, colIndex) {
     this.updatedColSet.has(colIndex) || this.updatedColSet.add(colIndex)
-    let colInfo = this.wall[colIndex]
+    const colInfo = this.wall[colIndex]
     // 当前列砖块数量减1
     --colInfo.count
     // 列的空洞数加1
@@ -300,12 +300,12 @@ export default class Model {
   // 夯实数组
   tamp () {
     // 空列数
-    let emptyCol = []
+    const emptyCol = []
     // 空列的最小与最大索引
     let min = this.col; let max = -1
-    for (let colIndex of this.updatedColSet) {
-      let colInfo = this.wall[colIndex]
-      let { start, pitCount, topPit, bottomPit } = colInfo
+    for (const colIndex of this.updatedColSet) {
+      const colInfo = this.wall[colIndex]
+      const { start, pitCount, topPit, bottomPit } = colInfo
 
       // 垂直方法压缩
       if (pitCount > 0) {
@@ -314,14 +314,14 @@ export default class Model {
           // topPit 上面有砖块(如果上面没有砖块就已经是压缩状态)
           if (topPit > start) {
             // 起始索引，其实是顶坑索引的正上方
-            let fromIndex = (topPit - 1) * this.col + colIndex
+            const fromIndex = (topPit - 1) * this.col + colIndex
             // 目标索引
-            let toIndex = start * this.col + colIndex
+            const toIndex = start * this.col + colIndex
             // 底坑索引 - 在夯实过程中会变
             let bottomPitIndex = bottomPit * this.col + colIndex
             for (let i = fromIndex; i >= toIndex; i -= this.col, bottomPitIndex -= this.col) {
               // 执行压缩
-              let tile = this.grid[bottomPitIndex] = this.grid[i]
+              const tile = this.grid[bottomPitIndex] = this.grid[i]
               delete this.grid[i]
               // 更新自身索引
               tile.index = bottomPitIndex
@@ -332,11 +332,11 @@ export default class Model {
           // 底坑索引 - 在夯实过程中会变
           let bottomPitIndex = bottomPit * this.col + colIndex
           // 起始索引 - 底坑索引的正上方
-          let fromIndex = bottomPitIndex - this.col
+          const fromIndex = bottomPitIndex - this.col
           // 目标索引
-          let toIndex = start * this.col + colIndex
+          const toIndex = start * this.col + colIndex
           for (let i = fromIndex; i >= toIndex; i -= this.col) {
-            let tile = this.grid[i]
+            const tile = this.grid[i]
             // 当前位置有砖块，执行压缩
             if (tile !== undefined) {
               // 执行压缩
@@ -369,9 +369,9 @@ export default class Model {
       }
     }
     // 空列总数
-    let emptyColCount = emptyCol.length
+    const emptyColCount = emptyCol.length
     // 当前列数
-    let colCount = this.wall.length
+    const colCount = this.wall.length
     // 有空列，水平方向压缩
     if (emptyColCount > 0) {
       // 连续的空列
@@ -379,16 +379,16 @@ export default class Model {
         // 空列不处在最右边 - 空列在最右边表示已经是压缩状态，删除最右边的空列信息
         if (max !== colCount - 1) {
           for (let i = max + 1; i < colCount; ++i) {
-            let colInfo = this.wall[i]
-            let { start, end } = colInfo
+            const colInfo = this.wall[i]
+            const { start, end } = colInfo
             // 压缩
             for (let j = start; j <= end; ++j) {
               // 压缩前索引
-              let indexA = j * this.col + i
+              const indexA = j * this.col + i
               // 压缩后索引 -- 其实就是往左移动 emptyColCoount 行
-              let indexB = indexA - emptyColCount
+              const indexB = indexA - emptyColCount
               // 招行压缩
-              let tile = this.grid[indexB] = this.grid[indexA]
+              const tile = this.grid[indexB] = this.grid[indexA]
               delete this.grid[indexA]
               // 更新索引
               tile.index = indexB
@@ -403,19 +403,19 @@ export default class Model {
         // 最左边的空列 - 压缩过程会变化
         let leftEmptyColIndex = min
         for (let i = min + 1; i < colCount; ++i) {
-          let colInfo = this.wall[i]
-          let { start, end, count } = colInfo
+          const colInfo = this.wall[i]
+          const { start, end, count } = colInfo
           // 当前列到最左边空列的距离
-          let distance = i - leftEmptyColIndex
+          const distance = i - leftEmptyColIndex
           // 非空行 - 压缩
           if (count > 0) {
             for (let j = start; j <= end; ++j) {
               // 压缩前索引
-              let indexA = j * this.col + i
+              const indexA = j * this.col + i
               // 压缩后的索引 -- 其实就是移动到最左边的空列
-              let indexB = indexA - distance
+              const indexB = indexA - distance
               // 招行压缩
-              let tile = this.grid[indexB] = this.grid[indexA]
+              const tile = this.grid[indexB] = this.grid[indexA]
               delete this.grid[indexA]
               // 更新索引
               tile.index = indexB
@@ -447,19 +447,19 @@ export default class Model {
   check () {
     if (this.tileCount === 0) return false
     // 取一个随机「列」样本
-    let patternCol = Math.random() * this.wall.length >> 0
-    let { start, end } = this.wall[patternCol]
+    const patternCol = Math.random() * this.wall.length >> 0
+    const { start, end } = this.wall[patternCol]
     // 取一个随机「行」样式
-    let patternRow = Math.random() * (end - start + 1) + start >> 0
+    const patternRow = Math.random() * (end - start + 1) + start >> 0
 
     // 向左扫描「列」
     for (let col = patternCol; col >= 0; --col) {
-      let colInfo = this.wall[col]
+      const colInfo = this.wall[col]
       // 行索引
-      let rowIndex = (patternCol === col ? patternRow : colInfo.start)
+      const rowIndex = (patternCol === col ? patternRow : colInfo.start)
       // 向下扫描「行」
       for (let row = rowIndex; row <= colInfo.end; ++row) {
-        let index = row * this.col + col
+        const index = row * this.col + col
         // 有同色砖块，直接中断
         if (this.hasNeighbour(index, row, col)) {
           return index
@@ -468,12 +468,12 @@ export default class Model {
     }
     // 向右扫描「列」
     for (let col = patternCol, len = this.wall.length; col < len; ++col) {
-      let colInfo = this.wall[col]
+      const colInfo = this.wall[col]
       // 行索引
-      let rowIndex = (patternCol === col ? patternRow - 1 : colInfo.end)
+      const rowIndex = (patternCol === col ? patternRow - 1 : colInfo.end)
       // 向上扫描「行」
       for (let row = rowIndex; row >= colInfo.start; --row) {
-        let index = row * this.col + col
+        const index = row * this.col + col
         // 有同色砖块，直接中断
         if (this.hasNeighbour(index, row, col)) {
           return index

@@ -1,6 +1,6 @@
 import { toButton } from '../button/index.js'
 
-export default class TicTacToe {
+export class TicTacToe {
   constructor (user_id) {
     this.board = Array(9).fill({ isEmpty: true, player: ' ' })
     this.nextPlayer = {

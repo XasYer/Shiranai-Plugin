@@ -1,8 +1,8 @@
 import { getNeighbours } from '../sprites/utils.js'
 
 export default function randomSolver (blocksIsWall, i, j) {
-  let neighbours = getNeighbours(i, j)
-  let directions = []
+  const neighbours = getNeighbours(i, j)
+  const directions = []
   neighbours.forEach((neighbour, direction) => {
     if (blocksIsWall[neighbour.i] !== undefined &&
             blocksIsWall[neighbour.i][neighbour.j] !== undefined &&

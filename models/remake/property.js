@@ -268,8 +268,6 @@ class Property {
         return
       case this.TYPES.EXT:
         this.lsset('extendTalent', value)
-
-      default:
     }
   }
 
@@ -315,8 +313,6 @@ class Property {
           prop,
           this.get(prop) + parseInt(value)
         )
-
-      default:
     }
   }
 

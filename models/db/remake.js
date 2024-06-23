@@ -1,5 +1,5 @@
-import { sequelize, DataTypes, executeSync, alter } from './base.js'
 import { logger } from '#lib'
+import { sequelize, DataTypes, executeSync, alter } from './base.js'
 
 /**
  * @typedef {Object} remake
@@ -76,7 +76,7 @@ await sequelize.sync({ alter: isAlter })
  * @returns {Promise<remake>}
  * 该函数创建一个具有默认值的新用户条目。name 为空字符串，其他数值型字段默认为 0。
  */
-async function createUser (user_id) {
+async function remakeTableCreateUser (user_id) {
   user_id = String(user_id)
   return executeSync(async () => {
     return (await remake_table.create({
@@ -92,7 +92,7 @@ async function createUser (user_id) {
  * @param {string} user_id - 要更新的用户的唯一标识符。
  * @param {remake} updateValues - 一个包含要更新字段的对象。
  */
-async function updateUser (user_id, updateValues) {
+async function remakeTableUpdateUser (user_id, updateValues) {
   user_id = String(user_id)
   return executeSync(async () => {
     if (Object.prototype.hasOwnProperty.call(updateValues, 'AEVT')) {
@@ -135,7 +135,7 @@ async function updateUser (user_id, updateValues) {
  * @param {number|string} user_id - 要查询的用户的唯一标识符。
  * @returns {Promise<remake>}
  */
-async function findUser (user_id) {
+async function remakeTableFindUser (user_id) {
   user_id = String(user_id)
   return executeSync(async () => {
     return await remake_table.findOne({
@@ -154,7 +154,7 @@ async function findUser (user_id) {
  * @param {number} limit - 查询结果的数量限制。
  * @returns {Promise<remake[]>}
  */
-async function findUsersSortedBy (field, order = 'DESC', limit = 10) {
+async function remakeTableFindUsersSortedBy (field, order = 'DESC', limit = 10) {
   return executeSync(async () => {
     return await remake_table.findAll({
       order: [
@@ -168,8 +168,8 @@ async function findUsersSortedBy (field, order = 'DESC', limit = 10) {
 }
 
 export {
-  createUser,
-  updateUser,
-  findUser,
-  findUsersSortedBy
+  remakeTableCreateUser,
+  remakeTableUpdateUser,
+  remakeTableFindUser,
+  remakeTableFindUsersSortedBy
 }

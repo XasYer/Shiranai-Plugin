@@ -1,5 +1,4 @@
-import MineSweeper from '../models/boardgame/minesweeper.js'
-import { toButton, extLetterToNumber } from '../models/button/index.js'
+import { toButton, extLetterToNumber, MineSweeper } from '#models'
 // import { App } from '#components'
 
 // 多少行

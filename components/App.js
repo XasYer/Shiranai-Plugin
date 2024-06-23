@@ -1,5 +1,5 @@
-import Version from './Version.js'
 import lodash from 'lodash'
+import Version from './Version.js'
 import { plugin, logger } from '#lib'
 
 export default class {

@@ -1,4 +1,4 @@
-import { toButton } from '../models/button/index.js'
+import { toButton } from '#models'
 // import { App } from '#components'
 
 export const app = {

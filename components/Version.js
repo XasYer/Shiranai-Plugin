@@ -1,7 +1,7 @@
 import fs from 'fs'
 import lodash from 'lodash'
-import { join, dirname, basename } from 'path'
 import { fileURLToPath } from 'url'
+import { join, dirname, basename } from 'path'
 
 const __filename = fileURLToPath(import.meta.url)
 

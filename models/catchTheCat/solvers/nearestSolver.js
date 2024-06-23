@@ -31,7 +31,7 @@ class Block {
 
   get neighbours () {
     if (this._neighbours === undefined) {
-      let neighbours = getNeighbours(this.i, this.j)
+      const neighbours = getNeighbours(this.i, this.j)
       this._neighbours = neighbours.map(neighbour => {
         return this.parent.getBlock(neighbour.i, neighbour.j)
       })
@@ -40,7 +40,7 @@ class Block {
   }
 
   get directions () {
-    let result = []
+    const result = []
     this.neighbours.forEach((neighbour, direction) => {
       if (neighbour !== null && !neighbour.isWall) {
         if (neighbour.distance < this.distance) {
@@ -55,7 +55,7 @@ class Block {
     let maxRoutesCount = 0
     let result = -1
     this.directions.forEach(direction => {
-      let neighbour = this.neighbours[direction]
+      const neighbour = this.neighbours[direction]
       if (neighbour.routesCount > maxRoutesCount) {
         maxRoutesCount = neighbour.routesCount
         result = direction
@@ -95,7 +95,7 @@ class Blocks {
      *     * 如果遍历过，则设置为它的距离与当前距离 + 1 中间的较小值
      */
   calcAllDistances () {
-    let queue = []
+    const queue = []
     this.blocks.forEach(col => {
       col.forEach(block => {
         if (block.isEdge && !block.isWall) {
@@ -105,7 +105,7 @@ class Blocks {
       })
     })
     while (queue.length > 0) {
-      let block = queue.shift()
+      const block = queue.shift()
       block.neighbours.forEach(neighbour => {
         if (neighbour !== null && !neighbour.isEdge && !neighbour.isWall) {
           if (neighbour.distance > block.distance + 1) {
@@ -120,11 +120,11 @@ class Blocks {
   }
 
   toString () {
-    let lines = []
+    const lines = []
     for (let j = 0; j < this.h; j++) {
-      let distances = []
+      const distances = []
       for (let i = 0; i < this.w; i++) {
-        let block = this.getBlock(i, j)
+        const block = this.getBlock(i, j)
         if (block.isWall) {
           distances.push('*')
         } else if (block.distance === Infinity) {
@@ -143,11 +143,11 @@ class Blocks {
   }
 
   toString2 () {
-    let lines = []
+    const lines = []
     for (let j = 0; j < this.h; j++) {
-      let distances = []
+      const distances = []
       for (let i = 0; i < this.w; i++) {
-        let block = this.getBlock(i, j)
+        const block = this.getBlock(i, j)
         if (block.isWall) {
           distances.push('*')
         } else if (block.routesCount === Infinity) {
@@ -167,10 +167,10 @@ class Blocks {
 }
 
 export function nearestSolver (blocksIsWall, i, j) {
-  let blocks = new Blocks(blocksIsWall)
+  const blocks = new Blocks(blocksIsWall)
   blocks.calcAllDistances()
-  let block = blocks.getBlock(i, j)
-  let directions = block.directions
+  const block = blocks.getBlock(i, j)
+  const directions = block.directions
   if (directions.length > 0) {
     return directions[0]
   } else {
@@ -179,8 +179,8 @@ export function nearestSolver (blocksIsWall, i, j) {
 }
 
 export default function nearestAndMoreRoutesSolver (blocksIsWall, i, j) {
-  let blocks = new Blocks(blocksIsWall)
+  const blocks = new Blocks(blocksIsWall)
   blocks.calcAllDistances()
-  let block = blocks.getBlock(i, j)
+  const block = blocks.getBlock(i, j)
   return block.direction
 }

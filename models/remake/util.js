@@ -70,11 +70,13 @@ function deepMapSet (target, source) {
     let value = source[key]
     switch (typeof value) {
       case 'function': value = value()
+      // eslint-disable-next-line no-fallthrough
       case 'object':
         if (!Array.isArray(value)) {
           deepMapSet(target[key], value)
           break
         }
+      // eslint-disable-next-line no-fallthrough
       default: target[key] = value
     }
   }

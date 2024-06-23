@@ -1,7 +1,7 @@
 // 快速波动均分算法
 export default function waveaverage (n = 5, crest = 4, trough = 4, isInteger = true) {
   // 平均结果
-  let list = []
+  const list = []
   // 无法进行波动均分，直接返回完全平分
   if (crest > (n - 1) * trough || trough > (n - 1) * crest) {
     return new Array(n).fill(0)

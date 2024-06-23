@@ -1,5 +1,5 @@
-import YAML from 'yaml'
 import fs from 'fs'
+import YAML from 'yaml'
 
 /**
  * YamlReader类提供了对YAML文件的动态读写功能

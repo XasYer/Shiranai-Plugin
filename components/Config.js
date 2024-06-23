@@ -1,10 +1,10 @@
-import YAML from 'yaml'
-import chokidar from 'chokidar'
-import fs from 'node:fs'
-import YamlReader from './YamlReader.js'
-import Version from './Version.js'
 import _ from 'lodash'
+import YAML from 'yaml'
+import fs from 'node:fs'
 import { logger } from '#lib'
+import chokidar from 'chokidar'
+import Version from './Version.js'
+import YamlReader from './YamlReader.js'
 
 class Config {
   constructor () {

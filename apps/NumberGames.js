@@ -1,11 +1,11 @@
 /* eslint-disable no-eval */
 import {
-  findUser,
-  createUser,
-  updateUser
-} from '../models/index.js'
-import { sleep } from '../models/common.js'
-import { toButton } from '../models/button/index.js'
+  userInfoTableFindUser,
+  userInfoTableCreateUser,
+  userInfoTableUpdateUser,
+  sleep,
+  toButton
+} from '#models'
 // import { App } from '#components'
 import { segment } from '#lib'
 
@@ -81,7 +81,7 @@ export const rule = {
         delete GameName[e.group_id]
         const user_info = await getUserInfo(e)
         user_info.currency += 5
-        await updateUser(user_info.user_id, user_info)
+        await userInfoTableUpdateUser(user_info.user_id, user_info)
         return await e.reply([segment.at(user_id), `\r恭喜你回答正确!\r\r>获得5金币\rID: ${user_info.id}\t\t昵称: ${user_info.name}\r剩余金币: ${user_info.currency}`, toButton(buttons, 'QQBot')])
       }
       buttons = [
@@ -279,14 +279,14 @@ export const rule = {
           if (num1 > num2) {
             const user_info1 = await getUserInfo({ user_id: nowGame.user[0].id })
             user_info1.currency += 5
-            await updateUser(user_info1.user_id, user_info1)
+            await userInfoTableUpdateUser(user_info1.user_id, user_info1)
             return await e.reply([segment.at(user_info1.user_id), `\r恭喜你赢了菜菜!\r\r>获得5金币\rID: ${user_info1.id}\t\t昵称: ${user_info1.name}\r剩余金币: ${user_info1.currency}`, toButton(buttons, 'QQBot')])
           } else if (num1 == num2) {
             return await e.reply(['是平局!', toButton(buttons, 'QQBot')])
           }
           const user_info2 = await getUserInfo({ user_id: nowGame.user[1].id })
           user_info2.currency += 5
-          await updateUser(user_info2.user_id, user_info2)
+          await userInfoTableUpdateUser(user_info2.user_id, user_info2)
           return await e.reply(['是菜菜赢了哦!', toButton(buttons, 'QQBot')])
         }
         await e.reply([`你的结果为${oldUser.str} = ${oldUser.sum}\r现在轮到`, segment.at(nowUser.id), '了'])
@@ -409,9 +409,9 @@ function permute (input) {
 
 async function getUserInfo (e) {
   const user_id = e.user_id
-  let user_info = await findUser(user_id)
+  let user_info = await userInfoTableFindUser(user_id)
   if (!user_info) {
-    user_info = await createUser(user_id)
+    user_info = await userInfoTableCreateUser(user_id)
   }
   return user_info
 }

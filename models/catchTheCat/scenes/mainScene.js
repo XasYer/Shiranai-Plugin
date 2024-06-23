@@ -1,7 +1,7 @@
 import Cat from '../sprites/cat.js'
 import Block from '../sprites/block.js'
+import { restoreNumberToLetter } from '#models'
 import nearestSolver from '../solvers/nearestSolver.js'
-import { restoreNumberToLetter } from '../../button/index.js'
 
 const GameState = {
   PLAYING: 'playing',
@@ -34,7 +34,7 @@ export default class MainScene {
   }
 
   get blocksData () {
-    let result = []
+    const result = []
     this.blocks.forEach((column, i) => {
       result[i] = []
       column.forEach((block, j) => {
@@ -93,7 +93,7 @@ export default class MainScene {
         message: '游戏已经结束，重新开局'
       }
     }
-    let block = this.getBlock(i, j)
+    const block = this.getBlock(i, j)
     if (!block) {
       return {
         result: false,
@@ -126,9 +126,9 @@ export default class MainScene {
     this.recordCoord.wall.push({ i, j })
     const click = restoreNumberToLetter([j + 1, i + 1])
     const catOldPos = restoreNumberToLetter([this.cat.j + 1, this.cat.i + 1])
-    let result = this.cat.step()
+    const result = this.cat.step()
     const catNewPos = restoreNumberToLetter([this.cat.j + 1, this.cat.i + 1])
-    let message = `您点击了 ${click} 猫从 ${catOldPos} 移动到 ${catNewPos}`
+    const message = `您点击了 ${click} 猫从 ${catOldPos} 移动到 ${catNewPos}`
     if (!result) {
       this.state = GameState.WIN
       return {
@@ -199,11 +199,11 @@ export default class MainScene {
   }
 
   createBlocks () {
-    let blocks = []
+    const blocks = []
     for (let i = 0; i < this.w; i++) {
       blocks[i] = []
       for (let j = 0; j < this.h; j++) {
-        let block = new Block(i, j)
+        const block = new Block(i, j)
         blocks[i][j] = block
       }
     }
@@ -211,7 +211,7 @@ export default class MainScene {
   }
 
   createCat () {
-    let cat = new Cat(this)
+    const cat = new Cat(this)
     cat.solver = nearestSolver
     this.cat = cat
   }
@@ -239,12 +239,12 @@ export default class MainScene {
       }
       // Shuffle array
       const j = i + Math.floor(Math.random() * (array.length - i))
-      let temp = array[i]
+      const temp = array[i]
       array[i] = array[j]
       array[j] = temp
       // Set wall
-      let wallI = array[i] % this.w
-      let wallJ = Math.floor(array[i] / this.w)
+      const wallI = array[i] % this.w
+      const wallJ = Math.floor(array[i] / this.w)
       this.getBlock(wallI, wallJ).isWall = true
     }
   }

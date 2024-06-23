@@ -1,6 +1,6 @@
 import { Config } from '#components'
 
-class LinkGame {
+export class LinkGame {
   constructor () {
     this.score = 0 // 得分
     this.cols = Config.linkGame.cols + 2 || 10 // 列数
@@ -357,5 +357,3 @@ class LinkGame {
     return false
   }
 }
-
-export default LinkGame

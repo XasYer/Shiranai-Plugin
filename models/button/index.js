@@ -1,5 +1,5 @@
-import { Render, Version } from '#components'
 import { segment, Bot } from '#lib'
+import { Render, Version } from '#components'
 
 /**
  * 转换成Button

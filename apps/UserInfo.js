@@ -1,14 +1,14 @@
 import {
-  findUser,
-  createUser,
-  updateUser,
-  findUsersSortedBy,
-  countUsers,
+  userInfoTableFindUser,
+  userInfoTableCreateUser,
+  userInfoTableUpdateUser,
+  userInfoTableFindUsersSortedBy,
+  userInfoTableCountUsers,
   getDaysBetweenDates,
   getTime,
-  generateRandomInteger
-} from '../models/index.js'
-import { toButton } from '../models/button/index.js'
+  generateRandomInteger,
+  toButton
+} from '#models'
 import { segment } from '#lib'
 
 export const app = {
@@ -78,7 +78,7 @@ export const rule = {
         user_info.last_sign = getTime()
       }
       msg += `\r已签到${user_info.sign_count}天\r现在有${user_info.currency}个金币`
-      await updateUser(user_id, user_info)
+      await userInfoTableUpdateUser(user_id, user_info)
       e.toQQBotMD = true
       const buttons = [
         [
@@ -140,7 +140,7 @@ export const rule = {
             break
         }
       }
-      const rankList = await findUsersSortedBy(field, 'DESC', 10)
+      const rankList = await userInfoTableFindUsersSortedBy(field, 'DESC', 10)
       if (!rankList || rankList.length == 0) {
         return await e.reply(['还没有排名哦'])
       }
@@ -224,7 +224,7 @@ export const rule = {
         }
       } else {
         if (!id) {
-          id = generateRandomInteger(1, await countUsers())
+          id = generateRandomInteger(1, await userInfoTableCountUsers())
         }
         user_info.rob_count++
         if (id == user_info.id) {
@@ -242,7 +242,7 @@ export const rule = {
             msg = `在这个风雨交加的夜晚，你准备抢一个陌生人的金币。但在视线模糊中，你误闯进了自己的家。你原本计划完美，但事与愿违。在离开现场时，你的口袋破了一个洞，${i}个金币不翼而飞。`
           }
         } else {
-          const target = await findUser(id, 'id')
+          const target = await userInfoTableFindUser(id, 'id')
           if (!target) {
             user_info.rob_count--
             msg = `你花费了大量时间寻找${id}，但无论你怎么努力，都似乎抓不到任何关于他的线索。这种情况让你怀疑，他们是否真的存在于这个游戏之中。`
@@ -270,12 +270,12 @@ export const rule = {
                 target.currency += i
               }
             }
-            await updateUser(target.user_id, target)
+            await userInfoTableUpdateUser(target.user_id, target)
           }
         }
       }
 
-      await updateUser(user_info.user_id, user_info)
+      await userInfoTableUpdateUser(user_info.user_id, user_info)
       const buttons = [
         [
           { text: '我也要抢金币', input: '/抢金币' },
@@ -313,7 +313,7 @@ export const rule = {
       }
       let msg
       const user_info = await getUserInfo(e)
-      const target = await findUser(id, 'id')
+      const target = await userInfoTableFindUser(id, 'id')
       if (user_info.currency < currency) {
         msg = `你想要向${id}赠送${currency}个金币，表达你的友好与慷慨，但当你查看自己的金币时，却发现自己的金库并不允许这样的大方。这个小小的难题让你有些尴尬，但你的好意已经表达。`
       } else if (!target) {
@@ -324,8 +324,8 @@ export const rule = {
         user_info.give_count++
         user_info.give_send += currency
         target.currency += currency
-        await updateUser(user_info.user_id, user_info)
-        await updateUser(target.user_id, target)
+        await userInfoTableUpdateUser(user_info.user_id, user_info)
+        await userInfoTableUpdateUser(target.user_id, target)
       }
       return await e.reply([
         segment.at(user_id), '\r', msg,
@@ -367,7 +367,7 @@ export const rule = {
       } else {
         msg = '你参与了抽奖，期待着一些令人兴奋的变化。然而，转盘停止时，你的金币数并没有任何变化。这个结果虽然平淡，但也让你避免了潜在的损失。'
       }
-      await updateUser(user_info.user_id, user_info)
+      await userInfoTableUpdateUser(user_info.user_id, user_info)
       const buttons = [
         [
           { text: '我也要抽奖', callback: '/金币抽奖' },
@@ -395,7 +395,7 @@ export const rule = {
       }
       const user_info = await getUserInfo(e)
       user_info.name = name
-      await updateUser(user_info.user_id, user_info)
+      await userInfoTableUpdateUser(user_info.user_id, user_info)
       return await e.reply(`修改成功~\r以后你的昵称就是: ${name}`)
     }
   },
@@ -432,9 +432,9 @@ export const rule = {
 
 async function getUserInfo (e) {
   const user_id = e.user_id
-  let user_info = await findUser(user_id)
+  let user_info = await userInfoTableFindUser(user_id)
   if (!user_info) {
-    user_info = await createUser(user_id)
+    user_info = await userInfoTableCreateUser(user_id)
   }
   return user_info
 }

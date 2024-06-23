@@ -1,11 +1,12 @@
-import Life from '../models/remake/life.js'
-import getConfig from '../models/remake/config.js'
-import { findUser, createUser } from '../models/db/remake.js'
-import { setItem, saveItem } from '../models/remake/save.js'
-import { App, Render } from '#components'
-import { setTimer } from '../models/common.js'
-import { toButton } from '../models/button/index.js'
+import {
+  remakeTableFindUser,
+  remakeTableCreateUser,
+  Life,
+  setTimer,
+  toButton
+} from '#models'
 import { segment } from '#lib'
+import { App, Render } from '#components'
 
 const cache = {}
 
@@ -59,12 +60,11 @@ export const rule = {
       }
       const data = await getUserInfo({ user_id })
       data.times++
+      const core = new Life(user_id)
       for (const i in data) {
         if (data[i] === '') continue
-        setItem(user_id, i, data[i])
+        core.setItem(user_id, i, data[i])
       }
-      const core = new Life(user_id)
-      core.config(getConfig())
       await core.initial()
       const randTLT = core.talentRandom()
       cache[user_id] = {
@@ -284,7 +284,7 @@ export const rule = {
           ...data
         })
         await e.reply([segment.at(e.user_id), '\n', img])
-        await saveItem(user_id)
+        await core.saveItem(user_id)
         return true
       }
       return false
@@ -299,9 +299,9 @@ export const remake = new App(app, rule).create()
 
 async function getUserInfo (e) {
   const user_id = e.user_id
-  let user_info = await findUser(user_id)
+  let user_info = await remakeTableFindUser(user_id)
   if (!user_info) {
-    user_info = await createUser(user_id)
+    user_info = await remakeTableCreateUser(user_id)
   }
   return user_info
 }

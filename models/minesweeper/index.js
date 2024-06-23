@@ -28,7 +28,7 @@ class Tile {
   }
 }
 
-export default class MineSweeper {
+export class MineSweeper {
   constructor (row, column, mineNum) {
     this.row = row
     this.column = column

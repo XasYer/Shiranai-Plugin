@@ -1,10 +1,10 @@
 import fs from 'node:fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import TaskQueue from './TaskQueue.js'
 import { Version } from '#components'
+import TaskQueue from './TaskQueue.js'
 import { Sequelize, DataTypes, Op } from 'sequelize'
-import { moveFileOrFolder, mkdirSync } from '../common.js'
+import { moveFileOrFolder, mkdirSync } from '#models'
 
 mkdirSync('data', 'db', 'sqlite')
 

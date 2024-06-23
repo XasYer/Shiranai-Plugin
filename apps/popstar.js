@@ -1,6 +1,4 @@
-import Popstar from '../models/popstar/Popstar.js'
-import { toButton, extLetterToNumber, coordinateToIndex } from '../models/button/index.js'
-import { sleep } from '../models/common.js'
+import { toButton, extLetterToNumber, coordinateToIndex, Popstar, sleep } from '#models'
 // import { App } from '#components'
 
 const GAME = {}

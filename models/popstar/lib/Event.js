@@ -57,7 +57,7 @@ export default class Events {
 
   // once 方法，监听一次
   once (event, cb) {
-    let onceCb = () => {
+    const onceCb = () => {
       cb && cb()
       this.off(event, onceCb)
     }

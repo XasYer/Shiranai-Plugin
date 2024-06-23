@@ -5,9 +5,6 @@
       "#Karin": [
         "lib/imports/index.js"
       ],
-      "#template": [
-        "lib/imports/template.js"
-      ],
       "#components": [
         "components/index.js"
       ],

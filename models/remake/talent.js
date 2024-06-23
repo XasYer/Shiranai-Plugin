@@ -18,7 +18,7 @@ class Talent {
       talent.grade = Number(talent.grade)
       talent.max_triggers = emt(talent.condition)
       if (talent.replacement) {
-        for (let key in talent.replacement) {
+        for (const key in talent.replacement) {
           const obj = {}
           for (let value of talent.replacement[key]) {
             value = `${value}`.split('*')

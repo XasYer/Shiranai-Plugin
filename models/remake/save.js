@@ -1,4 +1,4 @@
-import { updateUser } from '../db/remake.js'
+import { remakeTableUpdateUser } from '#models'
 
 const localStorage = {}
 
@@ -21,7 +21,7 @@ function setItem (user_id, key, value) {
 
 async function saveItem (user_id) {
   // console.log(localStorage[user_id]);
-  await updateUser(user_id, localStorage[user_id])
+  await remakeTableUpdateUser(user_id, localStorage[user_id])
   delete localStorage[user_id]
 }
 

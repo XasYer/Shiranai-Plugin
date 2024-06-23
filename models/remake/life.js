@@ -1,16 +1,15 @@
-import { readFileSync } from 'node:fs'
-
-import * as util from './util.js'
-import * as fCondition from './condition.js'
-
-import Property from './property.js'
+import { join } from 'path'
 import Event from './event.js'
 import Talent from './talent.js'
-import Achievement from './achievement.js'
-import Character from './character.js'
-
+import * as util from './util.js'
+import getConfig from './config.js'
+import Property from './property.js'
 import { Version } from '#components'
-import { join } from 'path'
+import Character from './character.js'
+import { readFileSync } from 'node:fs'
+import Achievement from './achievement.js'
+import * as fCondition from './condition.js'
+import { setItem, saveItem } from './save.js'
 
 const loadFile = name => JSON.parse(readFileSync(join(Version.pluginPath, 'resources', 'remake', `${name}.json`), 'utf-8'))
 
@@ -50,6 +49,7 @@ class Life {
   #initialData
 
   async initial () {
+    this.config(getConfig())
     const [age, talents, events, achievements, characters] = await Promise.all([
       loadFile('age'),
       loadFile('talents'),
@@ -82,6 +82,14 @@ class Life {
     this.#talent.config(talentConfig)
     this.#property.config(propertyConfig)
     this.#character.config(characterConfig)
+  }
+
+  setItem (...args) {
+    setItem(...args)
+  }
+
+  saveItem (...args) {
+    saveItem(...args)
   }
 
   request (module) {

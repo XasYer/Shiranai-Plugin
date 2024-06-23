@@ -1,6 +1,5 @@
-import { getShindanTitle, makeShindan } from '../models/shindan/index.js'
 import { Config, Render, App } from '#components'
-import { getGroupMemberInfo } from '../models/groupApi/index.js'
+import { getShindanTitle, makeShindan, getGroupMemberInfo } from '#models'
 
 export const app = {
   id: 'shindan',

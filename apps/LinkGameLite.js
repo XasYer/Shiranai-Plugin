@@ -1,5 +1,4 @@
-import LinkGame from '../models/link/index.js'
-import { toButton, extLetterToNumber } from '../models/button/index.js'
+import { toButton, extLetterToNumber, LinkGame } from '#models'
 // import { App } from '#components'
 
 const GAME = {}

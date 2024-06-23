@@ -1,7 +1,7 @@
-import { join, extname } from 'path'
-import { Version } from '#components'
 import fs from 'fs'
 import YAML from 'yaml'
+import { join, extname } from 'path'
+import { Version } from '#components'
 
 /**
  * 计算两个日期之间相差的天数

@@ -1,7 +1,6 @@
-import { MainScene } from '../models/catchTheCat/index.js'
-import { Config, Render, App } from '#components'
-import { extLetterToNumber, toButton } from '../models/button/index.js'
 import { segment } from '#lib'
+import { Config, Render, App } from '#components'
+import { MainScene, extLetterToNumber, toButton } from '#models'
 
 const GAME = {}
 
