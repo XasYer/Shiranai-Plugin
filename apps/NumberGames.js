@@ -76,7 +76,7 @@ export const rule = {
       e.toQQBotMD = true
       if (!nowGame) return await e.reply(['现在没有开局哦,请输入/24点来开始游戏!', toButton(buttons, 'QQBot')])
       const msg = e.msg.replace(/[#/]?解答\s*/, '')
-      const user_id = e.user_id(e)
+      const user_id = e.user_id
       if (check_result(msg, nowGame.question, nowGame.game)) {
         delete GameName[e.group_id]
         const user_info = await getUserInfo(e)
@@ -121,7 +121,7 @@ export const rule = {
         if (nowGame.start) {
           return await e.reply(['算术对战已经开始了哦,请等待结束吧'])
         }
-        const user_id = e.user_id(e)
+        const user_id = e.user_id
         nowGame.user.push({
           id: nowGame.user[0].id == user_id ? '菜菜' : user_id,
           str: '(1 + ? - ?) x ? ÷ ?',
@@ -152,7 +152,7 @@ export const rule = {
       GameName[e.group_id] = {
         start: false,
         user: [{
-          id: e.user_id(e),
+          id: e.user_id,
           str: '(1 + ? - ?) x ? ÷ ?',
           sum: 0,
           ops: { '+': true, '-': true, x: true, '÷': true }
@@ -180,7 +180,7 @@ export const rule = {
         return await e.reply(['还没有开始游戏哦', toButton([[{ text: '开始游戏', input: '/算术对战', send: true }]], 'QQBot')])
       }
       let nowUser = nowGame.user[nowGame.nowUser]
-      if (nowUser.id != e.user_id(e)) {
+      if (nowUser.id != e.user_id) {
         return await e.reply([segment.at(e.user_id), '现在不是你的回合哦'])
       }
       const buttons = [
@@ -408,7 +408,7 @@ function permute (input) {
 }
 
 async function getUserInfo (e) {
-  const user_id = e.user_id(e)
+  const user_id = e.user_id
   let user_info = await findUser(user_id)
   if (!user_info) {
     user_info = await createUser(user_id)

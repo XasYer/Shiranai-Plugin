@@ -39,7 +39,7 @@ export const rule = {
   sign: {
     reg: /^[#/]?金币签到$/,
     fnc: async e => {
-      const user_id = e.user_id(e)
+      const user_id = e.user_id
       if (getCD(e, 'sign')) {
         return e.reply('不可以这么快哦,一分钟之后再来吧')
       }
@@ -179,7 +179,7 @@ export const rule = {
   rob: {
     reg: /^[#/]?抢金币\s*\d*$/,
     fnc: async e => {
-      const user_id = e.user_id(e)
+      const user_id = e.user_id
       if (getCD(e, 'rob', 60)) {
         return e.reply('不可以这么快哦,一分钟之后再来吧')
       }
@@ -297,7 +297,7 @@ export const rule = {
   give: {
     reg: /^[#/]?送金币\s*(\d+|\d+[\s*]+\d+)$/,
     fnc: async e => {
-      const user_id = e.user_id(e)
+      const user_id = e.user_id
       if (getCD(e, 'give', 60 * 60)) {
         return e.reply('不可以这么快哦,一分钟之后再来吧')
       }
@@ -336,7 +336,7 @@ export const rule = {
   draw: {
     reg: /^[#/]?金币抽奖$/,
     fnc: async e => {
-      const user_id = e.user_id(e)
+      const user_id = e.user_id
       // if (getCD(e, 'draw', 60)) {
       //     return await e.reply(`不可以这么快哦,一分钟之后再来吧`)
       // }
@@ -431,7 +431,7 @@ export const rule = {
 }
 
 async function getUserInfo (e) {
-  const user_id = e.user_id(e)
+  const user_id = e.user_id
   let user_info = await findUser(user_id)
   if (!user_info) {
     user_info = await createUser(user_id)
@@ -440,7 +440,7 @@ async function getUserInfo (e) {
 }
 const cd = {}
 function getCD (e, type = 'default', time = 60) {
-  const user_id = e.user_id(e)
+  const user_id = e.user_id
   if (!cd[type]) {
     cd[type] = {}
   }
