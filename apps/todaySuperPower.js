@@ -1,6 +1,6 @@
 import { segment, Bot } from '#lib'
-import { Config, Version } from '#components'
-import { toButton, TodaySuperPower } from '#models'
+import { Config } from '#components'
+import { TodaySuperPower } from '#models'
 
 const todaySuperPower = new TodaySuperPower()
 await todaySuperPower.init()
@@ -15,16 +15,6 @@ export const rule = {
     reg: /^#?(刷新)?[今昨明][日天]超能力$/,
     fnc: async e => {
       if (!checkEnable(e)) return false
-      if (Config.todaySuperPower.api.enable) {
-        try {
-          const data = await fetch(Config.todaySuperPower.api.url + '/get').then(res => res.json())
-          const msg = todaySuperPower.getTodayMsg('', data)
-          return await e.reply(msg)
-        } catch (error) {
-          console.log(error)
-          return await e.reply('获取今日超能力失败~')
-        }
-      }
 
       let msg
       if (e.msg.includes('今')) {
@@ -59,16 +49,6 @@ export const rule = {
             oppositeAction: 'press',
             tip: '不按'
           }
-      if (Config.todaySuperPower.api.enable) {
-        try {
-          const res = await fetch(Config.todaySuperPower.api.url + `/action/${data.action}/${e.user_id}`).then(res => res.json())
-          const msg = todaySuperPower.getTodayMsg(data.tip, res)
-          return await e.reply(msg)
-        } catch (error) {
-          console.log(error)
-          return await e.reply('获取今日超能力失败~')
-        }
-      }
       const select = todaySuperPower.setAction(e.user_id, data)
       const msg = todaySuperPower.getTodayMsg(select)
       return await e.reply(msg)
@@ -81,25 +61,6 @@ export const rule = {
       const message = e.msg.replace(/#?评论\s*/, '')
       if (!message) {
         return false
-      }
-      if (Config.todaySuperPower.api.enable) {
-        try {
-          const res = await fetch(Config.todaySuperPower.api.url + '/review', {
-            method: 'POST',
-            body: JSON.stringify({
-              message,
-              userId: e.user_id,
-              avatar: await e.friend.getAvatarUrl()
-            }),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then(res => res.json())
-          return await e.reply(res.message)
-        } catch (error) {
-          console.log(error)
-          return await e.reply('获取今日超能力失败~')
-        }
       }
       const id = todaySuperPower.addReview(message, e.user_id, await e.friend.getAvatarUrl())
       if (Config.todaySuperPower.examineReviewInfo.enable) {
@@ -124,31 +85,6 @@ export const rule = {
       const id = regRet[2] ? regRet[2] - 1 : -1
       const isMaster = e.isMaster || e.user_id == Config.todaySuperPower.otherBotInfo.QQBotID
       if (regRet[1] == '查看') {
-        if (Config.todaySuperPower.api.enable) {
-          try {
-            const res = await fetch(Config.todaySuperPower.api.url + '/lookReview').then(res => res.json())
-            const img = await e.runtime.render(Version.pluginName, 'todaySuperPower/html/index', { review: res.data }, {
-              retType: 'base64',
-              beforeRender: ({ data }) => {
-                if (data.pageGotoParams) {
-                  data.pageGotoParams.waitUntil = 'load'
-                } else {
-                  data.pageGotoParams = { waitUntil: 'load' }
-                }
-                return data
-              }
-            })
-            return await e.reply([img, toButton([
-              [
-                { text: '点赞评论', input: '/点赞评论' },
-                { text: '点踩评论', input: '/点踩评论' }
-              ]
-            ], 'QQBot')])
-          } catch (error) {
-            console.log(error)
-            return await e.reply('获取今日超能力失败~')
-          }
-        }
         const msg = await todaySuperPower.getReviewImg(e, id, isMaster)
         return await e.reply(msg)
       } else if (regRet[1] == '通过') {
@@ -166,15 +102,6 @@ export const rule = {
           点赞: 'like',
           点踩: 'dislike'
         }[tip]
-        if (Config.todaySuperPower.api.enable) {
-          try {
-            const res = await fetch(Config.todaySuperPower.api.url + `/review/${type}/${+id + 1}/${e.user_id}`).then(res => res.json())
-            return await e.reply(res.message)
-          } catch (error) {
-            console.log(error)
-            return await e.reply('获取今日超能力失败~')
-          }
-        }
         const msg = todaySuperPower.setReview(type, id, e.user_id, tip)
         await e.reply(msg, true, { recallMsg: 30 })
       }
