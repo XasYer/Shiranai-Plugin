@@ -1,5 +1,6 @@
 export * from './db/index.js'
 export * from './link/index.js'
+export * from './help/index.js'
 export * from './button/index.js'
 export * from './common/index.js'
 export * from './remake/index.js'

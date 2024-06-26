@@ -19,11 +19,11 @@ const getLine = function (line) {
   return line
 }
 
-const readLogFile = function (root, versionCount = 4) {
+const readLogFile = function (root, versionCount = 5) {
   const logPath = `${root}/CHANGELOG.md`
   let logs = {}
   const changelogs = []
-  let currentVersion
+  let version
 
   try {
     if (fs.existsSync(logPath)) {
@@ -33,21 +33,17 @@ const readLogFile = function (root, versionCount = 4) {
       let temp = {}
       let lastLine = {}
       lodash.forEach(logs, (line) => {
-        if (versionCount <= -1) {
+        if (versionCount <= 0) {
           return false
         }
         const versionRet = /^#\s*([0-9a-zA-Z\\.~\s]+?)\s*$/.exec(line)
         if (versionRet && versionRet[1]) {
           const v = versionRet[1].trim()
-          if (!currentVersion) {
-            currentVersion = v
+          if (!version) {
+            version = v
           } else {
             changelogs.push(temp)
-            if (/0\s*$/.test(v) && versionCount > 0) {
-              versionCount = 0
-            } else {
-              versionCount--
-            }
+            versionCount--
           }
 
           temp = {
@@ -73,7 +69,7 @@ const readLogFile = function (root, versionCount = 4) {
   } catch (e) {
     // do nth
   }
-  return { changelogs, currentVersion }
+  return { changelogs, version }
 }
 
 const pluginPath = join(__dirname, '..').replace(/\\/g, '/')
@@ -99,15 +95,11 @@ const BotName = (() => {
 
 const BotVersion = packageJson.version
 
-const { changelogs, currentVersion } = readLogFile(pluginPath)
+const { changelogs, version } = readLogFile(pluginPath)
 
 export default {
-  get version () {
-    return currentVersion
-  },
-  get changelogs () {
-    return changelogs
-  },
+  version,
+  changelogs,
   readLogFile,
   pluginName,
   pluginPath,

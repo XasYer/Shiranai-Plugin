@@ -18,7 +18,6 @@ export class TodaySuperPower {
   }
 
   async init () {
-    if (Config.todaySuperPower.api.enable) return
     this.setScheduleJob()
     await this.getTodaySuperPower()
   }
