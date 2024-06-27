@@ -42,9 +42,6 @@ async function help (e) {
     helpGroup.push(group)
   })
   const themeData = await helpTheme.getThemeData(helpCfg)
-  console.log('themeData', themeData)
-  console.log('helpCfg', helpCfg)
-  console.log('helpGroup', helpGroup)
   const img = await Render.render('help/index', {
     helpCfg,
     helpGroup,
