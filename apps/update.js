@@ -18,7 +18,7 @@ export const updateApp = new App(app, rule).create()
 
 function update (e) {
   let msg = e.msg
-  if (!msg.incudes('日志') && !e.isMaster) return false
+  if (!msg.includes('日志') && !e.isMaster) return false
   if (msg.includes('强制') && msg.includes('日志')) {
     msg = msg.replace('强制', '')
   }
