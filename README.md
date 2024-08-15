@@ -37,11 +37,11 @@ git clone  --depth=1 https://github.com/XasYer/Shiranai-Plugin.git ./plugins/Shi
 ```
 
 > <svg t="1719156492195" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8591" width="30" height="30"><path d="M512 189.44a322.56 322.56 0 1 0 0 645.12 322.56 322.56 0 0 0 0-645.12zM117.76 512a394.24 394.24 0 1 1 788.48 0 394.24 394.24 0 0 1-788.48 0z" fill="#1296db" p-id="8592"></path><path d="M476.16 574.72v-286.72h71.68v286.72H476.16zM476.16 718.08v-71.68h71.68v71.68H476.16z" fill="#1296db" p-id="8593"></path></svg>
-> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://moeyy.cn/gh-proxy/) 提供的文件代理加速下载服务
+> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://ghproxy.net/) 提供的文件代理加速下载服务
 >
-> ```
-> git clone  --depth=1 https://github.moeyy.xyz/https://github.com/XasYer/Shiranai-Plugin.git ./plugins/Shiranai-Plugin
-> ```
+>```
+> git clone  --depth=1 https://ghproxy.net/https://github.com/XasYer/Shiranai-Plugin.git ./plugins/Shiranai-Plugin
+>```
 
 - Karin 使用
 
@@ -50,10 +50,10 @@ git clone  --depth=1 https://github.com/XasYer/Shiranai-Plugin.git ./plugins/kar
 ```
 
 > <svg t="1719156492195" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8591" width="30" height="30"><path d="M512 189.44a322.56 322.56 0 1 0 0 645.12 322.56 322.56 0 0 0 0-645.12zM117.76 512a394.24 394.24 0 1 1 788.48 0 394.24 394.24 0 0 1-788.48 0z" fill="#1296db" p-id="8592"></path><path d="M476.16 574.72v-286.72h71.68v286.72H476.16zM476.16 718.08v-71.68h71.68v71.68H476.16z" fill="#1296db" p-id="8593"></path></svg>
-> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://moeyy.cn/gh-proxy/) 提供的文件代理加速下载服务
+> 如果你的网络环境较差，无法连接到 Github，可以使用 [GitHub Proxy](https://ghproxy.net/) 提供的文件代理加速下载服务
 >
 > ```
-> git clone  --depth=1 https://github.moeyy.xyz/https://github.com/XasYer/Shiranai-Plugin.git ./plugins/karin-plugin-Shiranai
+> git clone  --depth=1 https://ghproxy.net/https://github.com/XasYer/Shiranai-Plugin.git ./plugins/karin-plugin-Shiranai
 > ```
 
 2. 安装依赖(可选：不安装依赖将无法使用一些功能)
