@@ -20,6 +20,9 @@ QQBotInfo:
 examineReviewInfo:
   enable: false
 
+# 评论长度限制
+reviewLengthLimit: 200
+
 # 明日超能力 需要野生Bot
 # enable: 是否启用明日超能力推送功能
 # cron: 什么时候进行推送

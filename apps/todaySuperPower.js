@@ -62,6 +62,9 @@ export const rule = {
       if (!message) {
         return false
       }
+      if (message.length > Config.todaySuperPower.reviewLengthLimit) {
+        return await e.reply('评论内容过长,请重新输入~')
+      }
       const id = todaySuperPower.addReview(message, e.user_id, await e.friend.getAvatarUrl())
       if (Config.todaySuperPower.examineReviewInfo.enable) {
         await e.reply('评论成功,等待审核中~')
